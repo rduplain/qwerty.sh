@@ -20,3 +20,5 @@ commands commonly found on Unix platforms, and makes every effort to provide
 simple error messages when things go wrong.
 
 Status: Alpha; consider the project a prototype until the v1.0 release.
+
+... with apologies to Dvorak.
