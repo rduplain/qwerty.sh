@@ -30,8 +30,12 @@ set -e
 
 # Global variables.
 PROG=qwerty.sh       # Name of program.
-DOWNLOAD_REF=''      # Reference to download target, parsed from command line.
 DOWNLOAD=''          # Temporary path of downloaded file.
+
+# Variables parsed from command line.
+CHMOD=''             # Mode invocation for chmod of downloaded file.
+DOWNLOAD_REF=''      # Reference to download target.
+OUTPUT=''            # Destination of downloaded file once verified.
 
 # Checksum values, parsed from command line.
 MD5=
@@ -51,6 +55,11 @@ usage() {
     fi
 
     stderr "usage: $PROG [OPTION...] DOWNLOAD_REF"
+    stderr
+    stderr "output options:"
+    stderr
+    stderr "  --output=FILEPATH          Download to this filepath."
+    stderr "  --chmod=MODE               Invoke chmod with this upon download."
     stderr
     stderr "checksum options:"
     stderr
@@ -197,6 +206,18 @@ checksum() {
     esac
 }
 
+write_output() {
+    # Write output given specified parameters.
+
+    if [ -n "$OUTPUT" ]; then
+        mkdir -p "$(dirname "$OUTPUT")"
+        cp -p "$DOWNLOAD" "$OUTPUT"
+        if [ -n "$CHMOD" ]; then
+            chmod "$CHMOD" "$OUTPUT"
+        fi
+    fi
+}
+
 isatty() {
     # Check whether stdout is open and refers to a terminal.
 
@@ -264,8 +285,14 @@ parse_arguments() {
                 -h | --help)
                     usage
                     ;;
+                --chmod)
+                    CHMOD="$value"
+                    ;;
                 --md5)
                     MD5="$value"
+                    ;;
+                --output)
+                    OUTPUT="$value"
                     ;;
                 --sha1)
                     SHA1="$value"
@@ -311,6 +338,8 @@ main() {
     if ! isatty; then
         cat "$DOWNLOAD"
     fi
+
+    write_output
 
     remove_download
     clear_traps
