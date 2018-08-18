@@ -17,7 +17,8 @@ curl -sSL qwerty.sh |\
 
 The qwerty.sh project provides fully portable shell with checksum support using
 commands commonly found on Unix platforms, and makes every effort to provide
-simple error messages when things go wrong.
+simple error messages when things go wrong. All of this together provides a
+means to publish executable checksum specifications.
 
 Status: Alpha; consider the project a prototype until the v1.0 release.
 
