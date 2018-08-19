@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# qwerty.sh v0.2.1: download reliably when all you have is a keyboard.
+# qwerty.sh v0.2.2-dev: download reliably when all you have is a keyboard.
 #
 # Copyright (c) 2018, Ron DuPlain
 # All rights reserved.
@@ -106,7 +106,7 @@ download_url() {
     # Download a URL.
 
     given curl
-    curl -o "$DOWNLOAD" "$1"
+    curl -SL -o "$DOWNLOAD" "$1"
 }
 
 remove_download() {
