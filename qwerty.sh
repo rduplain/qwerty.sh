@@ -335,7 +335,7 @@ main() {
     download "$DOWNLOAD_REF"
     checksums "$DOWNLOAD"
 
-    if ! isatty; then
+    if ! isatty && [ -z "$OUTPUT" ]; then
         cat "$DOWNLOAD"
     fi
 
