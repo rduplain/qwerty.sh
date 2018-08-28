@@ -1,29 +1,31 @@
 #!/usr/bin/env sh
 # qwerty.sh v0.3-dev: download reliably when all you have is a keyboard.
 #
-# Copyright (c) 2018, Ron DuPlain
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#     * Redistributions of source code must retain the above copyright notice,
-#       this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# Copyright (c) 2018, Ron DuPlain. All rights reserved.
+# See footer for BSD 2-Clause License.
+
+usage() {
+    if [ $# -gt 0 ]; then
+        stderr "$@"; stderr; # Print message argument, if given.
+    fi
+
+    stderr "usage: $PROG [OPTION...] DOWNLOAD_REF"
+    stderr
+    stderr "output options:"
+    stderr
+    stderr "  --output=FILEPATH          Download to this filepath."
+    stderr "  --chmod=MODE               Invoke chmod with this upon download."
+    stderr
+    stderr "checksum options:"
+    stderr
+    stderr "  --md5=..."
+    stderr "  --sha1=..."
+    stderr "  --sha224=..."
+    stderr "  --sha256=..."
+    stderr "  --sha384=..."
+    stderr "  --sha512=..."
+    return 2
+}
 
 # Exit immediately if a command error or non-zero return occurs.
 set -e
@@ -44,33 +46,6 @@ SHA224=
 SHA256=
 SHA384=
 SHA512=
-
-usage() {
-    # Print program usage to stderr and return 2.
-
-    if [ $# -gt 0 ]; then
-        # Print message argument, if given.
-        stderr "$@"
-        stderr
-    fi
-
-    stderr "usage: $PROG [OPTION...] DOWNLOAD_REF"
-    stderr
-    stderr "output options:"
-    stderr
-    stderr "  --output=FILEPATH          Download to this filepath."
-    stderr "  --chmod=MODE               Invoke chmod with this upon download."
-    stderr
-    stderr "checksum options:"
-    stderr
-    stderr "  --md5=..."
-    stderr "  --sha1=..."
-    stderr "  --sha224=..."
-    stderr "  --sha256=..."
-    stderr "  --sha384=..."
-    stderr "  --sha512=..."
-    return 2
-}
 
 download() {
     # Download as referenced.
@@ -346,3 +321,26 @@ main() {
 }
 
 main "$@"
+
+# BSD 2-Clause License. See header for contact and copyright information.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#     * Redistributions of source code must retain the above copyright notice,
+#       this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
