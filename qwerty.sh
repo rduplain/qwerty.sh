@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# qwerty.sh v0.3-dev: download reliably when all you have is a keyboard.
+# qwerty.sh v0.2.3: download reliably when all you have is a keyboard.
 #
 # Copyright (c) 2018, Ron DuPlain. All rights reserved.
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
