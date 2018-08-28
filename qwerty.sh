@@ -5,10 +5,9 @@
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
 
 usage() {
-    if [ $# -gt 0 ]; then
-        stderr "$@"; stderr; # Print message argument, if given.
-    fi
+    if [ $# -gt 0 ]; then stderr "$@"; stderr; fi # Print arguments if given.
 
+    # curl -sSL qwerty.sh | sh -s - [OPTION...] DOWNLOAD_REF
     stderr "usage: $PROG [OPTION...] DOWNLOAD_REF"
     stderr
     stderr "output options:"
