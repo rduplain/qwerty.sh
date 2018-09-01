@@ -26,6 +26,23 @@ usage() {
     return 2
 }
 
+main() {
+    set_traps
+    parse_arguments "$@"
+
+    download "$DOWNLOAD_REF"
+    checksums "$DOWNLOAD"
+
+    if ! isatty && [ -z "$OUTPUT" ]; then
+        cat "$DOWNLOAD"
+    fi
+
+    write_output
+
+    remove_download
+    clear_traps
+}
+
 
 ## Begin setting global and command-line variables.
 
@@ -329,25 +346,6 @@ parse_arguments() {
 
 
 ## Begin program execution.
-
-main() {
-    # The main routine of qwerty.sh.
-
-    set_traps
-    parse_arguments "$@"
-
-    download "$DOWNLOAD_REF"
-    checksums "$DOWNLOAD"
-
-    if ! isatty && [ -z "$OUTPUT" ]; then
-        cat "$DOWNLOAD"
-    fi
-
-    write_output
-
-    remove_download
-    clear_traps
-}
 
 main "$@"
 
