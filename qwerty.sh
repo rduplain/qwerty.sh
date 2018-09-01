@@ -141,12 +141,6 @@ checksum() {
     given openssl
     given awk tr
 
-    if [ -n "$DOWNLOAD_REF" ]; then
-        report_filepath="$DOWNLOAD_REF"
-    else
-        report_filepath="$filepath"
-    fi
-
     case "$hash_function" in
         "sha1" | "sha224" | "sha256" | "sha384" | "sha512" | "md5" )
             dgst_output=$( openssl dgst -$hash_function "$filepath" )
@@ -169,7 +163,7 @@ checksum() {
             stderr "$hash_function: $dgst_value"
 
             if [ "$hash_value" != "$dgst_value" ]; then
-                stderr "$report_filepath $hash_function mismatch: $hash_value"
+                stderr "$hash_function mismatch: $hash_value"
                 return 1
             fi
             ;;
