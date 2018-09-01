@@ -248,6 +248,8 @@ write_output() {
         fi
     elif ! isatty; then
         cat "$DOWNLOAD"
+    else
+        stderr "No command pipeline or output specified. Doing nothing."
     fi
 }
 
