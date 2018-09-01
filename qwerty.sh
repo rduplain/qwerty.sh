@@ -160,10 +160,24 @@ checksum() {
                 return 3
             fi
 
-            stderr "$hash_function: $dgst_value"
+            # Print a legible standalone section of checksum values to stderr.
+            case "$hash_function" in
+                "md5")
+                    stderr "--- $hash_function ----$(repleat '-' $dgst_value)"
+                    ;;
+                "sha1")
+                    stderr "--- $hash_function ---$(repleat '-' $dgst_value)"
+                    ;;
+                *)
+                    stderr "--- $hash_function -$(repleat '-' $dgst_value)"
+                    ;;
+            esac
+            stderr "expected:   $hash_value"
+            stderr "downloaded: $dgst_value"
+            stderr "------------$(repleat '-' $dgst_value)"
 
             if [ "$hash_value" != "$dgst_value" ]; then
-                stderr "$hash_function mismatch: $hash_value"
+                stderr "error: $hash_function mismatch."
                 return 1
             fi
             ;;
@@ -172,6 +186,16 @@ checksum() {
             return 2
             ;;
     esac
+}
+
+repleat() {
+    # Echo repeat replacement character for the width of given value.
+
+    replacement="$1"
+    shift
+
+    given tr
+    echo "$@" | tr '[:print:]' "$replacement"
 }
 
 write_output() {
