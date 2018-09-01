@@ -30,8 +30,8 @@ main() {
     set_traps
     parse_arguments "$@"
 
-    download "$DOWNLOAD_REF"
-    checksums "$DOWNLOAD"
+    download
+    checksums
 
     if ! isatty && [ -z "$OUTPUT" ]; then
         cat "$DOWNLOAD"
@@ -181,38 +181,30 @@ given() {
 download() {
     # Download as referenced.
 
-    if [ $# -ne 1 ]; then
-        stderr "usage: download REF"
-        return 2
-    fi
-
-    ref="$1"
-    shift 1
-
     given mktemp
     DOWNLOAD=$(mktemp)
 
-    if [ -d "$ref" ]; then
+    if [ -d "$DOWNLOAD_REF" ]; then
         stderr "error: $PROG cannot target directories."
         return 2
-    elif [ -e "$ref" ]; then
-        download_file "$ref"
+    elif [ -e "$DOWNLOAD_REF" ]; then
+        download_file
     else
-        download_url "$ref"
+        download_url
     fi
 }
 
 download_file() {
     # Download a file.
 
-    cp -p "$1" "$DOWNLOAD"
+    cp -p "$DOWNLOAD_REF" "$DOWNLOAD"
 }
 
 download_url() {
     # Download a URL.
 
     given curl
-    curl -SL -o "$DOWNLOAD" "$1"
+    curl -SL -o "$DOWNLOAD" "$DOWNLOAD_REF"
 }
 
 remove_download() {
@@ -224,36 +216,28 @@ remove_download() {
 checksums() {
     # Check all specified checksum values.
 
-    if [ $# -ne 1 ]; then
-        stderr "usage: checksums FILENAME"
-        return 2
-    fi
-
-    filepath="$1"
-    shift
-
     if [ -n "$MD5" ]; then
-        checksum "$filepath" md5 "$MD5"
+        checksum "$DOWNLOAD" md5 "$MD5"
     fi
 
     if [ -n "$SHA1" ]; then
-        checksum "$filepath" sha1 "$SHA1"
+        checksum "$DOWNLOAD" sha1 "$SHA1"
     fi
 
     if [ -n "$SHA224" ]; then
-        checksum "$filepath" sha224 "$SHA224"
+        checksum "$DOWNLOAD" sha224 "$SHA224"
     fi
 
     if [ -n "$SHA256" ]; then
-        checksum "$filepath" sha256 "$SHA256"
+        checksum "$DOWNLOAD" sha256 "$SHA256"
     fi
 
     if [ -n "$SHA384" ]; then
-        checksum "$filepath" sha384 "$SHA384"
+        checksum "$DOWNLOAD" sha384 "$SHA384"
     fi
 
     if [ -n "$SHA512" ]; then
-        checksum "$filepath" sha512 "$SHA512"
+        checksum "$DOWNLOAD" sha512 "$SHA512"
     fi
 }
 
