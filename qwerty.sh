@@ -26,6 +26,9 @@ usage() {
     return 2
 }
 
+
+## Begin setting global and command-line variables.
+
 # Exit immediately if a command error or non-zero return occurs.
 set -e
 
@@ -45,6 +48,118 @@ SHA224=
 SHA256=
 SHA384=
 SHA512=
+
+
+## Begin utilities which stand alone without global or command-line variables.
+
+checksum() {
+    # Verify checksum of file, exiting non-zero if hash does not match.
+
+    if [ $# -ne 3 ]; then
+        stderr "usage: checksum FILENAME sha1|sha256|... HASH"
+        return 2
+    fi
+
+    local filepath="$1"
+    local hash_function=$2
+    local hash_value=$3
+    shift 3
+
+    given openssl
+    given awk tr
+
+    case "$hash_function" in
+        "sha1" | "sha224" | "sha256" | "sha384" | "sha512" | "md5" )
+            dgst_output=$( openssl dgst -$hash_function "$filepath" )
+            dgst_exit=$?
+
+            if [ $dgst_exit -ne 0 ]; then
+                stderr "dgst failed with non-zero status: $dgst_exit"
+                return $dsgt_exit
+            fi
+
+            # Parse checksum output and trim spaces.
+            dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
+            dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
+
+            if [ -z "dgst_value" ]; then
+                stderr "Unable to parse hash value from openssl dgst call."
+                return 3
+            fi
+
+            # Print a legible standalone section of checksum values to stderr.
+            case "$hash_function" in
+                "md5")
+                    stderr "--- $hash_function ----$(repleat '-' $dgst_value)"
+                    ;;
+                "sha1")
+                    stderr "--- $hash_function ---$(repleat '-' $dgst_value)"
+                    ;;
+                *)
+                    stderr "--- $hash_function -$(repleat '-' $dgst_value)"
+                    ;;
+            esac
+            stderr "expected:   $hash_value"
+            stderr "downloaded: $dgst_value"
+            stderr "------------$(repleat '-' $dgst_value)"
+
+            if [ "$hash_value" != "$dgst_value" ]; then
+                stderr "error: $hash_function mismatch."
+                return 1
+            fi
+            ;;
+        * )
+            echo "checksum: unknown hash function: $hash_function" >&2
+            return 2
+            ;;
+    esac
+}
+
+isatty() {
+    # Check whether stdout is open and refers to a terminal.
+
+    [ -t 1 ]
+}
+
+stdout() {
+    # Echo all arguments to stdout.
+    #
+    # Provided for parity with stderr function.
+
+    echo "$@"
+}
+
+stderr() {
+    # Echo all arguments to stderr.
+    #
+    # Be sure to return/exit with an error code if applicable, after calling.
+
+    echo "$@" >&2
+}
+
+repleat() {
+    # Echo repeat replacement character for the width of given value.
+
+    replacement="$1"
+    shift
+
+    given tr
+    echo "$@" | tr '[:print:]' "$replacement"
+}
+
+
+## Begin tasks which use global and command-line variables.
+
+given() {
+    # Check that the given commands exist.
+
+    for command in "$@"; do
+        if ! which "$command" > /dev/null; then
+            stderr "$PROG requires '$command' command, but cannot find it."
+            return 3
+        fi
+    done
+}
 
 download() {
     # Download as referenced.
@@ -125,79 +240,6 @@ checksums() {
     fi
 }
 
-checksum() {
-    # Verify checksum of file, exiting non-zero if hash does not match.
-
-    if [ $# -ne 3 ]; then
-        stderr "usage: checksum FILENAME sha1|sha256|... HASH"
-        return 2
-    fi
-
-    local filepath="$1"
-    local hash_function=$2
-    local hash_value=$3
-    shift 3
-
-    given openssl
-    given awk tr
-
-    case "$hash_function" in
-        "sha1" | "sha224" | "sha256" | "sha384" | "sha512" | "md5" )
-            dgst_output=$( openssl dgst -$hash_function "$filepath" )
-            dgst_exit=$?
-
-            if [ $dgst_exit -ne 0 ]; then
-                stderr "dgst failed with non-zero status: $dgst_exit"
-                return $dsgt_exit
-            fi
-
-            # Parse checksum output and trim spaces.
-            dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
-            dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
-
-            if [ -z "dgst_value" ]; then
-                stderr "Unable to parse hash value from openssl dgst call."
-                return 3
-            fi
-
-            # Print a legible standalone section of checksum values to stderr.
-            case "$hash_function" in
-                "md5")
-                    stderr "--- $hash_function ----$(repleat '-' $dgst_value)"
-                    ;;
-                "sha1")
-                    stderr "--- $hash_function ---$(repleat '-' $dgst_value)"
-                    ;;
-                *)
-                    stderr "--- $hash_function -$(repleat '-' $dgst_value)"
-                    ;;
-            esac
-            stderr "expected:   $hash_value"
-            stderr "downloaded: $dgst_value"
-            stderr "------------$(repleat '-' $dgst_value)"
-
-            if [ "$hash_value" != "$dgst_value" ]; then
-                stderr "error: $hash_function mismatch."
-                return 1
-            fi
-            ;;
-        * )
-            echo "checksum: unknown hash function: $hash_function" >&2
-            return 2
-            ;;
-    esac
-}
-
-repleat() {
-    # Echo repeat replacement character for the width of given value.
-
-    replacement="$1"
-    shift
-
-    given tr
-    echo "$@" | tr '[:print:]' "$replacement"
-}
-
 write_output() {
     # Write output given specified parameters.
 
@@ -208,39 +250,6 @@ write_output() {
             chmod "$CHMOD" "$OUTPUT"
         fi
     fi
-}
-
-isatty() {
-    # Check whether stdout is open and refers to a terminal.
-
-    [ -t 1 ]
-}
-
-given() {
-    # Check that the given commands exist.
-
-    for command in "$@"; do
-        if ! which "$command" > /dev/null; then
-            stderr "$PROG requires '$command' command, but cannot find it."
-            return 3
-        fi
-    done
-}
-
-stdout() {
-    # Echo all arguments to stdout.
-    #
-    # Provided for parity with stderr function.
-
-    echo "$@"
-}
-
-stderr() {
-    # Echo all arguments to stderr.
-    #
-    # Be sure to return/exit with an error code if applicable, after calling.
-
-    echo "$@" >&2
 }
 
 set_traps() {
@@ -317,6 +326,9 @@ parse_arguments() {
         shift
     done
 }
+
+
+## Begin program execution.
 
 main() {
     # The main routine of qwerty.sh.
