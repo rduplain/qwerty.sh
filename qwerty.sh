@@ -33,10 +33,6 @@ main() {
     download
     checksums
 
-    if ! isatty && [ -z "$OUTPUT" ]; then
-        cat "$DOWNLOAD"
-    fi
-
     write_output
 
     remove_download
@@ -250,6 +246,8 @@ write_output() {
         if [ -n "$CHMOD" ]; then
             chmod "$CHMOD" "$OUTPUT"
         fi
+    elif ! isatty; then
+        cat "$DOWNLOAD"
     fi
 }
 
