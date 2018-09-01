@@ -249,7 +249,7 @@ write_output() {
     elif ! isatty; then
         cat "$DOWNLOAD"
     else
-        stderr "No command pipeline or output specified. Doing nothing."
+        stderr "No command pipeline or output specified. Waiting for Godot."
     fi
 }
 
