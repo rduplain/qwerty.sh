@@ -29,13 +29,10 @@ usage() {
 main() {
     set_traps
     parse_arguments "$@"
-
     download
     checksums
-
     write_output
-
-    remove_download
+    remove_temp_download
     clear_traps
 }
 
@@ -203,7 +200,7 @@ download_url() {
     curl -SL -o "$DOWNLOAD" "$DOWNLOAD_REF"
 }
 
-remove_download() {
+remove_temp_download() {
     # Remove download.
 
     rm -f "$DOWNLOAD"
@@ -256,14 +253,14 @@ write_output() {
 set_traps() {
     # Set shell traps to exit program execution with class.
 
-    trap remove_download INT TERM
+    trap remove_temp_download INT TERM
 
     # Set an EXIT trap since ERR is not portable.
     # Be sure to `clear_traps` before exiting on success.
     if isatty; then
-        trap 'remove_download' EXIT
+        trap 'remove_temp_download' EXIT
     else
-        trap 'remove_download; stdout "exit 1 # Propagate error."' EXIT
+        trap 'remove_temp_download; stdout "exit 1 # Propagate error."' EXIT
     fi
 }
 
