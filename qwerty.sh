@@ -280,7 +280,7 @@ set_traps() {
     if isatty; then
         trap 'remove_temp_download' EXIT
     else
-        trap 'remove_temp_download; stdout "exit 1 # Propagate error."' EXIT
+        trap 'stdout "exit $? # Propagate error."; remove_temp_download' EXIT
     fi
 }
 
