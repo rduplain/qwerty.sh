@@ -76,7 +76,7 @@ checksum() {
     shift 3
 
     case "$hash_algorithm" in
-        "sha1" | "sha224" | "sha256" | "sha384" | "sha512" | "md5" )
+        "md5" | "sha1" | "sha224" | "sha256" | "sha384" | "sha512")
             dgst_value=$(openssl_dgst "$filepath" $hash_algorithm) || return $?
 
             # Print a legible standalone section of checksum values to stderr.
