@@ -329,15 +329,12 @@ parse_arguments() {
                     SHA512="$value"
                     ;;
                 *)
-                    stderr "$PROG: unknown option '$1'"
-                    usage
+                    usage "$PROG: unrecognized option '$key'"
                     ;;
             esac
         else
             # Argument does NOT start with a hyphen.
-            if [ -n "$DOWNLOAD_REF" ]; then
-                usage "too many arguments at '$1'"
-            fi
+            [ -n "$DOWNLOAD_REF" ] && usage "too many arguments at '$1'"
             DOWNLOAD_REF="$1"
         fi
         shift
