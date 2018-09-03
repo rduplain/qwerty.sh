@@ -442,6 +442,10 @@ parse_arguments() {
             shift
         fi
     done
+
+    if [ -z "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" ]; then
+        usage "provide a checksum value e.g. --sha256=..."
+    fi
 }
 
 
