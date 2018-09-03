@@ -111,7 +111,11 @@ checksum() {
             esac
             stderr "--- $hash_function $pad$(repleat '-' $dgst_value)"
             stderr "expected:   $hash_value"
-            stderr "downloaded: $dgst_value"
+            if [ "$hash_value" = "$dgst_value" ]; then
+                stderr "$(green downloaded): $dgst_value"
+            else
+                stderr "$(red downloaded): $dgst_value"
+            fi
             stderr "------------$(repleat '-' $dgst_value)"
 
             if [ "$hash_value" != "$dgst_value" ]; then
@@ -164,6 +168,37 @@ repleat() {
     echo "$@" | tr '[:print:]' "$replacement"
 }
 
+colorize() {
+    # Print line to stdout, with given color code, if stderr is a terminal.
+
+    color="$1"
+    shift
+
+    if stderr_isatty; then
+        printf "\033[1;${color}m%s\033[0m" "$@"
+    else
+        echo "$@"
+    fi
+}
+
+blue() {
+    # Print line to stdout, in blue, if stderr is a terminal.
+
+    colorize 34 "$@"
+}
+
+green() {
+    # Print line to stdout, in green, if stderr is a terminal.
+
+    colorize 32 "$@"
+}
+
+red() {
+    # Print line to stdout, in red, if stderr is a terminal.
+
+    colorize 31 "$@"
+}
+
 
 ## Begin tasks which use global and command-line variables.
 
@@ -206,7 +241,7 @@ download_url() {
     # curl -sSL qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
 
     given curl
-    report="--- $PROG\n"
+    report="--- $(blue $PROG)\n"
     report="${report}Location:\t%{url_effective}\n"
     report="${report}Content-Type:\t%{content_type}\n"
     report="${report}Content-Length:\t%{size_download}\n"
@@ -232,7 +267,7 @@ checksums_or_rej() {
         else
             output_rej="$OUTPUT.rej"
         fi
-        stderr "Rejecting download: $output_rej"
+        stderr "Rejecting download: $(red $output_rej)"
         mv "$DOWNLOAD" "$output_rej"
         return $status
     fi
