@@ -305,12 +305,15 @@ write_output() {
     # Write output given specified parameters.
 
     if [ -n "$OUTPUT" ]; then
+        stderr "Writing output to $(green $OUTPUT)."
         mkdir -p "$(dirname "$OUTPUT")"
         cp -p "$DOWNLOAD" "$OUTPUT"
         if [ -n "$CHMOD" ]; then
             chmod "$CHMOD" "$OUTPUT"
         fi
     elif ! stdout_isatty; then
+        stderr "Writing output to pipeline on $(green stdout)."
+        stderr
         cat "$DOWNLOAD"
     else
         stderr "No command pipeline or output specified. Waiting for Godot."
