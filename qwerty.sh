@@ -12,7 +12,7 @@ usage() {
     stderr
     stderr "output options:"
     stderr
-    stderr "  --output=FILEPATH          Download to this filepath."
+    stderr "  -o, --output=FILEPATH      Download to this filepath."
     stderr "  --chmod=MODE               Invoke chmod with this upon download."
     stderr
     stderr "checksum options:"
@@ -317,7 +317,7 @@ parse_arguments() {
                 --md5)
                     MD5="$value"
                     ;;
-                --output)
+                -o | --output)
                     OUTPUT="$value"
                     ;;
                 --sha1)
