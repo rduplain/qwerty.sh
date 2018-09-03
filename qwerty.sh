@@ -47,12 +47,12 @@ set -e
 
 # Global variables.
 PROG=qwerty.sh       # Name of program.
-DOWNLOAD=''          # Temporary path of downloaded file.
+DOWNLOAD=            # Temporary path of downloaded file.
 
 # Variables parsed from command line.
-CHMOD=''             # Mode invocation for chmod of downloaded file.
-DOWNLOAD_REF=''      # Reference to download target.
-OUTPUT=''            # Destination of downloaded file once verified.
+CHMOD=               # Mode invocation for chmod of downloaded file.
+DOWNLOAD_REF=        # Reference to download target.
+OUTPUT=              # Destination of downloaded file once verified.
 
 # Checksum values, parsed from command line.
 MD5=
