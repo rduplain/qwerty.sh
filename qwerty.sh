@@ -302,6 +302,11 @@ parse_arguments() {
             # Argument starts with a hyphen.
             key=$(echo "$1" | awk -F= '{ print $1 }')
             value=$(echo "$1" | awk -F= '{ print $2 }')
+            shift
+            if [ -z "$value" ]; then
+                value="$1"
+                shift
+            fi
             case "$key" in
                 -h | --help)
                     usage
@@ -331,6 +336,7 @@ parse_arguments() {
                     SHA512="$value"
                     ;;
                 *)
+                    set -- "$value" "$@"
                     usage "$PROG: unrecognized option '$key'"
                     ;;
             esac
@@ -338,8 +344,8 @@ parse_arguments() {
             # Argument does NOT start with a hyphen.
             [ -n "$DOWNLOAD_REF" ] && usage "too many arguments at '$1'"
             DOWNLOAD_REF="$1"
+            shift
         fi
-        shift
     done
 }
 
