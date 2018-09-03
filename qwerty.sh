@@ -210,7 +210,11 @@ remove_temp_download() {
 checksums_or_rej() {
     # Check all specified checksum values, or write .rej file.
 
-    if ! checksums; then
+    if checksums; then
+        # Separate branch to allow status code capture with $?.
+        return 0
+    else
+        status=$?
         if [ -z "$OUTPUT" ]; then
             output_rej="stdout.rej"
         else
@@ -218,7 +222,7 @@ checksums_or_rej() {
         fi
         stderr "Rejecting download: $output_rej"
         mv "$DOWNLOAD" "$output_rej"
-        return 1
+        return $status
     fi
 }
 
