@@ -195,10 +195,12 @@ download_file() {
 }
 
 download_url() {
-    # Download a URL.
+    # Download a URL, passing optional QWERTY_CURL_FLAGS from environment.
+    #
+    # curl -sSL qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
 
     given curl
-    curl -SL -o "$DOWNLOAD" "$DOWNLOAD_REF"
+    curl -SL -o "$DOWNLOAD" $QWERTY_CURL_FLAGS "$DOWNLOAD_REF"
 }
 
 remove_temp_download() {
