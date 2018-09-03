@@ -70,9 +70,9 @@ checksum() {
         return 2
     fi
 
-    local filepath="$1"
-    local hash_function=$2
-    local hash_value=$3
+    filepath="$1"
+    hash_function="$2"
+    hash_value="$3"
     shift 3
 
     given openssl
