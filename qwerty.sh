@@ -100,15 +100,16 @@ checksum() {
             # Print a legible standalone section of checksum values to stderr.
             case "$hash_function" in
                 "md5")
-                    stderr "--- $hash_function ----$(repleat '-' $dgst_value)"
+                    pad='----'
                     ;;
                 "sha1")
-                    stderr "--- $hash_function ---$(repleat '-' $dgst_value)"
+                    pad='---'
                     ;;
                 *)
-                    stderr "--- $hash_function -$(repleat '-' $dgst_value)"
+                    pad='-'
                     ;;
             esac
+            stderr "--- $hash_function $pad$(repleat '-' $dgst_value)"
             stderr "expected:   $hash_value"
             stderr "downloaded: $dgst_value"
             stderr "------------$(repleat '-' $dgst_value)"
