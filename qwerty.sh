@@ -75,27 +75,9 @@ checksum() {
     hash_value="$3"
     shift 3
 
-    given openssl
-    given awk tr
-
     case "$hash_function" in
         "sha1" | "sha224" | "sha256" | "sha384" | "sha512" | "md5" )
-            dgst_output=$( openssl dgst -$hash_function "$filepath" )
-            dgst_exit=$?
-
-            if [ $dgst_exit -ne 0 ]; then
-                stderr "dgst failed with non-zero status: $dgst_exit"
-                return $dsgt_exit
-            fi
-
-            # Parse checksum output and trim spaces.
-            dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
-            dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
-
-            if [ -z "$dgst_value" ]; then
-                stderr "Unable to parse hash value from openssl dgst call."
-                return 3
-            fi
+            dgst_value=$(openssl_dgst "$filepath" $hash_function) || return $?
 
             # Print a legible standalone section of checksum values to stderr.
             case "$hash_function" in
@@ -128,6 +110,43 @@ checksum() {
             return 2
             ;;
     esac
+}
+
+openssl_dgst() {
+    # Print openssl digest value of file checksum to stdout.
+    #
+    # Unlike `checksum`, this does not validate selection of given algorithm.
+
+    if [ $# -ne 2 ]; then
+        stderr "usage: openssl_dgst FILENAME sha1|sha256|..."
+        return 2
+    fi
+
+    filepath="$1"
+    hash_function="$2"
+    shift 2
+
+    given openssl
+    given awk tr
+
+    dgst_output=$(openssl dgst -$hash_function "$filepath")
+    dgst_exit=$?
+
+    if [ $dgst_exit -ne 0 ]; then
+        stderr "openssl dgst failed with non-zero status: $dgst_exit"
+        return $dsgt_exit
+    fi
+
+    # Parse checksum output and trim spaces.
+    dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
+    dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
+
+    if [ -z "$dgst_value" ]; then
+        stderr "Unable to parse hash value from openssl dgst call."
+        return 3
+    fi
+
+    echo $dgst_value
 }
 
 stdout_isatty() {
