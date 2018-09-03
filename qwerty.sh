@@ -30,7 +30,7 @@ main() {
     set_traps
     parse_arguments "$@"
     download
-    checksums
+    checksums_or_rej
     write_output
     remove_temp_download
     clear_traps
@@ -207,31 +207,46 @@ remove_temp_download() {
     rm -f "$DOWNLOAD"
 }
 
+checksums_or_rej() {
+    # Check all specified checksum values, or write .rej file.
+
+    if ! checksums; then
+        if [ -z "$OUTPUT" ]; then
+            output_rej="stdout.rej"
+        else
+            output_rej="$OUTPUT.rej"
+        fi
+        stderr "Rejecting download: $output_rej"
+        mv "$DOWNLOAD" "$output_rej"
+        return 1
+    fi
+}
+
 checksums() {
     # Check all specified checksum values.
 
     if [ -n "$MD5" ]; then
-        checksum "$DOWNLOAD" md5 "$MD5"
+        checksum "$DOWNLOAD" md5 "$MD5" || return $?
     fi
 
     if [ -n "$SHA1" ]; then
-        checksum "$DOWNLOAD" sha1 "$SHA1"
+        checksum "$DOWNLOAD" sha1 "$SHA1" || return $?
     fi
 
     if [ -n "$SHA224" ]; then
-        checksum "$DOWNLOAD" sha224 "$SHA224"
+        checksum "$DOWNLOAD" sha224 "$SHA224" || return $?
     fi
 
     if [ -n "$SHA256" ]; then
-        checksum "$DOWNLOAD" sha256 "$SHA256"
+        checksum "$DOWNLOAD" sha256 "$SHA256" || return $?
     fi
 
     if [ -n "$SHA384" ]; then
-        checksum "$DOWNLOAD" sha384 "$SHA384"
+        checksum "$DOWNLOAD" sha384 "$SHA384" || return $?
     fi
 
     if [ -n "$SHA512" ]; then
-        checksum "$DOWNLOAD" sha512 "$SHA512"
+        checksum "$DOWNLOAD" sha512 "$SHA512" || return $?
     fi
 }
 

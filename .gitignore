@@ -18,6 +18,7 @@ __MACOSX
 *.out
 *.pdf
 *.pyc
+*.rej
 *.sqlite
 *.sw*
 Untitled*.ipynb
