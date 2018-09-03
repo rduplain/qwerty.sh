@@ -336,10 +336,9 @@ parse_arguments() {
         else
             # Argument does NOT start with a hyphen.
             if [ -n "$DOWNLOAD_REF" ]; then
-                usage
-            else
-                DOWNLOAD_REF="$1"
+                usage "too many arguments at '$1'"
             fi
+            DOWNLOAD_REF="$1"
         fi
         shift
     done
