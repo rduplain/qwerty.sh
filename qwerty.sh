@@ -14,6 +14,7 @@ usage() {
     stderr
     stderr "  -o, --output=FILEPATH      Download to this filepath."
     stderr "  --chmod=MODE               Invoke chmod with this upon download."
+    stderr "  --skip-rej                 Skip writing .rej file on failure."
     stderr
     stderr "checksum options:"
     stderr
@@ -53,6 +54,7 @@ DOWNLOAD=            # Temporary path of downloaded file.
 CHMOD=               # Mode invocation for chmod of downloaded file.
 DOWNLOAD_REF=        # Reference to download target.
 OUTPUT=              # Destination of downloaded file once verified.
+SKIP_REJ=            # Skip writing .rej file on failure.
 
 # Checksum values, parsed from command line.
 MD5=
@@ -301,6 +303,9 @@ checksums_or_rej() {
         return 0
     else
         status=$?
+    fi
+
+    if [ -z "$SKIP_REJ" ]; then
         if [ -z "$OUTPUT" ]; then
             output_rej="stdout.rej"
         else
@@ -308,8 +313,9 @@ checksums_or_rej() {
         fi
         stderr "Rejecting download: $(red $output_rej)"
         mv "$DOWNLOAD" "$output_rej"
-        return $status
     fi
+
+    return $status
 }
 
 checksums() {
@@ -432,7 +438,15 @@ parse_arguments() {
                     ;;
                 *)
                     set -- "$value" "$@"
-                    usage "$PROG: unrecognized option '$key'"
+                    case "$key" in
+                        --skip-rej)
+                            [ -n "$SKIP_REJ" ] && usage "duplicate skip-rej"
+                            SKIP_REJ=true
+                            ;;
+                        *)
+                            usage "$PROG: unrecognized option '$key'"
+                            ;;
+                    esac
                     ;;
             esac
         else
