@@ -104,6 +104,17 @@ checksum() {
                 stderr "error: $hash_algorithm mismatch."
                 return 1
             fi
+
+            # Success. Provide suggestion to upgrade on weaker algorithms.
+            case "$hash_algorithm" in
+                "md5" | "sha1")
+                    stderr "$(yellow "Using $hash_algorithm. Next time use:")"
+                    stderr
+                    stderr "    --sha256=$(openssl_dgst "$filepath" sha256)"
+                    stderr
+                    stderr "... assuming no $hash_algorithm collision."
+                ;;
+            esac
             ;;
         * )
             echo "checksum: unknown hash algorithm: $hash_algorithm" >&2
@@ -210,6 +221,12 @@ green() {
     # Print line to stdout, in green, if stderr is a terminal.
 
     colorize 32 "$@"
+}
+
+yellow() {
+    # Print line to stdout, in yellow, if stderr is a terminal.
+
+    colorize 33 "$@"
 }
 
 red() {
