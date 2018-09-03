@@ -200,7 +200,11 @@ download_url() {
     # curl -sSL qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
 
     given curl
-    curl -SL -o "$DOWNLOAD" $QWERTY_CURL_FLAGS "$DOWNLOAD_REF"
+    report="--- $PROG\n"
+    report="${report}Location:\t%{url_effective}\n"
+    report="${report}Content-Type:\t%{content_type}\n"
+    report="${report}Content-Length:\t%{size_download}\n"
+    curl -SL -o "$DOWNLOAD" -w "$report" $QWERTY_CURL_FLAGS "$DOWNLOAD_REF" >&2
 }
 
 remove_temp_download() {
