@@ -17,12 +17,15 @@ usage() {
     stderr
     stderr "checksum options:"
     stderr
-    stderr "  --md5=..."
-    stderr "  --sha1=..."
     stderr "  --sha224=..."
     stderr "  --sha256=..."
     stderr "  --sha384=..."
     stderr "  --sha512=..."
+    stderr
+    stderr "weaker checksum options available:"
+    stderr
+    stderr "  --md5=..."
+    stderr "  --sha1=..."
     return 2
 }
 
