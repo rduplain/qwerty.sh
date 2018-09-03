@@ -71,16 +71,16 @@ checksum() {
     fi
 
     filepath="$1"
-    hash_function="$2"
+    hash_algorithm="$2"
     hash_value="$3"
     shift 3
 
-    case "$hash_function" in
+    case "$hash_algorithm" in
         "sha1" | "sha224" | "sha256" | "sha384" | "sha512" | "md5" )
-            dgst_value=$(openssl_dgst "$filepath" $hash_function) || return $?
+            dgst_value=$(openssl_dgst "$filepath" $hash_algorithm) || return $?
 
             # Print a legible standalone section of checksum values to stderr.
-            case "$hash_function" in
+            case "$hash_algorithm" in
                 "md5")
                     pad='----'
                     ;;
@@ -91,7 +91,7 @@ checksum() {
                     pad='-'
                     ;;
             esac
-            stderr "--- $hash_function $pad$(repleat '-' $dgst_value)"
+            stderr "--- $hash_algorithm $pad$(repleat '-' $dgst_value)"
             stderr "expected:   $hash_value"
             if [ "$hash_value" = "$dgst_value" ]; then
                 stderr "$(green downloaded): $dgst_value"
@@ -101,12 +101,12 @@ checksum() {
             stderr "------------$(repleat '-' $dgst_value)"
 
             if [ "$hash_value" != "$dgst_value" ]; then
-                stderr "error: $hash_function mismatch."
+                stderr "error: $hash_algorithm mismatch."
                 return 1
             fi
             ;;
         * )
-            echo "checksum: unknown hash function: $hash_function" >&2
+            echo "checksum: unknown hash algorithm: $hash_algorithm" >&2
             return 2
             ;;
     esac
@@ -123,13 +123,13 @@ openssl_dgst() {
     fi
 
     filepath="$1"
-    hash_function="$2"
+    hash_algorithm="$2"
     shift 2
 
     given openssl
     given awk tr
 
-    dgst_output=$(openssl dgst -$hash_function "$filepath")
+    dgst_output=$(openssl dgst -$hash_algorithm "$filepath")
     dgst_exit=$?
 
     if [ $dgst_exit -ne 0 ]; then
