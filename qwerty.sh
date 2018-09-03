@@ -92,7 +92,7 @@ checksum() {
             dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
             dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
 
-            if [ -z "dgst_value" ]; then
+            if [ -z "$dgst_value" ]; then
                 stderr "Unable to parse hash value from openssl dgst call."
                 return 3
             fi
