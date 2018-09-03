@@ -316,27 +316,35 @@ parse_arguments() {
                     usage
                     ;;
                 --chmod)
+                    [ -n "$CHMOD" ] && usage "duplicate chmod"
                     CHMOD="$value"
                     ;;
                 --md5)
+                    [ -n "$MD5" ] && usage "duplicate md5"
                     MD5="$value"
                     ;;
                 -o | --output)
+                    [ -n "$OUTPUT" ] && usage "duplicate output"
                     OUTPUT="$value"
                     ;;
                 --sha1)
+                    [ -n "$SHA1" ] && usage "duplicate sha1"
                     SHA1="$value"
                     ;;
                 --sha224)
+                    [ -n "$SHA224" ] && usage "duplicate sha224"
                     SHA224="$value"
                     ;;
                 --sha256)
+                    [ -n "$SHA256" ] && usage "duplicate sha256"
                     SHA256="$value"
                     ;;
                 --sha384)
+                    [ -n "$SHA384" ] && usage "duplicate sha384"
                     SHA384="$value"
                     ;;
                 --sha512)
+                    [ -n "$SHA512" ] && usage "duplicate sha512"
                     SHA512="$value"
                     ;;
                 *)
