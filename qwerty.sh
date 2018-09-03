@@ -126,10 +126,16 @@ checksum() {
     esac
 }
 
-isatty() {
+stdout_isatty() {
     # Check whether stdout is open and refers to a terminal.
 
     [ -t 1 ]
+}
+
+stderr_isatty() {
+    # Check whether stderr is open and refers to a terminal.
+
+    [ -t 2 ]
 }
 
 stdout() {
@@ -269,7 +275,7 @@ write_output() {
         if [ -n "$CHMOD" ]; then
             chmod "$CHMOD" "$OUTPUT"
         fi
-    elif ! isatty; then
+    elif ! stdout_isatty; then
         cat "$DOWNLOAD"
     else
         stderr "No command pipeline or output specified. Waiting for Godot."
@@ -283,7 +289,7 @@ set_traps() {
 
     # Set an EXIT trap since ERR is not portable.
     # Be sure to `clear_traps` before exiting on success.
-    if isatty; then
+    if stdout_isatty; then
         trap 'remove_temp_download' EXIT
     else
         trap 'stdout "exit $? # Propagate error."; remove_temp_download' EXIT
