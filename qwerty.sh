@@ -33,10 +33,12 @@ usage() {
 main() {
     set_traps
     parse_arguments "$@"
-    download
-    checksums_or_rej
-    write_output
-    remove_temp_download
+    if ! valid_output_exists; then
+        download
+        checksums_or_rej
+        write_output
+        remove_temp_download
+    fi
     clear_traps
 }
 
@@ -254,6 +256,22 @@ given() {
     done
 }
 
+valid_output_exists() {
+    # Check that the specific output exists and has a valid checksum.
+
+    [ -z "$OUTPUT" ] && return 1 # No output specified.
+    [ -e "$OUTPUT" ] || return 1 # No output exists.
+
+    if checksums "$OUTPUT"; then
+        stderr "Output already exists and is valid: $(green $OUTPUT)"
+        return 0
+    else
+        status=$?
+        stderr "Output already exists but is not valid: $(red $OUTPUT)"
+        return $status
+    fi
+}
+
 download() {
     # Download as referenced.
 
@@ -299,7 +317,6 @@ checksums_or_rej() {
     # Check all specified checksum values, or write .rej file.
 
     if checksums; then
-        # Separate branch to allow status code capture with $?.
         return 0
     else
         status=$?
@@ -322,27 +339,27 @@ checksums() {
     # Check all specified checksum values.
 
     if [ -n "$MD5" ]; then
-        checksum "$DOWNLOAD" md5 "$MD5" || return $?
+        checksum "${1:-$DOWNLOAD}" md5 "$MD5" || return $?
     fi
 
     if [ -n "$SHA1" ]; then
-        checksum "$DOWNLOAD" sha1 "$SHA1" || return $?
+        checksum "${1:-$DOWNLOAD}" sha1 "$SHA1" || return $?
     fi
 
     if [ -n "$SHA224" ]; then
-        checksum "$DOWNLOAD" sha224 "$SHA224" || return $?
+        checksum "${1:-$DOWNLOAD}" sha224 "$SHA224" || return $?
     fi
 
     if [ -n "$SHA256" ]; then
-        checksum "$DOWNLOAD" sha256 "$SHA256" || return $?
+        checksum "${1:-$DOWNLOAD}" sha256 "$SHA256" || return $?
     fi
 
     if [ -n "$SHA384" ]; then
-        checksum "$DOWNLOAD" sha384 "$SHA384" || return $?
+        checksum "${1:-$DOWNLOAD}" sha384 "$SHA384" || return $?
     fi
 
     if [ -n "$SHA512" ]; then
-        checksum "$DOWNLOAD" sha512 "$SHA512" || return $?
+        checksum "${1:-$DOWNLOAD}" sha512 "$SHA512" || return $?
     fi
 }
 
@@ -350,14 +367,14 @@ write_output() {
     # Write output given specified parameters.
 
     if [ -n "$OUTPUT" ]; then
-        stderr "Writing output to $(green $OUTPUT)."
+        stderr "Download is valid. Writing to $(green $OUTPUT)."
         mkdir -p "$(dirname "$OUTPUT")"
         cp -p "$DOWNLOAD" "$OUTPUT"
         if [ -n "$CHMOD" ]; then
             chmod "$CHMOD" "$OUTPUT"
         fi
     elif ! stdout_isatty; then
-        stderr "Writing output to pipeline on $(green stdout)."
+        stderr "Download is valid. Writing to pipeline on $(green stdout)."
         stderr
         cat "$DOWNLOAD"
     else
