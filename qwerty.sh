@@ -2,6 +2,7 @@
 # qwerty.sh v0.4-dev: download reliably when all you have is a keyboard.
 #
 # Copyright (c) 2018, Ron DuPlain. All rights reserved.
+# README: https://github.com/rduplain/qwerty.sh#readme
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
 
 usage() {
