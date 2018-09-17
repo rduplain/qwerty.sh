@@ -1,5 +1,8 @@
 """http_qwerty.py: redirect HTTP to HTTPS with a meaningful response body."""
 
+from urllib.parse import urlparse, urlunparse
+
+
 SHELL_REDIRECT = """
 #!/usr/bin/env sh
 echo 'error: Use HTTPS.'     >&2
@@ -13,10 +16,16 @@ HTTPS_LOCATION = 'https://qwerty.sh/'
 
 
 def application(environ, start_response, redirect_to=HTTPS_LOCATION):
+    # Preserve path information and query string in redirect.
+    location_parts = urlparse(redirect_to)._replace(
+        path=environ['PATH_INFO'],
+        query=environ['QUERY_STRING'])
+
     start_response(
         '301 MOVED PERMANENTLY',
         (('Content-Type', 'text/plain'),
-         ('Location', redirect_to)))
+         ('Location', urlunparse(location_parts))))
+
     return [bytes(line, 'ascii') for line
             in SHELL_REDIRECT.splitlines(keepends=True)]
 
