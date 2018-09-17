@@ -1,2 +1,5 @@
 run:
-	@$(MAKE) -C web run
+	@$(MAKE) -C web $@
+
+http-proxied:
+	@$(MAKE) -C web $@
