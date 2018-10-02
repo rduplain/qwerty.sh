@@ -20,18 +20,21 @@ def string_response(s, encoding='utf-8'):
     return [bytes(line, encoding) for line in s.splitlines(keepends=True)]
 
 
-def application(environ, start_response, redirect_to=HTTPS_LOCATION):
-    """WSGI callable to redirect all requests to HTTPS location."""
-
-    # Build named tuple which preserves path and query string of redirect.
+def https_location(environ, redirect_to):
+    """Build URL for redirect to location which preserves path & query."""
     location_parts = urlparse(redirect_to)._replace(
         path=environ['PATH_INFO'],
         query=environ['QUERY_STRING'])
 
+    return urlunparse(location_parts)
+
+
+def application(environ, start_response, redirect_to=HTTPS_LOCATION):
+    """WSGI callable to redirect all requests to HTTPS location."""
     start_response(
         '301 MOVED PERMANENTLY',
         (('Content-Type', 'text/plain'),
-         ('Location', urlunparse(location_parts))))
+         ('Location', https_location(environ, redirect_to))))
 
     return string_response(SHELL_REDIRECT)
 
