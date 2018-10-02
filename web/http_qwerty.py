@@ -15,6 +15,11 @@ exit 2
 HTTPS_LOCATION = 'https://qwerty.sh/'
 
 
+def string_response(s, encoding='utf-8'):
+    """Convert string to WSGI string response."""
+    return [bytes(line, encoding) for line in s.splitlines(keepends=True)]
+
+
 def application(environ, start_response, redirect_to=HTTPS_LOCATION):
     # Preserve path information and query string in redirect.
     location_parts = urlparse(redirect_to)._replace(
@@ -26,8 +31,7 @@ def application(environ, start_response, redirect_to=HTTPS_LOCATION):
         (('Content-Type', 'text/plain'),
          ('Location', urlunparse(location_parts))))
 
-    return [bytes(line, 'ascii') for line
-            in SHELL_REDIRECT.splitlines(keepends=True)]
+    return string_response(SHELL_REDIRECT)
 
 
 def run_development(app, host='localhost', port=8000, **kw):
