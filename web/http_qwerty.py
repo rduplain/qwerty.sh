@@ -32,7 +32,10 @@ def https_location(environ, redirect_to):
 def application(environ, start_response, redirect_to=HTTPS_LOCATION):
     """WSGI callable to redirect all requests to HTTPS location."""
     start_response(
+        # HTTP Status
         '301 MOVED PERMANENTLY',
+
+        # HTTP Response Headers
         (('Content-Type', 'text/plain'),
          ('Location', https_location(environ, redirect_to))))
 
