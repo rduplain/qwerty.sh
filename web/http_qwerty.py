@@ -21,7 +21,9 @@ def string_response(s, encoding='utf-8'):
 
 
 def application(environ, start_response, redirect_to=HTTPS_LOCATION):
-    # Preserve path information and query string in redirect.
+    """WSGI callable to redirect all requests to HTTPS location."""
+
+    # Build named tuple which preserves path and query string of redirect.
     location_parts = urlparse(redirect_to)._replace(
         path=environ['PATH_INFO'],
         query=environ['QUERY_STRING'])
@@ -35,7 +37,9 @@ def application(environ, start_response, redirect_to=HTTPS_LOCATION):
 
 
 def run_development(app, host='localhost', port=8000, **kw):
+    """Run a WSGI development server."""
     from werkzeug.serving import run_simple
+
     kw['use_reloader'] = kw.get('use_reloader', True)
     run_simple(host, port, app, **kw)
 
