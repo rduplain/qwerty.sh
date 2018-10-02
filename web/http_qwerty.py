@@ -17,7 +17,7 @@ HTTPS_LOCATION = 'https://qwerty.sh/'
 
 def string_response(s, encoding='utf-8'):
     """Convert string to WSGI string response."""
-    return [bytes(line, encoding) for line in s.splitlines(keepends=True)]
+    return [bytes(s, encoding)]
 
 
 def https_location(environ, redirect_to):
