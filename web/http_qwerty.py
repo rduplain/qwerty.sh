@@ -1,5 +1,7 @@
 """http_qwerty.py: redirect HTTP to HTTPS with a meaningful response body."""
 
+import os
+
 from wsgi_qwerty import https_location, string_response
 
 
@@ -12,10 +14,10 @@ echo 'curl -sSL qwerty.sh'   >&2
 exit 2
 """.strip() + '\n'
 
-HTTPS_LOCATION = 'https://qwerty.sh/'
+HTTPS_LOCATION = os.environ.get('QWERTY_HTTPS_LOCATION', 'https://qwerty.sh/')
 
 
-def application(environ, start_response, redirect_to=HTTPS_LOCATION):
+def application(environ, start_response):
     """WSGI callable to redirect all requests to HTTPS location."""
     start_response(
         # HTTP Status
@@ -23,7 +25,7 @@ def application(environ, start_response, redirect_to=HTTPS_LOCATION):
 
         # HTTP Response Headers
         (('Content-Type', 'text/plain'),
-         ('Location', https_location(environ, redirect_to))))
+         ('Location', https_location(environ, HTTPS_LOCATION))))
 
     return string_response(SHELL_REDIRECT)
 
