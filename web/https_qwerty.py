@@ -1,5 +1,6 @@
 """https_qwerty.py: serve qwerty.sh file as requested."""
 
+import shutil
 import subprocess
 
 from wsgi_qwerty import string_response
@@ -104,7 +105,17 @@ class CommandFailure(subprocess.SubprocessError):
         super().__init__(completed_process.stderr)
 
 
+def flight_check():
+    commands = ['git']
+    for command in commands:
+        if shutil.which(command) is None:
+            raise RuntimeError('command not found: {}'.format(command))
+
+    git_rev_parse('HEAD')
+
+
 if __name__ == '__main__':
     from wsgi_qwerty import run_main
 
+    flight_check()
     run_main(application)
