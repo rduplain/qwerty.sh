@@ -114,8 +114,10 @@ def flight_check():
     git_rev_parse('HEAD')
 
 
+flight_check()
+
+
 if __name__ == '__main__':
     from wsgi_qwerty import run_main
 
-    flight_check()
     run_main(application)
