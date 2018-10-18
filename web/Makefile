@@ -23,6 +23,7 @@ PYTHON_REQUIREMENTS := gunicorn==19.9.0 pyflakes werkzeug==0.14.1
 PYTHON_REQUIREMENTS_MAKEFILE := $(lastword $(MAKEFILE_LIST))
 
 include .Makefile.d-init.mk
+include .Makefile.d/path.mk
 include .Makefile.d/poorman.mk
 include .Makefile.d/procfile.mk
 include .Makefile.d/python.mk
@@ -39,6 +40,10 @@ run-https-dev: PORT := 8002
 run-http-dev:  export QWERTY_HTTPS_LOCATION := http://localhost:8002/
 
 # Configuration supported via environment variables.
+
+ifeq ($(GIT_DIR),)
+export GIT_DIR := $(abspath $(dir $(PROJECT_ROOT)))/.git
+endif
 
 ifeq ($(WORKERS),)
 WORKERS := 2
