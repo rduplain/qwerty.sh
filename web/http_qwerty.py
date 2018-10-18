@@ -31,6 +31,6 @@ def application(environ, start_response):
 
 
 if __name__ == '__main__':
-    from wsgi_qwerty import run_development
+    from wsgi_qwerty import run_main
 
-    run_development(application)
+    run_main(application)

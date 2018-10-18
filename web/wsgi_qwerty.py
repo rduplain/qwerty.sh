@@ -20,6 +20,16 @@ def run_development(app, host='localhost', port=8000, **kw):
     run_simple(host, port, app, **kw)
 
 
+def run_main(app):
+    """Run a WSGI development server, using port given on command line."""
+    from sys import argv
+
+    kw = {}
+    if len(argv) > 1:
+        kw['port'] = int(argv[1])
+    run_development(app, **kw)
+
+
 def string_response(s, encoding='utf-8'):
     """Convert string to WSGI string response."""
     return [bytes(s, encoding)]

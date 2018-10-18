@@ -1,12 +1,15 @@
-run: lint python-command
-	$(PYTHON) http_qwerty.py
+run: Procfile | poorman-command python-command lint
+	$(POORMAN) start
 
-http-proxied: python-command
+%-production: python-command
 	@$(PYTHON_ENV)/bin/gunicorn \
 		--bind 127.0.0.1:$(PORT) \
 		--workers $(WORKERS) \
 		--access-logfile - \
-		http_qwerty:application
+		$*_qwerty:application
+
+http-proxied: http-production
+https-proxied: https-production
 
 python-repl: python-command
 	$(PYTHON)
@@ -20,7 +23,20 @@ PYTHON_REQUIREMENTS := gunicorn==19.9.0 pyflakes werkzeug==0.14.1
 PYTHON_REQUIREMENTS_MAKEFILE := $(lastword $(MAKEFILE_LIST))
 
 include .Makefile.d-init.mk
+include .Makefile.d/poorman.mk
+include .Makefile.d/procfile.mk
 include .Makefile.d/python.mk
+
+Procfile: proc proc-http-dev proc-https-dev
+.PHONY: Procfile
+
+run-%-dev:
+	$(PYTHON) $*_qwerty.py $(PORT)
+
+run-http-dev:  PORT := 8001
+run-https-dev: PORT := 8002
+
+run-http-dev:  export QWERTY_HTTPS_LOCATION := http://localhost:8002/
 
 # Configuration supported via environment variables.
 
