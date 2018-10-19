@@ -1,15 +1,15 @@
 run: Procfile | poorman-command python-command lint
 	$(POORMAN) start
 
-%-production: python-command
+%-gunicorn: python-command
 	@$(PYTHON_ENV)/bin/gunicorn \
 		--bind 127.0.0.1:$(PORT) \
 		--workers $(WORKERS) \
 		--access-logfile - \
 		$*_qwerty:application
 
-http-proxied: http-production
-https-proxied: https-production
+http-proxied: http-gunicorn
+https-proxied: https-gunicorn
 
 python-repl: python-command
 	$(PYTHON)
