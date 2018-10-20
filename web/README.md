@@ -14,3 +14,9 @@ curl -sSL qwerty.sh # Redirects to https://qwerty.sh.
 ### HTTPS
 
 By default, serve up the latest release of the qwerty.sh shell script.
+Support downloading a specific version or git reference:
+
+```sh
+curl -sSL qwerty.sh/v0.3
+curl -sSL qwerty.sh/ab4f960
+```
