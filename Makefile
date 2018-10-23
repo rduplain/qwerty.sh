@@ -1,6 +1,6 @@
-%-web:
+web-%:
 	@$(MAKE) -C web $*
 
-run: run-web
-http-proxied: http-proxied-web
-https-proxied: https-proxied-web
+run: web-run
+http-proxied: web-http-proxied
+https-proxied: web-https-proxied
