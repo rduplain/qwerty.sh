@@ -71,17 +71,17 @@ def parse_ref(url_path):
     return ref
 
 
-def git_remote():
+def git_remote(**kw):
     """List of remote names as returned by `git remote`."""
-    return sh('git', 'remote').strip().split('\n')
+    return sh('git', 'remote', **kw).strip().split('\n')
 
 
-def git_rev_parse(ref):
+def git_rev_parse(ref, **kw):
     """Run `git rev-parse --short` on given ref, return stdout."""
-    return sh('git', 'rev-parse', '--short', ref).strip()
+    return sh('git', 'rev-parse', '--short', ref, **kw).strip()
 
 
-def git_show(ref, filepath):
+def git_show(ref, filepath, **kw):
     """Provide file content at given ref (via `git show`).
 
     Accept a project-specific ref 'DIRTY' which requests file content within
@@ -92,8 +92,8 @@ def git_show(ref, filepath):
     Note: 'DIRTY' is useful for development and not intended for production.
     """
     if ref == DIRTY and filepath == 'qwerty.sh':
-        return sh('cat', os.environ.get('QWERTY_SH', filepath))
-    return sh('git', 'show', '{ref}:{filepath}'.format(**locals()))
+        return sh('cat', os.environ.get('QWERTY_SH', filepath), **kw)
+    return sh('git', 'show', '{ref}:{filepath}'.format(**locals()), **kw)
 
 
 def sh(*args, encoding='utf-8', **kw):
