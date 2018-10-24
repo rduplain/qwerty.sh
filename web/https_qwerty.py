@@ -57,7 +57,7 @@ def resolve_ref(ref):
     except CommandFailure:
         for remote in git_remote():
             try:
-                return git_rev_parse(f'{remote}/{ref}')
+                return git_rev_parse('{remote}/{ref}'.format(**locals()))
             except CommandFailure:
                 continue
         return None
@@ -93,31 +93,28 @@ def git_show(ref, filepath):
     """
     if ref == DIRTY and filepath == 'qwerty.sh':
         return sh('cat', os.environ.get('QWERTY_SH', filepath))
-    return sh('git', 'show', f'{ref}:{filepath}')
+    return sh('git', 'show', '{ref}:{filepath}'.format(**locals()))
 
 
-def sh(*args, **kw):
+def sh(*args, encoding='utf-8', **kw):
     """Run shell command, returning stdout. Raise error on non-zero exit."""
     options = dict(
-        encoding='utf-8',
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
     )
     options.update(kw)
 
-    process = subprocess.run(args, **options)
+    process = subprocess.Popen(args, **options)
+    process.wait()
 
     if process.returncode != 0:
-        raise CommandFailure(process)
+        raise CommandFailure(process.stderr.read().decode(encoding))
 
-    return process.stdout
+    return process.stdout.read().decode(encoding)
 
 
 class CommandFailure(subprocess.SubprocessError):
     """A command failed."""
-
-    def __init__(self, completed_process):
-        super().__init__(completed_process.stderr)
 
 
 def flight_check():

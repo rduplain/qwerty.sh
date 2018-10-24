@@ -36,3 +36,5 @@ Test:
 ```sh
 curl -sSL localhost:8001/v0.3 | head
 ```
+
+Support Python 3.4+.
