@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 
-from wsgi_qwerty import string_response
+from wsgi_qwerty import bytes_response, string_response
 
 
 DIRTY = 'DIRTY'
@@ -45,7 +45,7 @@ def application(environ, start_response):
             # HTTP Response Headers
             (('Content-Type', 'text/plain'),))
 
-        return string_response(git_show(ref, 'qwerty.sh'))
+        return bytes_response(git_show(ref, 'qwerty.sh', return_bytes=True))
 
 
 def resolve_ref(ref):
@@ -96,7 +96,7 @@ def git_show(ref, filepath, **kw):
     return sh('git', 'show', '{ref}:{filepath}'.format(**locals()), **kw)
 
 
-def sh(*args, encoding='utf-8', **kw):
+def sh(*args, return_bytes=False, encoding='utf-8', **kw):
     """Run shell command, returning stdout. Raise error on non-zero exit."""
     options = dict(
         stderr=subprocess.PIPE,
@@ -109,6 +109,9 @@ def sh(*args, encoding='utf-8', **kw):
 
     if process.returncode != 0:
         raise CommandFailure(process.stderr.read().decode(encoding))
+
+    if return_bytes:
+        return process.stdout.read()
 
     return process.stdout.read().decode(encoding)
 

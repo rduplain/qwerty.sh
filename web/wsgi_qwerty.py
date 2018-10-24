@@ -3,6 +3,11 @@
 from urllib.parse import urlparse, urlunparse
 
 
+def bytes_response(b):
+    """Prepare bytes as WSGI response."""
+    return [b]
+
+
 def https_location(environ, redirect_to):
     """Build URL for redirect to location which preserves path & query."""
     location_parts = urlparse(redirect_to)._replace(
