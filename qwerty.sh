@@ -15,7 +15,6 @@ usage() {
     stderr
     stderr "  -o, --output=FILEPATH      Download to this filepath."
     stderr "  --chmod=MODE               Invoke chmod with this upon download."
-    stderr "  --skip-rej                 Skip writing .rej file on failure."
     stderr
     stderr "checksum options:"
     stderr
@@ -24,10 +23,10 @@ usage() {
     stderr "  --sha384=..."
     stderr "  --sha512=..."
     stderr
-    stderr "weaker checksum options available:"
+    stderr "  --md5=...    (weak)"
+    stderr "  --sha1=...   (weak)"
     stderr
-    stderr "  --md5=..."
-    stderr "  --sha1=..."
+    stderr "  --skip-rej                 Skip writing .rej file on failure."
     return 2
 }
 
