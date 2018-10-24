@@ -1,4 +1,4 @@
-## qwerty.sh: download reliably when all you have is a keyboard.
+## qwerty.sh: bootstrap repeatable builds with just a keyboard.
 
 How do you verify integrity of a downloaded file, when the download installs
 the very tool that you need to bootstrap a build process? Too often, you
@@ -30,6 +30,6 @@ commands commonly found on Unix platforms, and makes every effort to provide
 simple error messages when things go wrong. All of this together provides a
 means to publish executable checksum specifications.
 
-Status: Alpha; consider the project a prototype until the v1.0 release.
+Status: Beta; consider the project a prototype until the v1.0 release.
 
 ... with apologies to Dvorak.
