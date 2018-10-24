@@ -8,8 +8,8 @@
 usage() {
     if [ $# -gt 0 ]; then stderr "$PROG: $@"; stderr; fi # Optional message.
 
-    # curl -sSL qwerty.sh | sh -s - [OPTION...] DOWNLOAD_REF
-    stderr "usage: $PROG [OPTION...] DOWNLOAD_REF"
+    stderr "usage: curl -sSL qwerty.sh      | sh -s - [OPTION...] DOWNLOAD_REF"
+    stderr "       curl -sSL qwerty.sh/v0.3 | sh -s - [OPTION...] DOWNLOAD_REF"
     stderr
     stderr "output options:"
     stderr
