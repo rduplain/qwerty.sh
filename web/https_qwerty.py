@@ -1,10 +1,13 @@
 """https_qwerty.py: serve qwerty.sh file as requested."""
 
+import os
 import shutil
 import subprocess
 
 from wsgi_qwerty import string_response
 
+
+DIRTY = 'DIRTY'
 
 SHELL_NOT_FOUND = """
 #!/usr/bin/env sh
@@ -47,6 +50,8 @@ def application(environ, start_response):
 
 def resolve_ref(ref):
     """Resolve to an exact ref, else None."""
+    if ref == DIRTY:
+        return ref
     try:
         return git_rev_parse(ref)
     except CommandFailure:
@@ -62,7 +67,7 @@ def parse_ref(url_path):
     """Parse URL which has a git ref."""
     ref = url_path.lstrip('/')
     if not ref:
-        ref = 'HEAD'
+        ref = os.environ.get('DEFAULT_GIT_REF', 'HEAD').strip()
     return ref
 
 
@@ -77,7 +82,17 @@ def git_rev_parse(ref):
 
 
 def git_show(ref, filepath):
-    """Provide file content at given ref (via `git show`)."""
+    """Provide file content at given ref (via `git show`).
+
+    Accept a project-specific ref 'DIRTY' which requests file content within
+    the working tree, whether the file matches HEAD or is modified/dirty. When
+    GIT_DIR is in use, the working tree may not be known. Therefore, an
+    environment variable QWERTY_SH specifies where to find the qwerty.sh file.
+
+    Note: 'DIRTY' is useful for development and not intended for production.
+    """
+    if ref == DIRTY and filepath == 'qwerty.sh':
+        return sh('cat', os.environ.get('QWERTY_SH', filepath))
     return sh('git', 'show', f'{ref}:{filepath}')
 
 
