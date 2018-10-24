@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# qwerty.sh v0.4-dev: bootstrap repeatable builds with just a keyboard.
+# qwerty.sh v0.3.1: bootstrap repeatable builds with just a keyboard.
 #
 # Copyright (c) 2018, Ron DuPlain. All rights reserved.
 # README: https://github.com/rduplain/qwerty.sh#readme
