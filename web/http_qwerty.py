@@ -11,7 +11,7 @@ echo 'error: Use HTTPS.'     >&2
 echo                         >&2
 echo 'curl -sSL qwerty.sh'   >&2
 
-exit 2
+exit 31
 """.strip() + '\n'
 
 HTTPS_LOCATION = os.environ.get('QWERTY_HTTPS_LOCATION', 'https://qwerty.sh/')

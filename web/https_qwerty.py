@@ -13,7 +13,7 @@ SHELL_NOT_FOUND = """
 #!/usr/bin/env sh
 echo "qwerty.sh: revision '{}' not found."  >&2
 
-exit 2
+exit 44
 """.strip() + '\n'
 
 
