@@ -7,7 +7,7 @@ from wsgi_qwerty import create_application, https_location, string_response
 
 SHELL_REDIRECT = """
 #!/usr/bin/env sh
-echo 'error: Use HTTPS.'     >&2
+echo 'qwerty.sh: Use HTTPS.' >&2
 echo                         >&2
 echo 'curl -sSL qwerty.sh'   >&2
 
