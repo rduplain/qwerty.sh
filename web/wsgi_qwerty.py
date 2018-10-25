@@ -31,7 +31,7 @@ def create_application(fn):
             http_status, http_headers, wsgi_body = fn(environ)
         except Exception:
             logger.exception('---')
-            return error_response(environ, start_response)
+            http_status, http_headers, wsgi_body = error(environ)
 
         start_response(http_status, http_headers)
         return wsgi_body
@@ -39,19 +39,20 @@ def create_application(fn):
     return application
 
 
-def error_response(environ, start_response, response=None):
-    """Start and return an error response."""
-    start_response(
+def error(environ, response=None):
+    """Build an error response."""
+    if response is None:
+        response = string_response(SHELL_SERVER_ERROR)
+
+    return (
         # HTTP Status
         '500 INTERNAL SERVER ERROR',
 
         # HTTP Response Headers
-        (('Content-Type', 'text/plain'),))
+        (('Content-Type', 'text/plain'),),
 
-    if response is None:
-        return string_response(SHELL_SERVER_ERROR)
-
-    return response
+        # WSGI Body
+        response)
 
 
 def https_location(environ, redirect_to):
