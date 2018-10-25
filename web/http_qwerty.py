@@ -2,7 +2,7 @@
 
 import os
 
-from wsgi_qwerty import https_location, string_response
+from wsgi_qwerty import create_application, https_location, string_response
 
 
 SHELL_REDIRECT = """
@@ -17,17 +17,21 @@ exit 2
 HTTPS_LOCATION = os.environ.get('QWERTY_HTTPS_LOCATION', 'https://qwerty.sh/')
 
 
-def application(environ, start_response):
-    """WSGI callable to redirect all requests to HTTPS location."""
-    start_response(
+def redirect_to_https(environ):
+    """Redirect all requests to HTTPS location."""
+    return (
         # HTTP Status
         '301 MOVED PERMANENTLY',
 
         # HTTP Response Headers
         (('Content-Type', 'text/plain'),
-         ('Location', https_location(environ, HTTPS_LOCATION))))
+         ('Location', https_location(environ, HTTPS_LOCATION))),
 
-    return string_response(SHELL_REDIRECT)
+        # WSGI Body
+        string_response(SHELL_REDIRECT))
+
+
+application = create_application(redirect_to_https)
 
 
 if __name__ == '__main__':

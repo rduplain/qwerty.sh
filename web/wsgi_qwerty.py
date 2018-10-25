@@ -1,11 +1,57 @@
 """wsgi_qwerty.py: WSGI utilities for qwerty.sh project."""
 
+import logging
 from urllib.parse import urlparse, urlunparse
+
+
+SHELL_SERVER_ERROR = """
+#!/usr/bin/env sh
+echo "qwerty.sh: internal server error."  >&2
+
+exit 50
+""".strip() + '\n'
+
+
+logger = logging.getLogger()
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.INFO)
 
 
 def bytes_response(b):
     """Prepare bytes as WSGI response."""
     return [b]
+
+
+def create_application(fn):
+    """Create WSGI callable which wraps given fn."""
+
+    def application(environ, start_response):
+        """WSGI callable."""
+        try:
+            http_status, http_headers, wsgi_body = fn(environ)
+        except Exception:
+            logger.exception('---')
+            return error_response(environ, start_response)
+
+        start_response(http_status, http_headers)
+        return wsgi_body
+
+    return application
+
+
+def error_response(environ, start_response, response=None):
+    """Start and return an error response."""
+    start_response(
+        # HTTP Status
+        '500 INTERNAL SERVER ERROR',
+
+        # HTTP Response Headers
+        (('Content-Type', 'text/plain'),))
+
+    if response is None:
+        return string_response(SHELL_SERVER_ERROR)
+
+    return response
 
 
 def https_location(environ, redirect_to):

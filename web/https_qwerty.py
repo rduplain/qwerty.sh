@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 
-from wsgi_qwerty import bytes_response, string_response
+from wsgi_qwerty import bytes_response, create_application, string_response
 
 
 DIRTY = 'DIRTY'
@@ -17,8 +17,8 @@ exit 2
 """.strip() + '\n'
 
 
-def application(environ, start_response):
-    """WSGI callable to serve qwerty.sh file as requested.
+def serve_qwerty(environ):
+    """Serve qwerty.sh file as requested.
 
     URL path indicates git ref to serve, defaulting to current HEAD.
     Example:
@@ -29,23 +29,28 @@ def application(environ, start_response):
     ref = resolve_ref(req_ref)
 
     if ref is None:
-        start_response(
+        return (
             # HTTP Status
             '404 NOT FOUND',
 
             # HTTP Response Headers
-            (('Content-Type', 'text/plain'),))
+            (('Content-Type', 'text/plain'),),
 
-        return string_response(SHELL_NOT_FOUND.format(req_ref))
+            # WSGI Body
+            string_response(SHELL_NOT_FOUND.format(req_ref)))
     else:
-        start_response(
+        return (
             # HTTP Status
             '200 OK',
 
             # HTTP Response Headers
-            (('Content-Type', 'text/plain'),))
+            (('Content-Type', 'text/plain'),),
 
-        return bytes_response(git_show(ref, 'qwerty.sh', return_bytes=True))
+            # WSGI Body
+            bytes_response(git_show(ref, 'qwerty.sh', return_bytes=True)))
+
+
+application = create_application(serve_qwerty)
 
 
 def resolve_ref(ref):
