@@ -24,6 +24,22 @@ install: python-command
 http-proxied: http-gunicorn
 https-proxied: https-gunicorn
 
+deploy:
+	ssh qwerty.sh " \
+		set -e; \
+		hostname; \
+		uptime; \
+		cd /srv/qwerty.sh; \
+		git remote update; \
+		git checkout $(VERSION); \
+		make install; \
+		supervisorctl status http-qwerty https-qwerty; \
+		supervisorctl restart http-qwerty https-qwerty; \
+		supervisorctl status http-qwerty https-qwerty; \
+		date"
+
+deploy: VERSION := $(shell git describe --tags --abbrev=0)
+
 ## Configuration supported via environment variables. ##
 
 ifeq ($(WORKERS),)
