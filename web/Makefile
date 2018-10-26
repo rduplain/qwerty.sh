@@ -28,6 +28,7 @@ deploy:
 	git push --tags origin
 	ssh qwerty.sh " \
 		set -e; \
+		export PATH=/usr/local/bin:/usr/bin:/bin; \
 		hostname; \
 		uptime; \
 		cd /srv/qwerty.sh; \
