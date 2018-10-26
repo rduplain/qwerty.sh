@@ -18,15 +18,18 @@
 * It is okay to hardcode "qwerty.sh" as to have shell code be self-documenting.
 
 
+### Python
+
+Support Python 3.4+.
+
+
 ### HTTP
 
-Redirect HTTP requests to HTTPS. Provide a custom redirect response, such that
-curl provides a meaningful error response when the `-L` redirect flag is not
-provided.
+Redirect HTTP requests to HTTPS.
 
 ```sh
-curl qwerty.sh      # Shows a meaningful error and exits non-zero.
-curl -sSL qwerty.sh # Redirects to https://qwerty.sh.
+curl qwerty.sh                 # Show a meaningful error and exit non-zero.
+curl -sSL qwerty.sh            # Redirect to https://qwerty.sh.
 ```
 
 
@@ -54,5 +57,3 @@ Test:
 ```sh
 curl -sSL localhost:8001/v0.3 | head
 ```
-
-Support Python 3.4+.
