@@ -1,9 +1,11 @@
 #!/usr/bin/env sh
-# qwerty.sh v0.4-dev: bootstrap repeatable builds with just a keyboard.
+# qwerty.sh: bootstrap repeatable builds with just a keyboard.
 #
 # Copyright (c) 2018, Ron DuPlain. All rights reserved.
 # README: https://github.com/rduplain/qwerty.sh#readme
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
+
+VERSION=0.4-dev
 
 usage() {
     if [ $# -gt 0 ]; then stderr "$PROG: $@"; stderr; fi # Optional message.
@@ -31,6 +33,7 @@ usage() {
     stderr "general options:"
     stderr
     stderr "  -h, --help                 Display this usage message."
+    stderr "  -V, --version              Display '$PROG $VERSION' to stdout."
     return 2
 }
 
@@ -406,6 +409,12 @@ clear_traps() {
     trap - INT TERM EXIT
 }
 
+version() {
+    # Print version to stdout.
+
+    stdout $PROG $VERSION
+}
+
 parse_arguments() {
     # Parse command-line arguments.
 
@@ -463,6 +472,10 @@ parse_arguments() {
                         --skip-rej)
                             [ -n "$SKIP_REJ" ] && usage "duplicate skip-rej"
                             SKIP_REJ=true
+                            ;;
+                        -V | --version)
+                            version
+                            exit
                             ;;
                         *)
                             usage "$PROG: unrecognized option '$key'"
