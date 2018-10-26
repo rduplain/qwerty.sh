@@ -35,7 +35,12 @@ curl -sSL qwerty.sh            # Redirect to https://qwerty.sh.
 
 ### HTTPS
 
-By default, serve up the latest release of the qwerty.sh shell script.
+By default, serve the latest release of the qwerty.sh shell script.
+
+```sh
+curl -sSL qwerty.sh
+```
+
 Support downloading a specific version or git reference:
 
 ```sh
@@ -55,6 +60,8 @@ make run
 Test:
 
 ```sh
+curl -sSL localhost:8001 | sh -s - --help
+curl -sSL localhost:8001 | head
 curl -sSL localhost:8001/v0.3 | head
 ```
 
