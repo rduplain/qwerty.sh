@@ -33,7 +33,7 @@ deploy:
 		cd /srv/qwerty.sh; \
 		git remote update; \
 		git checkout $(VERSION); \
-		make install; \
+		make --no-print-directory install; \
 		supervisorctl status http-qwerty https-qwerty; \
 		supervisorctl restart http-qwerty https-qwerty; \
 		supervisorctl status http-qwerty https-qwerty; \

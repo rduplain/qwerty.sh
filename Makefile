@@ -5,4 +5,4 @@ http-proxied: web-http-proxied
 https-proxied: web-https-proxied
 
 web-%:
-	@$(MAKE) -C web $*
+	@$(MAKE) --no-print-directory -C web $*
