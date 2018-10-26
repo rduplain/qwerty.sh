@@ -1,4 +1,6 @@
-run: Procfile | poorman-command python-command lint
+install: python-command
+
+run: Procfile | poorman-command install lint
 	$(POORMAN) start
 
 %-gunicorn: python-command
