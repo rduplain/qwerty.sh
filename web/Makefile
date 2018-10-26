@@ -39,6 +39,7 @@ deploy:
 		supervisorctl restart http-qwerty https-qwerty; \
 		supervisorctl status http-qwerty https-qwerty; \
 		date"
+	curl -sSL qwerty.sh | sh -s - --version
 
 deploy: VERSION := $(shell git describe --tags --abbrev=0)
 
