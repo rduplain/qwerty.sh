@@ -25,6 +25,7 @@ http-proxied: http-gunicorn
 https-proxied: https-gunicorn
 
 deploy:
+	git push --tags origin
 	ssh qwerty.sh " \
 		set -e; \
 		hostname; \
