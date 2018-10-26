@@ -57,3 +57,27 @@ Test:
 ```sh
 curl -sSL localhost:8001/v0.3 | head
 ```
+
+
+### Production
+
+Clone the qwerty.sh repository and checkout the default version to serve.
+Prepare:
+
+```sh
+make install
+```
+
+Use a process manager to run these, setting WORKERS based on number of CPUs:
+
+```sh
+WORKERS=4 PORT=8001 make http-proxied
+WORKERS=4 PORT=8002 make https-proxied
+```
+
+Use an industrial httpd to proxy:
+
+* port 80 to 8001
+* port 443 to 8002
+
+The strength of qwerty.sh depends on the HTTPS implementation.
