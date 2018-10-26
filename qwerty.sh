@@ -415,12 +415,9 @@ parse_arguments() {
             shift
             if [ -z "$value" ]; then
                 value="$1"
-                shift
+                [ -n "$value" ] && shift
             fi
             case "$key" in
-                -h | --help)
-                    usage
-                    ;;
                 --chmod)
                     [ -n "$CHMOD" ] && usage "duplicate chmod"
                     CHMOD="$value"
@@ -456,6 +453,9 @@ parse_arguments() {
                 *)
                     set -- "$value" "$@"
                     case "$key" in
+                        -h | --help)
+                            usage
+                            ;;
                         --skip-rej)
                             [ -n "$SKIP_REJ" ] && usage "duplicate skip-rej"
                             SKIP_REJ=true
