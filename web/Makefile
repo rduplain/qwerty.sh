@@ -1,7 +1,18 @@
-install: python-command
+### Development ###
 
 run: Procfile | poorman-command install lint
 	$(POORMAN) start
+
+python-repl: python-command
+	$(PYTHON)
+
+lint: python-command
+	@$(PYTHON_ENV)/bin/pyflakes *.py
+
+
+### Production ###
+
+install: python-command
 
 %-gunicorn: python-command
 	@$(PYTHON_ENV)/bin/gunicorn \
@@ -13,13 +24,23 @@ run: Procfile | poorman-command install lint
 http-proxied: http-gunicorn
 https-proxied: https-gunicorn
 
-python-repl: python-command
-	$(PYTHON)
+## Configuration supported via environment variables. ##
 
-lint: python-command
-	@$(PYTHON_ENV)/bin/pyflakes *.py
+ifeq ($(WORKERS),)
+WORKERS := 2
+endif
+
+ifeq ($(PORT),)
+PORT := 8080
+endif
+
+
+### External Dependencies ###
 
 PYTHON_REQUIREMENTS := gunicorn==19.9.0 pyflakes werkzeug==0.14.1
+
+
+### Implementation Details ###
 
 # Indicate to python.mk that requirements are specified in _this_ Makefile.
 PYTHON_REQUIREMENTS_MAKEFILE := $(lastword $(MAKEFILE_LIST))
@@ -45,16 +66,6 @@ run-http-dev:  export QWERTY_HTTPS_LOCATION := http://localhost:8002/
 run-https-dev: export DEFAULT_GIT_REF := DIRTY # DIRTY is project-specific.
 run-https-dev: export QWERTY_SH := $(PARENT_PROJECT_ROOT)/qwerty.sh
 
-# Configuration supported via environment variables.
-
 ifeq ($(GIT_DIR),)
 export GIT_DIR := $(PARENT_PROJECT_ROOT)/.git
-endif
-
-ifeq ($(WORKERS),)
-WORKERS := 2
-endif
-
-ifeq ($(PORT),)
-PORT := 8080
 endif
