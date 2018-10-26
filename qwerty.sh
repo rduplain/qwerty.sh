@@ -27,6 +27,10 @@ usage() {
     stderr "  --sha1=...   (weak)"
     stderr
     stderr "  --skip-rej                 Skip writing .rej file on failure."
+    stderr
+    stderr "general options:"
+    stderr
+    stderr "  -h, --help                 Display this usage message."
     return 2
 }
 
