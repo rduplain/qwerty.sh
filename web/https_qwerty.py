@@ -1,6 +1,7 @@
 """https_qwerty.py: serve qwerty.sh file as requested."""
 
 import os
+import re
 import shutil
 import subprocess
 
@@ -9,12 +10,21 @@ from wsgi_qwerty import bytes_response, create_application, string_response
 
 DIRTY = 'DIRTY'
 
+SHELL_BAD_REQUEST = """
+#!/usr/bin/env sh
+echo "qwerty.sh: bad request."  >&2
+
+exit 40
+""".strip() + '\n'
+
 SHELL_NOT_FOUND = """
 #!/usr/bin/env sh
 echo "qwerty.sh: revision '{}' not found."  >&2
 
 exit 44
 """.strip() + '\n'
+
+VALID_REQUEST = re.compile('^[a-zA-Z0-9\-\.]*$')
 
 
 def serve_qwerty(environ):
@@ -25,6 +35,17 @@ def serve_qwerty(environ):
 
         https://qwerty.sh/c0ffee # => serve qwerty.sh at ref c0ffee
     """
+    if not valid_request(environ):
+        return (
+            # HTTP Status
+            '400 BAD REQUEST',
+
+            # HTTP Response Headers
+            (('Content-Type', 'text/plain'),),
+
+            # WSGI Body
+            string_response(SHELL_BAD_REQUEST))
+
     req_ref = parse_ref(environ.get('PATH_INFO', '/'))
     ref = resolve_ref(req_ref)
 
@@ -74,6 +95,22 @@ def parse_ref(url_path):
     if not ref:
         ref = os.environ.get('DEFAULT_GIT_REF', 'HEAD').strip()
     return ref
+
+
+def valid_request(environ):
+    """True if request is valid, else False."""
+    if environ.get('REQUEST_METHOD') != 'GET':
+        return False
+    if environ.get('QUERY_STRING'):
+        return False
+    requested = environ.get('PATH_INFO', '/').lstrip('/')
+    if not requested:
+        return True
+    if len(requested) > 40: # Larger than git SHA reference.
+        return False
+    if VALID_REQUEST.match(requested) is None:
+        return False
+    return True
 
 
 def git_remote(**kw):

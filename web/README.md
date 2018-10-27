@@ -7,6 +7,7 @@
 * All HTTP and HTTPS responses shall have a shell body:
   1. 200 OK -- Only when serving the qwerty.sh file itself.
   1. 301 MOVED PERMANENTLY
+  1. 400 BAD REQUEST
   1. 404 NOT FOUND
   1. 500 INTERNAL SERVER ERROR
   1. 502 BAD GATEWAY -- Loaded separately as a static file in proxying httpd.
