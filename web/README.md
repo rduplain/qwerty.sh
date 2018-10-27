@@ -68,6 +68,8 @@ curl -sSL localhost:8001/v0.3 | head
 
 ### Production
 
+See: [Configuration files for qwerty.sh deployment on a single server.][config]
+
 Clone the qwerty.sh repository and checkout the default version to serve.
 Prepare:
 
@@ -88,3 +90,6 @@ Use an industrial httpd to proxy:
 * port 443 to 8002
 
 The strength of qwerty.sh depends on the HTTPS implementation.
+
+
+[config]: https://gist.github.com/rduplain/3727fbd58d2a0066f2f447ac094f93d7
