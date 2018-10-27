@@ -12,14 +12,14 @@ DIRTY = 'DIRTY'
 
 SHELL_BAD_REQUEST = """
 #!/usr/bin/env sh
-echo "qwerty.sh: bad request."  >&2
+echo "qwerty.sh: bad request." >&2
 
 exit 40
 """.strip() + '\n'
 
 SHELL_NOT_FOUND = """
 #!/usr/bin/env sh
-echo "qwerty.sh: revision '{}' not found."  >&2
+echo "qwerty.sh: revision '{}' not found." >&2
 
 exit 44
 """.strip() + '\n'

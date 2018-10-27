@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
-echo 'Bad Gateway'
+echo 'qwerty.sh: bad gateway.' >&2
 exit 52
