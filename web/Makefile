@@ -33,6 +33,7 @@ deploy:
 		uptime; \
 		cd /srv/qwerty.sh; \
 		git remote update; \
+		git reset --hard HEAD; \
 		git checkout $(VERSION); \
 		make --no-print-directory install; \
 		supervisorctl status http-qwerty https-qwerty; \
