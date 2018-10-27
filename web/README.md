@@ -6,10 +6,10 @@
 * HTTPS shall be terminated by a proxying httpd.
 * All HTTP and HTTPS responses shall have a shell body:
   1. 200 OK -- Only when serving the qwerty.sh file itself.
-  2. 301 MOVED PERMANENTLY
-  3. 404 NOT FOUND
-  4. 500 INTERNAL SERVER ERROR
-  5. 502 BAD GATEWAY -- Loaded separately as a static file in proxying httpd.
+  1. 301 MOVED PERMANENTLY
+  1. 404 NOT FOUND
+  1. 500 INTERNAL SERVER ERROR
+  1. 502 BAD GATEWAY -- Loaded separately as a static file in proxying httpd.
 * Each non-200 shell body shall be meaningful with error and exit code.
 * Each shell body shall expect the user to pipe it into `sh`.
 * Minimize overhead and response time of web services.
