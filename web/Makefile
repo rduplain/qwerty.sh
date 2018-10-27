@@ -28,7 +28,7 @@ https-proxied: https-gunicorn
 
 deploy:
 	git push --tags origin
-	ssh qwerty.sh " \
+	ssh qwerty.sh ' \
 		set -e; \
 		export PATH=/usr/local/bin:/usr/bin:/bin; \
 		hostname; \
@@ -39,12 +39,23 @@ deploy:
 		git checkout $(VERSION); \
 		make --no-print-directory install; \
 		supervisorctl status http-qwerty https-qwerty; \
-		supervisorctl restart http-qwerty https-qwerty; \
+		supervisorctl start http-qwerty https-qwerty >/dev/null 2>&1 || true; \
+		sudo -n kill -HUP `cat /srv/qwerty.sh/web/.reqd/var/run/*.pid`; \
 		supervisorctl status http-qwerty https-qwerty; \
-		date"
+		date'
 	curl -sSL qwerty.sh | sh -s - --version
 
 deploy: VERSION := $(shell git describe --tags --abbrev=0)
+
+# A restart is only needed on changes to Python env or gunicorn settings.
+deploy-restart: | deploy
+	ssh qwerty.sh ' \
+		set -e; \
+		export PATH=/usr/local/bin:/usr/bin:/bin; \
+		hostname; \
+		supervisorctl restart http-qwerty https-qwerty; \
+		supervisorctl status http-qwerty https-qwerty'
+	curl -sSL qwerty.sh | sh -s - --version
 
 ## Configuration supported via environment variables. ##
 

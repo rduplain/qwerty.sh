@@ -1,5 +1,6 @@
 run: web-run
 deploy: web-deploy
+deploy-restart: web-deploy-restart
 install: web-install
 http-proxied: web-http-proxied
 https-proxied: web-https-proxied
