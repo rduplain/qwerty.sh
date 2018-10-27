@@ -15,7 +15,9 @@ lint: python-command
 install: python-command
 
 %-gunicorn: python-command
+	@mkdir -p $(REQD_VAR)/run
 	@$(PYTHON_ENV)/bin/gunicorn \
+		--pid $(REQD_VAR)/run/$@.pid \
 		--bind 127.0.0.1:$(PORT) \
 		--workers $(WORKERS) \
 		--access-logfile - \
@@ -70,6 +72,7 @@ include .Makefile.d/path.mk
 include .Makefile.d/poorman.mk
 include .Makefile.d/procfile.mk
 include .Makefile.d/python.mk
+include .Makefile.d/reqd.mk
 
 PARENT_PROJECT_ROOT := $(abspath $(dir $(PROJECT_ROOT)))
 
