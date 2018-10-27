@@ -21,7 +21,11 @@ install: python-command
 		--bind 127.0.0.1:$(PORT) \
 		--workers $(WORKERS) \
 		--access-logfile - \
+		--access-logformat $(GUNICORN_ACCESS_LOGFORMAT) \
 		$*_qwerty:application
+
+GUNICORN_ACCESS_LOGFORMAT := \
+ '%({x-forwarded-for}i)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 
 http-proxied: http-gunicorn
 https-proxied: https-gunicorn
