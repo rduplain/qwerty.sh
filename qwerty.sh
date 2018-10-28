@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# qwerty.sh: bootstrap repeatable builds with just a keyboard.
+# qwerty.sh: download, verify, and unpack files in a single command.
 #
 # Copyright (c) 2018, Ron DuPlain. All rights reserved.
 # README: https://github.com/rduplain/qwerty.sh#readme
