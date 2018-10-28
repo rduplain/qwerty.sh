@@ -1,33 +1,5 @@
 ## web: serve qwerty.sh script via HTTPS (redirecting HTTP)
 
-### Requirements
-
-* Serve a portable shell script at the qwerty.sh domain via HTTPS.
-* Serve a specific VERSION of the shell script at qwerty.sh/VERSION.
-* Each published version shall be published forever.
-* Published versions shall guarantee that they have no changes over time.
-* All HTTP responses shall redirect to the HTTPS location of the same path.
-* HTTPS shall be terminated by a proxying httpd.
-* All HTTP and HTTPS responses shall have a shell body:
-  1. 200 OK -- Only when serving the qwerty.sh file itself.
-  1. 301 MOVED PERMANENTLY
-  1. 400 BAD REQUEST
-  1. 404 NOT FOUND
-  1. 500 INTERNAL SERVER ERROR
-  1. 502 BAD GATEWAY -- Loaded separately as a static file in proxying httpd.
-* Each non-200 shell body shall be meaningful with error and exit code.
-* Each shell body shall expect the user to pipe it into `sh`.
-* Minimize overhead and response time of web services.
-* Minimize dependencies as to allow for simple self-hosting of web services.
-* Expose configuration variables.
-* It is okay to hardcode "qwerty.sh" as to have shell code be self-documenting.
-
-
-### Python
-
-Support Python 3.4+.
-
-
 ### HTTP
 
 Redirect HTTP requests to HTTPS.
@@ -52,6 +24,34 @@ Support downloading a specific version or git reference:
 curl -sSL qwerty.sh/v0.3
 curl -sSL qwerty.sh/ab4f960
 ```
+
+
+### Python
+
+Support Python 3.4+.
+
+
+### Requirements
+
+* Serve a portable shell script at the qwerty.sh domain via HTTPS.
+* Serve a specific VERSION of the shell script at qwerty.sh/VERSION.
+* Each published version shall be published forever.
+* Published versions shall guarantee that they have no changes over time.
+* All HTTP responses shall redirect to the HTTPS location of the same path.
+* HTTPS shall be terminated by a proxying httpd.
+* All HTTP and HTTPS responses shall have a shell body:
+  1. 200 OK -- Only when serving the qwerty.sh file itself.
+  1. 301 MOVED PERMANENTLY
+  1. 400 BAD REQUEST
+  1. 404 NOT FOUND
+  1. 500 INTERNAL SERVER ERROR
+  1. 502 BAD GATEWAY -- Loaded separately as a static file in proxying httpd.
+* Each non-200 shell body shall be meaningful with error and exit code.
+* Each shell body shall expect the user to pipe it into `sh`.
+* Minimize overhead and response time of web services.
+* Minimize dependencies as to allow for simple self-hosting of web services.
+* Expose configuration variables.
+* It is okay to hardcode "qwerty.sh" as to have shell code be self-documenting.
 
 
 ### Development
