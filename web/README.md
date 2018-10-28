@@ -1,5 +1,10 @@
 ## web: serve qwerty.sh script via HTTPS (redirecting HTTP)
 
+### Overview
+
+A production-ready web server for qwerty.sh with minimal dependencies.
+
+
 ### HTTP
 
 Redirect HTTP requests to HTTPS.
@@ -26,9 +31,10 @@ curl -sSL qwerty.sh/ab4f960
 ```
 
 
-### Python
+### Dependencies
 
-Support Python 3.4+.
+* Python 3.4+
+* git
 
 
 ### Requirements
