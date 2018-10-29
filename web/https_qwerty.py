@@ -11,14 +11,14 @@ from wsgi_qwerty import bytes_response, create_application, string_response
 DIRTY = 'DIRTY'
 
 SHELL_BAD_REQUEST = """
-#!/usr/bin/env sh
+#!/bin/sh
 echo "qwerty.sh: bad request." >&2
 
 exit 40
 """.strip() + '\n'
 
 SHELL_NOT_FOUND = """
-#!/usr/bin/env sh
+#!/bin/sh
 echo "qwerty.sh: revision '{}' not found." >&2
 
 exit 44

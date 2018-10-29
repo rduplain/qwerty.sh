@@ -5,7 +5,7 @@ from urllib.parse import urlparse, urlunparse
 
 
 SHELL_SERVER_ERROR = """
-#!/usr/bin/env sh
+#!/bin/sh
 echo "qwerty.sh: internal server error." >&2
 
 exit 50

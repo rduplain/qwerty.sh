@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # qwerty.sh: download, verify, and unpack files in a single command.
 #
 # Copyright (c) 2018, Ron DuPlain. All rights reserved.
