@@ -20,13 +20,15 @@ Contents:
 
 It is a solved (or solvable) problem to download, verify, and unpack files as a
 programmer with most operating systems and programming languages. Everything
-else is undefined. Use qwerty.sh to download unversioned files, the latest
-development tools, and project data.
+else is undefined. Use qwerty.sh to download, verify, and unpack: unversioned
+files, specific versions of development tools, and project data.
 
 Know that you have a bad download at **download time** and not _run time_.
 
 
 ### Use Cases
+
+Use qwerty.sh when bootstrapping builds and development environments, for:
 
 1. Repeatable single-command downloads in build systems & Dockerfile workflows.
 2. Trusted copy/paste developer tool instructions (replacing `curl ... | sh`).
