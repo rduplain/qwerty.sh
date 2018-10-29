@@ -166,12 +166,24 @@ openssl_dgst() {
     dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
     dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
 
-    if [ -z "$dgst_value" ]; then
+    if empty "$dgst_value"; then
         stderr "Unable to parse hash value from openssl dgst call."
         return 3
     fi
 
     echo $dgst_value
+}
+
+empty() {
+    # Check whether argument is empty.
+
+    [ _"$*" = _ ]
+}
+
+nonempty() {
+    # Check whether argument is nonempty.
+
+    [ _"$*" != _ ]
 }
 
 stdout_isatty() {
@@ -266,7 +278,7 @@ given() {
 valid_output_exists() {
     # Check that the specific output exists and has a valid checksum.
 
-    [ -z "$OUTPUT" ] && return 1 # No output specified.
+    empty "$OUTPUT" && return 1 # No output specified.
     [ -e "$OUTPUT" ] || return 1 # No output exists.
 
     if checksums "$OUTPUT"; then
@@ -329,8 +341,8 @@ checksums_or_rej() {
         status=$?
     fi
 
-    if [ -z "$SKIP_REJ" ]; then
-        if [ -z "$OUTPUT" ]; then
+    if empty "$SKIP_REJ"; then
+        if empty "$OUTPUT"; then
             output_rej="stdout.rej"
         else
             output_rej="$OUTPUT.rej"
@@ -345,27 +357,27 @@ checksums_or_rej() {
 checksums() {
     # Check all specified checksum values.
 
-    if [ -n "$MD5" ]; then
+    if nonempty "$MD5"; then
         checksum "${1:-$DOWNLOAD}" md5 "$MD5" || return $?
     fi
 
-    if [ -n "$SHA1" ]; then
+    if nonempty "$SHA1"; then
         checksum "${1:-$DOWNLOAD}" sha1 "$SHA1" || return $?
     fi
 
-    if [ -n "$SHA224" ]; then
+    if nonempty "$SHA224"; then
         checksum "${1:-$DOWNLOAD}" sha224 "$SHA224" || return $?
     fi
 
-    if [ -n "$SHA256" ]; then
+    if nonempty "$SHA256"; then
         checksum "${1:-$DOWNLOAD}" sha256 "$SHA256" || return $?
     fi
 
-    if [ -n "$SHA384" ]; then
+    if nonempty "$SHA384"; then
         checksum "${1:-$DOWNLOAD}" sha384 "$SHA384" || return $?
     fi
 
-    if [ -n "$SHA512" ]; then
+    if nonempty "$SHA512"; then
         checksum "${1:-$DOWNLOAD}" sha512 "$SHA512" || return $?
     fi
 }
@@ -373,11 +385,11 @@ checksums() {
 write_output() {
     # Write output given specified parameters.
 
-    if [ -n "$OUTPUT" ]; then
+    if nonempty "$OUTPUT"; then
         stderr "Download is valid. Writing to $(green $OUTPUT)."
         mkdir -p "$(dirname "$OUTPUT")"
         cp -p "$DOWNLOAD" "$OUTPUT"
-        if [ -n "$CHMOD" ]; then
+        if nonempty "$CHMOD"; then
             chmod "$CHMOD" "$OUTPUT"
         fi
     elif ! stdout_isatty; then
@@ -426,41 +438,41 @@ parse_arguments() {
             key=$(echo "$1" | awk -F= '{ print $1 }')
             value=$(echo "$1" | awk -F= '{ print $2 }')
             shift
-            if [ -z "$value" ]; then
+            if empty "$value"; then
                 value="$1"
-                [ -n "$value" ] && shift
+                nonempty "$value" && shift
             fi
             case "$key" in
                 --chmod)
-                    [ -n "$CHMOD" ] && usage "duplicate chmod"
+                    nonempty "$CHMOD" && usage "duplicate chmod"
                     CHMOD="$value"
                     ;;
                 --md5)
-                    [ -n "$MD5" ] && usage "duplicate md5"
+                    nonempty "$MD5" && usage "duplicate md5"
                     MD5="$value"
                     ;;
                 -o | --output)
-                    [ -n "$OUTPUT" ] && usage "duplicate output"
+                    nonempty "$OUTPUT" && usage "duplicate output"
                     OUTPUT="$value"
                     ;;
                 --sha1)
-                    [ -n "$SHA1" ] && usage "duplicate sha1"
+                    nonempty "$SHA1" && usage "duplicate sha1"
                     SHA1="$value"
                     ;;
                 --sha224)
-                    [ -n "$SHA224" ] && usage "duplicate sha224"
+                    nonempty "$SHA224" && usage "duplicate sha224"
                     SHA224="$value"
                     ;;
                 --sha256)
-                    [ -n "$SHA256" ] && usage "duplicate sha256"
+                    nonempty "$SHA256" && usage "duplicate sha256"
                     SHA256="$value"
                     ;;
                 --sha384)
-                    [ -n "$SHA384" ] && usage "duplicate sha384"
+                    nonempty "$SHA384" && usage "duplicate sha384"
                     SHA384="$value"
                     ;;
                 --sha512)
-                    [ -n "$SHA512" ] && usage "duplicate sha512"
+                    nonempty "$SHA512" && usage "duplicate sha512"
                     SHA512="$value"
                     ;;
                 *)
@@ -484,13 +496,13 @@ parse_arguments() {
             esac
         else
             # Argument does NOT start with a hyphen.
-            [ -n "$DOWNLOAD_REF" ] && usage "too many arguments at '$1'"
+            nonempty "$DOWNLOAD_REF" && usage "too many arguments at '$1'"
             DOWNLOAD_REF="$1"
             shift
         fi
     done
 
-    if [ -z "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" ]; then
+    if empty "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512"; then
         usage "provide a checksum value e.g. --sha256=..."
     fi
 }
