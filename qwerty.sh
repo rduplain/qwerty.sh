@@ -470,7 +470,6 @@ parse_arguments() {
                             usage
                             ;;
                         --skip-rej)
-                            [ -n "$SKIP_REJ" ] && usage "duplicate skip-rej"
                             SKIP_REJ=true
                             ;;
                         -V | --version)
