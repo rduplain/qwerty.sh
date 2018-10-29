@@ -8,7 +8,7 @@ import subprocess
 from wsgi_qwerty import bytes_response, create_application, string_response
 
 
-DIRTY = 'DIRTY'
+DIRTY = 'DIRTY' # DIRTY is a made-up ref: reference uncommitted files.
 
 SHELL_BAD_REQUEST = """
 #!/bin/sh
