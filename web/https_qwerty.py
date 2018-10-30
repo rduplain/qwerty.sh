@@ -169,8 +169,7 @@ def flight_check():
     external module and raise an exception if not installed correctly.
     Accordingly, it is acceptable to run this function at import time.
     """
-    commands = ['git']
-    for command in commands:
+    for command in ['git']:
         if shutil.which(command) is None:
             raise RuntimeError('command not found: {}'.format(command))
 
