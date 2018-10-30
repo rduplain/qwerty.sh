@@ -163,6 +163,12 @@ class CommandFailure(subprocess.SubprocessError):
 
 
 def flight_check():
+    """Verify that non-Python dependencies are functional.
+
+    This check has expectations similar to an `import` in Python: load an
+    external module and raise an exception if not installed correctly.
+    Accordingly, it is acceptable to run this function at import time.
+    """
     commands = ['git']
     for command in commands:
         if shutil.which(command) is None:
@@ -171,6 +177,7 @@ def flight_check():
     git_rev_parse('HEAD')
 
 
+# Run flight check at import time in order to check upon gunicorn import.
 flight_check()
 
 
