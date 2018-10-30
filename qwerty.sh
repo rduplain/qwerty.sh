@@ -10,13 +10,13 @@ VERSION=v0.4-dev
 usage() {
     if [ $# -gt 0 ]; then stderr "$PROG: $@"; stderr; fi # Optional message.
 
-    stderr "usage: curl -sSL qwerty.sh      | sh -s - [OPTION...] DOWNLOAD_REF"
-    stderr "       curl -sSL qwerty.sh/v0.3 | sh -s - [OPTION...] DOWNLOAD_REF"
+    stderr "usage: curl -sSL qwerty.sh      | sh -s - [OPTION...] URL"
+    stderr "       curl -sSL qwerty.sh/v0.3 | sh -s - [OPTION...] URL"
     stderr
     stderr "output options:"
     stderr
     stderr "  -o, --output=FILEPATH      Download to this filepath."
-    stderr "  --chmod=MODE               Invoke chmod with this upon download."
+    stderr "  --chmod=MODE               Change mode of downloaded file(s)."
     stderr
     stderr "checksum options:"
     stderr
@@ -61,7 +61,7 @@ DOWNLOAD=            # Temporary path of downloaded file.
 
 # Variables parsed from command line.
 CHMOD=               # Mode invocation for chmod of downloaded file.
-DOWNLOAD_REF=        # Reference to download target.
+URL=                 # URL of target download.
 OUTPUT=              # Destination of downloaded file once verified.
 SKIP_REJ=            # Skip writing .rej file on failure.
 
@@ -286,15 +286,15 @@ valid_output_exists() {
 }
 
 download() {
-    # Download as referenced.
+    # Download file at URL.
 
     given mktemp
     DOWNLOAD=$(mktemp)
 
-    if [ -d "$DOWNLOAD_REF" ]; then
+    if [ -d "$URL" ]; then
         stderr "error: $PROG cannot target directories."
         return 2
-    elif [ -e "$DOWNLOAD_REF" ]; then
+    elif [ -e "$URL" ]; then
         download_file
     else
         download_url
@@ -304,7 +304,7 @@ download() {
 download_file() {
     # Download a file.
 
-    cp -p "$DOWNLOAD_REF" "$DOWNLOAD"
+    cp -p "$URL" "$DOWNLOAD"
 }
 
 download_url() {
@@ -317,7 +317,7 @@ download_url() {
     report="${report}Location:\t%{url_effective}\n"
     report="${report}Content-Type:\t%{content_type}\n"
     report="${report}Content-Length:\t%{size_download}\n"
-    curl -SL -o "$DOWNLOAD" -w "$report" $QWERTY_CURL_FLAGS "$DOWNLOAD_REF" >&2
+    curl -SL -o "$DOWNLOAD" -w "$report" $QWERTY_CURL_FLAGS "$URL" >&2
 }
 
 remove_temp_download() {
@@ -421,13 +421,20 @@ version() {
     stdout $PROG $VERSION
 }
 
+using_checksum() {
+    # Check whether using a checksum in program invocation.
+
+    exists "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512"
+}
+
 parse_arguments() {
     # Parse command-line arguments.
 
     given awk
 
+    # Loop through arguments; below is a break on first positional argument.
     while [ "$1" != "" ]; do
-        if case $1 in "-"*) true;; *) false;; esac; then
+        if case "$1" in "-"*) true;; *) false;; esac; then
             # Argument starts with a hyphen.
             key=$(echo "$1" | awk -F= '{ print $1 }')
             value=$(echo "$1" | awk -F= '{ print $2 }')
@@ -489,14 +496,25 @@ parse_arguments() {
                     ;;
             esac
         else
-            # Argument does NOT start with a hyphen.
-            exists "$DOWNLOAD_REF" && usage "too many arguments at '$1'"
-            DOWNLOAD_REF="$1"
+            # Argument does not start with a hyphen.
+            URL="$1"
             shift
+            break
         fi
     done
 
-    if ! exists "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512"; then
+    if using_checksum && exists "$@"; then
+        usage "too many arguments when using a checksum: $@"
+    fi
+
+    for argument in "$@"; do
+        if case "$argument" in "-"*) true;; *) false;; esac; then
+            # Argument starts with a hyphen.
+            usage "provide options before positional arguments: $argument"
+        fi
+    done
+
+    if ! using_checksum; then
         usage "provide a checksum value e.g. --sha256=..."
     fi
 }
