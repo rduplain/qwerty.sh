@@ -32,7 +32,7 @@ https-proxied: https-gunicorn
 
 deploy:
 	git push --tags origin
-	git push --all origin
+	git push origin master
 	ssh qwerty.sh ' \
 		set -e; \
 		export PATH=/usr/local/bin:/usr/bin:/bin; \
