@@ -65,7 +65,7 @@ Download a shell script, verify it, execute it (without keeping it):
 ```sh
 curl -sSL qwerty.sh |\
   sh -s - \
-  --sha256=5438dc18c98158c56bc6567c13dbfb0276a6ac96e5f721fc2f986278534b28e0 \
+  --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   http://hello.qwerty.sh | sh
 ```
 
@@ -74,7 +74,7 @@ Download a program, verify it, keep it, make it executable:
 ```sh
 curl -sSL qwerty.sh |\
   sh -s - \
-  --sha256=5438dc18c98158c56bc6567c13dbfb0276a6ac96e5f721fc2f986278534b28e0 \
+  --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   --output=hello --chmod=a+x \
   http://hello.qwerty.sh
 ```
