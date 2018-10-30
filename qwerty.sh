@@ -514,6 +514,10 @@ parse_arguments() {
         fi
     done
 
+    if ! exists "$URL"; then
+        usage "provide a URL for download."
+    fi
+
     if ! using_checksum; then
         usage "provide a checksum value e.g. --sha256=..."
     fi
