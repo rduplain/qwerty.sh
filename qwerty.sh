@@ -306,8 +306,9 @@ download() {
 }
 
 download_file() {
-    # Download a file.
+    # "Download" a file.
 
+    stderr "Copying file at $URL ..."
     cp -p "$URL" "$DOWNLOAD"
 }
 
