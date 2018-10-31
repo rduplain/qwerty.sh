@@ -54,7 +54,7 @@ main() {
 }
 
 
-## Begin setting global and command-line variables.
+## Begin declaration of global and command-line variables.
 
 # Exit immediately if a command error or non-zero return occurs.
 set -e
@@ -274,10 +274,10 @@ given() {
 }
 
 valid_output_exists() {
-    # Check that the specific output exists and has a valid checksum.
+    # Check that the target output exists and has a valid checksum.
 
     ! exists "$OUTPUT" && return 1 # No output specified.
-    [ -e "$OUTPUT" ] || return 1 # No output exists.
+    [ -e "$OUTPUT" ] || return 1 # No output file exists.
 
     if checksums "$OUTPUT"; then
         stderr "Output already exists and is valid: $(green $OUTPUT)"
@@ -315,7 +315,9 @@ download_file() {
 download_url() {
     # Download a URL, passing optional QWERTY_CURL_FLAGS from environment.
     #
-    # curl -sSL qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
+    # Example usage from command line:
+    #
+    #     curl -sSL qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
 
     given curl
     report="--- $(blue $PROG)\n"
@@ -382,7 +384,7 @@ checksums() {
 }
 
 write_output() {
-    # Write output given specified parameters.
+    # Write output file according to context.
 
     if exists "$OUTPUT"; then
         stderr "Download is valid. Writing to $(green $OUTPUT)."
@@ -401,12 +403,13 @@ write_output() {
 }
 
 set_traps() {
-    # Set shell traps to exit program execution with class.
+    # Set shell traps in order to keep it classy on program exit.
+    #
+    # Set an EXIT trap since ERR is not portable.
+    # Be sure to `clear_traps` before exiting on success.
 
     trap remove_temp_download INT TERM
 
-    # Set an EXIT trap since ERR is not portable.
-    # Be sure to `clear_traps` before exiting on success.
     if stdout_isatty; then
         trap 'remove_temp_download' EXIT
     else
@@ -415,7 +418,7 @@ set_traps() {
 }
 
 clear_traps() {
-    # Clear shell traps
+    # Clear shell traps.
 
     trap - INT TERM EXIT
 }
@@ -434,6 +437,9 @@ using_checksum() {
 
 parse_arguments() {
     # Parse command-line arguments.
+    #
+    # All command-line flags must be listed separately,
+    # i.e. combined short options in the form of `-abc` are not supported.
 
     given awk
 
