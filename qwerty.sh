@@ -36,6 +36,8 @@ usage() {
     stderr
     stderr "  -h, --help                 Display this usage message."
     stderr "  -V, --version              Display '$PROG $VERSION' to stdout."
+    stderr
+    stderr '`sh -s -` sends all arguments which follow to the stdin script.'
     return 2
 }
 
