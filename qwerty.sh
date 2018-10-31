@@ -13,12 +13,9 @@ usage() {
     stderr "usage: curl -sSL qwerty.sh      | sh -s - [OPTION...] URL"
     stderr "       curl -sSL qwerty.sh/v0.3 | sh -s - [OPTION...] URL"
     stderr
-    stderr "output options:"
+    stderr "using a checksum:"
     stderr
-    stderr "  -o, --output=FILEPATH      Download to this filepath."
-    stderr "  --chmod=MODE               Change mode of downloaded file(s)."
-    stderr
-    stderr "checksum options:"
+    stderr "  URL                        A file to download."
     stderr
     stderr "  --sha224=..."
     stderr "  --sha256=..."
@@ -29,6 +26,11 @@ usage() {
     stderr "  --sha1=...   (weak)"
     stderr
     stderr "  --skip-rej                 Skip writing .rej file on failure."
+    stderr
+    stderr "output options:"
+    stderr
+    stderr "  -o, --output=FILEPATH      Download to this filepath."
+    stderr "  --chmod=MODE               Change mode of downloaded file(s)."
     stderr
     stderr "general options:"
     stderr
