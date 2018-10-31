@@ -492,7 +492,7 @@ parse_arguments() {
                             exit
                             ;;
                         *)
-                            usage "$PROG: unrecognized option '$key'"
+                            usage "unrecognized option '$key'"
                             ;;
                     esac
                     ;;
