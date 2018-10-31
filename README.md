@@ -41,7 +41,7 @@ Arguments start after `sh -s -`. The `--help` flag shows full usage.
 
 ```sh
 curl -sSL qwerty.sh | sh -s - --help
-curl -sSL qwerty.sh/v0.3.2 | sh -s - --help
+curl -sSL qwerty.sh/v0.3.5 | sh -s - --help
 ```
 
 See full examples below.
