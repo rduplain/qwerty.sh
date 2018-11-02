@@ -51,7 +51,7 @@ See full examples below.
 
 * `curl`, to fetch the qwerty.sh script and have it download target files.
 * `sh`, which is a given on all Unix-like systems, to run the qwerty.sh script.
-* `openssl` command, which is widely available, to verify checksums.
+* `openssl` command, which is widely available with curl, to verify checksums.
 
 The qwerty.sh project provides fully portable shell using commands commonly
 found on Unix platforms, and makes every effort to provide a simple, clear
