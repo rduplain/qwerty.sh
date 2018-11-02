@@ -44,12 +44,13 @@ usage() {
 main() {
     set_traps
     parse_arguments "$@"
+    create_temp_dir
     if ! valid_output_exists; then
         download
         checksums_or_rej
         write_output
-        remove_temp_download
     fi
+    remove_temp_dir
     clear_traps
 }
 
@@ -61,6 +62,7 @@ set -e
 
 # Global variables.
 PROG=qwerty.sh       # Name of program.
+TEMP_DIR=            # Path to program temporary directory.
 DOWNLOAD=            # Temporary path of downloaded file.
 
 # Variables parsed from command line.
@@ -292,8 +294,7 @@ valid_output_exists() {
 download() {
     # Download file at URL.
 
-    given mktemp
-    DOWNLOAD=$(mktemp)
+    DOWNLOAD="$TEMP_DIR"/$PROG.download
 
     if [ -d "$URL" ]; then
         stderr "error: $PROG cannot target directories."
@@ -325,12 +326,6 @@ download_url() {
     report="${report}Content-Type:\t%{content_type}\n"
     report="${report}Content-Length:\t%{size_download}\n"
     curl -SL -o "$DOWNLOAD" -w "$report" $QWERTY_CURL_FLAGS "$URL" >&2
-}
-
-remove_temp_download() {
-    # Remove download.
-
-    rm -f "$DOWNLOAD"
 }
 
 checksums_or_rej() {
@@ -402,6 +397,23 @@ write_output() {
     fi
 }
 
+create_temp_dir() {
+    # Create temporary directory.
+
+    given mktemp
+    TEMP_DIR=$(mktemp)
+
+    # For portability, do not rely on command-line options (i.e. `-d`).
+    rm -f "$TEMP_DIR"
+    mkdir -p "$TEMP_DIR"
+}
+
+remove_temp_dir() {
+    # Remove temporary directory.
+
+    rm -fr "$TEMP_DIR"
+}
+
 set_traps() {
     # Set shell traps in order to keep it classy on program exit.
     #
@@ -413,7 +425,7 @@ set_traps() {
     if stdout_isatty; then
         trap 'remove_temp_download' EXIT
     else
-        trap 'stdout "exit $? # Propagate error."; remove_temp_download' EXIT
+        trap 'stdout "exit $? # Propagate error."; remove_temp_dir' EXIT
     fi
 }
 
