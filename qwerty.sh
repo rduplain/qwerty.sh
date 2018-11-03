@@ -468,35 +468,35 @@ parse_arguments() {
             fi
             case "$key" in
                 --chmod)
-                    exists "$CHMOD" && usage "duplicate chmod"
+                    exists "$CHMOD" && usage "duplicate chmod: $value"
                     CHMOD="$value"
                     ;;
                 --md5)
-                    exists "$MD5" && usage "duplicate md5"
+                    exists "$MD5" && usage "duplicate md5: $value"
                     MD5="$value"
                     ;;
                 -o | --output)
-                    exists "$OUTPUT" && usage "duplicate output"
+                    exists "$OUTPUT" && usage "duplicate output: $value"
                     OUTPUT="$value"
                     ;;
                 --sha1)
-                    exists "$SHA1" && usage "duplicate sha1"
+                    exists "$SHA1" && usage "duplicate sha1: $value"
                     SHA1="$value"
                     ;;
                 --sha224)
-                    exists "$SHA224" && usage "duplicate sha224"
+                    exists "$SHA224" && usage "duplicate sha224: $value"
                     SHA224="$value"
                     ;;
                 --sha256)
-                    exists "$SHA256" && usage "duplicate sha256"
+                    exists "$SHA256" && usage "duplicate sha256: $value"
                     SHA256="$value"
                     ;;
                 --sha384)
-                    exists "$SHA384" && usage "duplicate sha384"
+                    exists "$SHA384" && usage "duplicate sha384: $value"
                     SHA384="$value"
                     ;;
                 --sha512)
-                    exists "$SHA512" && usage "duplicate sha512"
+                    exists "$SHA512" && usage "duplicate sha512: $value"
                     SHA512="$value"
                     ;;
                 *)
