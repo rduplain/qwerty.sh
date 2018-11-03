@@ -420,7 +420,7 @@ set_traps() {
     # Set an EXIT trap since ERR is not portable.
     # Be sure to `clear_traps` before exiting on success.
 
-    trap remove_temp_download INT TERM
+    trap remove_temp_dir INT TERM
 
     if stdout_isatty; then
         trap 'remove_temp_dir' EXIT
