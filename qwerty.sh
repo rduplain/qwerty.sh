@@ -169,15 +169,15 @@ openssl_dgst() {
     fi
 
     # Parse checksum output and trim spaces.
-    dgst_value=$(echo "$dgst_output" | awk -F= '{ print $2 }')
-    dgst_value=$(echo "$dgst_value" | tr -d '[:space:]')
+    dgst_value=$(printf %s "$dgst_output" | awk -F= '{ print $2 }')
+    dgst_value=$(printf %s "$dgst_value" | tr -d '[:space:]')
 
     if ! exists "$dgst_value"; then
         stderr "Unable to parse hash value from openssl dgst call."
         return 3
     fi
 
-    echo $dgst_value
+    printf %s $dgst_value
 }
 
 exists() {
@@ -459,8 +459,8 @@ parse_arguments() {
     while [ "$1" != "" ]; do
         if case "$1" in "-"*) true;; *) false;; esac; then
             # Argument starts with a hyphen.
-            key=$(echo "$1" | awk -F= '{ print $1 }')
-            value=$(echo "$1" | awk -F= '{ print $2 }')
+            key=$(printf %s "$1" | awk -F= '{ print $1 }')
+            value=$(printf %s "$1" | awk -F= '{ print $2 }')
             shift
             if ! exists "$value"; then
                 value="$1"
