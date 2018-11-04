@@ -82,6 +82,24 @@ SHA512=
 
 ### Utilities which stand alone without global variables ###
 
+## Utilities to verify external dependencies ##
+
+given() {
+    # Check that the given commands exist.
+
+    for command in "$@"; do
+        if ! which "$command" > /dev/null; then
+            if exists "$PROG"; then
+                stderr "$PROG: cannot find required program: $command"
+            else
+                stderr "cannot find required program: $command"
+            fi
+            return 3
+        fi
+    done
+}
+
+
 ## Checksum ##
 
 checksum() {
@@ -149,6 +167,9 @@ openssl_dgst() {
     # Print openssl digest value of file checksum to stdout.
     #
     # Unlike `checksum`, this does not validate selection of given algorithm.
+
+    given openssl
+    given awk tr
 
     if [ $# -ne 2 ]; then
         stderr "usage: openssl_dgst FILENAME sha1|sha256|..."
@@ -221,6 +242,8 @@ stderr_isatty() {
 
 repleat() {
     # Echo repeat replacement character for the width of given value.
+
+    given tr
 
     replacement="$1"
     shift
@@ -399,20 +422,6 @@ version() {
     # Print version to stdout.
 
     stdout $PROG $VERSION
-}
-
-
-## Utilities to verify external dependencies ##
-
-given() {
-    # Check that the given commands exist.
-
-    for command in "$@"; do
-        if ! which "$command" > /dev/null; then
-            stderr "$PROG requires '$command' command, but cannot find it."
-            return 3
-        fi
-    done
 }
 
 
