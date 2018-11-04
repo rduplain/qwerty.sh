@@ -55,23 +55,23 @@ main() {
 }
 
 
-## Begin declaration of global and command-line variables.
+### Global variables ###
 
 # Exit immediately if a command error or non-zero return occurs.
 set -e
 
-# Global variables.
+# Global configuration variables:
 PROG=qwerty.sh       # Name of program.
 TEMP_DIR=            # Path to program temporary directory.
 DOWNLOAD=            # Temporary path of downloaded file.
 
-# Variables parsed from command line.
+# Variables parsed from command line:
 CHMOD=               # Mode invocation for chmod of downloaded file.
 URL=                 # URL of target download.
 OUTPUT=              # Destination of downloaded file once verified.
 SKIP_REJ=            # Skip writing .rej file on failure.
 
-# Checksum values, parsed from command line.
+# Checksum values, parsed from command line:
 MD5=
 SHA1=
 SHA224=
@@ -80,7 +80,9 @@ SHA384=
 SHA512=
 
 
-## Begin utilities which stand alone without global or command-line variables.
+### Utilities which stand alone without global variables ###
+
+## Checksum ##
 
 checksum() {
     # Verify checksum of file, exiting non-zero if hash does not match.
@@ -180,23 +182,17 @@ openssl_dgst() {
     printf %s $dgst_value
 }
 
+
+## Shell language improvements ##
+
 exists() {
     # Check whether argument is not empty, i.e. test whether a variable exists.
 
     [ _"$*" != _ ]
 }
 
-stdout_isatty() {
-    # Check whether stdout is open and refers to a terminal.
 
-    [ -t 1 ]
-}
-
-stderr_isatty() {
-    # Check whether stderr is open and refers to a terminal.
-
-    [ -t 2 ]
-}
+## Output utilities ##
 
 stdout() {
     # Echo all arguments to stdout.
@@ -212,6 +208,18 @@ stderr() {
     # Be sure to return/exit with an error code if applicable, after calling.
 
     echo "$@" >&2
+}
+
+stdout_isatty() {
+    # Check whether stdout is open and refers to a terminal.
+
+    [ -t 1 ]
+}
+
+stderr_isatty() {
+    # Check whether stderr is open and refers to a terminal.
+
+    [ -t 2 ]
 }
 
 repleat() {
@@ -262,18 +270,9 @@ red() {
 }
 
 
-## Begin tasks which use global and command-line variables.
+### Tasks and utilities which use global variables ###
 
-given() {
-    # Check that the given commands exist.
-
-    for command in "$@"; do
-        if ! which "$command" > /dev/null; then
-            stderr "$PROG requires '$command' command, but cannot find it."
-            return 3
-        fi
-    done
-}
+## Tasks when using checksum ##
 
 valid_output_exists() {
     # Check that the target output exists and has a valid checksum.
@@ -397,6 +396,41 @@ write_output() {
     fi
 }
 
+
+## Supplemental tasks ##
+
+version() {
+    # Print version to stdout.
+
+    stdout $PROG $VERSION
+}
+
+
+## Utilities to verify external dependencies ##
+
+given() {
+    # Check that the given commands exist.
+
+    for command in "$@"; do
+        if ! which "$command" > /dev/null; then
+            stderr "$PROG requires '$command' command, but cannot find it."
+            return 3
+        fi
+    done
+}
+
+
+## Utilities to simplify conditional tests ##
+
+using_checksum() {
+    # Check whether using a checksum in program invocation.
+
+    exists "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512"
+}
+
+
+## Utilities for clean program execution ##
+
 create_temp_dir() {
     # Create temporary directory.
 
@@ -435,17 +469,8 @@ clear_traps() {
     trap - INT TERM EXIT
 }
 
-version() {
-    # Print version to stdout.
 
-    stdout $PROG $VERSION
-}
-
-using_checksum() {
-    # Check whether using a checksum in program invocation.
-
-    exists "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512"
-}
+### Argument parsing ###
 
 parse_arguments() {
     # Parse command-line arguments.
@@ -547,7 +572,7 @@ parse_arguments() {
 }
 
 
-## Begin program execution.
+### Program execution ###
 
 main "$@"
 
