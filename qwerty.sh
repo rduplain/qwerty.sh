@@ -530,7 +530,7 @@ parse_arguments() {
                     SHA512="$value"
                     ;;
                 *)
-                    set -- "$value $@"
+                    eval "set -- $value $@"
                     case "$key" in
                         -h | --help)
                             usage
