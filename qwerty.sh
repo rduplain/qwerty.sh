@@ -159,9 +159,6 @@ openssl_dgst() {
     hash_algorithm="$2"
     shift 2
 
-    given openssl
-    given awk tr
-
     dgst_output=$(openssl dgst -$hash_algorithm "$filepath")
     dgst_exit=$?
 
@@ -228,7 +225,6 @@ repleat() {
     replacement="$1"
     shift
 
-    given tr
     echo "$@" | tr '[:print:]' "$replacement"
 }
 
