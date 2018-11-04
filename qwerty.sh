@@ -139,7 +139,7 @@ checksum() {
             esac
             ;;
         * )
-            echo "checksum: unknown hash algorithm: $hash_algorithm" >&2
+            stderr "checksum: unknown hash algorithm: $hash_algorithm"
             return 2
             ;;
     esac
