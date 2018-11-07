@@ -8,7 +8,7 @@
 VERSION=v0.4-dev
 
 usage() {
-    if [ $# -gt 0 ]; then stderr "$PROG: $@"; stderr; fi # Optional message.
+    exists "$@" && stderr "$PROG: $(red "$@")" && stderr # Optional message.
 
     stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL"
     stderr "       curl -sSL qwerty.sh/v0.3.5 | sh -s - [OPTION...] URL"
