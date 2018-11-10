@@ -80,7 +80,7 @@ SHA384=
 SHA512=
 
 
-### Utilities which stand alone without global variables ###
+### Shell Cookbook: General utilities without global variables ###
 
 ## Utilities to verify external dependencies ##
 
