@@ -258,9 +258,9 @@ colorize() {
     shift
 
     if stderr_isatty; then
-        printf "\033[1;${color}m%s\033[0m" "$@"
+        printf "\033[1;${color}m%s\033[0m" "$*"
     else
-        echo "$@"
+        echo "$*"
     fi
 }
 
