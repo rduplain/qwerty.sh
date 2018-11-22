@@ -72,8 +72,7 @@ Test:
 
 ```sh
 curl -sSL localhost:8001 | sh -s - --help
-curl -sSL localhost:8001 | head
-curl -sSL localhost:8001/v0.3.5 | head
+curl -sSL localhost:8001/v0.3.5 | sh -s - --version
 ```
 
 
