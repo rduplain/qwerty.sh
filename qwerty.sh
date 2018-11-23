@@ -45,7 +45,7 @@ main() {
     set_traps
     parse_arguments "$@"
     create_temp_dir
-    if ! valid_output_exists; then
+    if ! valid_download_exists; then
         download
         checksums_or_rej
         write_output
@@ -293,8 +293,8 @@ red() {
 
 ## Tasks when using checksum ##
 
-valid_output_exists() {
-    # Check that the target output exists and has a valid checksum.
+valid_download_exists() {
+    # Check whether the download output exists and has a valid checksum.
 
     ! exists "$OUTPUT" && return 1 # No output specified.
     [ -e "$OUTPUT" ] || return 1 # No output file exists.
