@@ -169,7 +169,6 @@ openssl_dgst() {
     # Unlike `checksum`, this does not validate selection of given algorithm.
 
     given openssl
-    given awk tr
 
     if [ $# -ne 2 ]; then
         stderr "usage: openssl_dgst FILENAME sha1|sha256|..."
@@ -242,8 +241,6 @@ stderr_isatty() {
 
 repleat() {
     # Echo repeat replacement character for the width of given value.
-
-    given tr
 
     replacement="$1"
     shift
@@ -482,8 +479,6 @@ parse_arguments() {
     #
     # All command-line flags must be listed separately,
     # i.e. combined short options in the form of `-abc` are not supported.
-
-    given awk
 
     # Loop through arguments; below is a break on first positional argument.
     while [ "$1" != "" ]; do
