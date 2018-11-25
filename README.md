@@ -2,6 +2,19 @@
 
 [qwerty.sh](https://qwerty.sh) is a script as a service.
 
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
+  http://hello.qwerty.sh | sh
+```
+
+_or_
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
+```
+
 Contents:
 
 * [Manage the Unmanaged](#manage-the-unmanaged)
@@ -9,6 +22,7 @@ Contents:
 * [Usage](#usage)
 * [Dependencies](#dependencies)
 * [Using a Checksum](#using-a-checksum)
+* [Using git](#using-git)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
@@ -54,6 +68,10 @@ See full examples below.
 * `curl`, to fetch the qwerty.sh script and have it download target files.
 * `sh`, which is a given on all Unix-like systems, to run the qwerty.sh script.
 * `openssl` command, which is widely available with curl, to verify checksums.
+* `git` command, a version control system, to verify file integrity.
+
+Arguments to qwerty.sh indicate whether to use a checksum or use git to verify
+files, and qwerty.sh requires `openssl` or `git` accordingly.
 
 The qwerty.sh project provides fully portable shell using commands commonly
 found on Unix platforms, and makes every effort to provide a simple, clear
@@ -89,6 +107,70 @@ curl -sSL qwerty.sh |\
   --sha256=70c98b2d0640b2b73c9d8adb4df63bcb62bad34b788fe46d1634b6cf87dc99a4 \
   http://download.redis.io/releases/redis-5.0.0.tar.gz |\
   tar -xvzf -
+```
+
+
+### Using git
+
+Download a shell script, verify it, execute it (without keeping it):
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
+```
+
+Download a program, verify it, keep it, make it executable:
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  --chmod=a+x \
+  https://github.com/rduplain/qwerty.sh.git \
+  web/hello/hello.sh:hello
+```
+
+Download an entire repository:
+
+```sh
+curl -sSL qwerty.sh | sh -s - https://github.com/rduplain/qwerty.sh.git
+
+curl -sSL qwerty.sh | sh -s - \
+  --output=OUTPUT_DIRECTORY https://github.com/rduplain/qwerty.sh.git
+```
+
+Download a specific revision:
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  -b v0.3.5 \
+  -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
+```
+
+Download multiple files, verify them, keep them, make them executable:
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  --chmod=a+x \
+  https://github.com/rduplain/qwerty.sh.git \
+  qwerty.sh web/hello/hello.sh:hello.sh
+```
+
+Download multiple files, verify them, write one file to stdout while making the
+others executable:
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  --chmod=a+x \
+  https://github.com/rduplain/qwerty.sh.git \
+  LICENSE:- web/hello/hello.sh:hello.sh
+```
+
+Download multiple files, verify them, and write them to stdout:
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  -o - \
+  https://github.com/rduplain/qwerty.sh.git \
+  README.md web/README.md | less
 ```
 
 

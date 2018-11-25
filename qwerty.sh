@@ -10,8 +10,8 @@ VERSION=v0.4-dev
 usage() {
     exists "$@" && stderr "$PROG: $(red "$@")" && stderr # Optional message.
 
-    stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL"
-    stderr "       curl -sSL qwerty.sh/v0.3.5 | sh -s - [OPTION...] URL"
+    stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL [...]"
+    stderr "       curl -sSL qwerty.sh/v0.3.5 | sh -s - [OPTION...] URL [...]"
     stderr
     stderr "using a checksum:"
     stderr
@@ -27,9 +27,23 @@ usage() {
     stderr
     stderr "  --skip-rej                 Skip writing .rej file on failure."
     stderr
+    stderr "using git:"
+    stderr
+    stderr "  ... URL"
+    stderr "  ... URL <file>..."
+    stderr "  ... URL <repo_file>:<local_file>..."
+    stderr
+    stderr "  URL                        A repository."
+    stderr "  output_dir                 Output directory for repository downloads."
+    stderr "  file                       Download file within repository."
+    stderr "  repo_file:local_file       Download file to this local path."
+    stderr
+    stderr "  -b, --ref=REF, --tag=TAG   Clone repository at this reference."
+    stderr "  -f, --force                Force overwriting files."
+    stderr
     stderr "output options:"
     stderr
-    stderr "  -o, --output=FILEPATH      Download to this filepath."
+    stderr "  -o, --output=FILEPATH      Download to this location."
     stderr "  --chmod=MODE               Change mode of downloaded file(s)."
     stderr
     stderr "general options:"
@@ -43,12 +57,24 @@ usage() {
 
 main() {
     set_traps
+
     parse_arguments "$@"
-    create_temp_dir
-    if ! valid_download_exists; then
-        download
-        checksums_or_rej
-        write_output
+    if using_checksum; then
+        if ! valid_download_exists; then
+            given curl openssl
+            create_temp_dir
+            download
+            checksums_or_rej
+            write_download_output
+        fi
+    else
+        given git
+        create_temp_dir
+        validate_filepaths_before_clone
+        clone
+        validate_filepaths_after_clone
+        prepare_clone_output
+        write_clone_output
     fi
     remove_temp_dir
     clear_traps
@@ -60,16 +86,27 @@ main() {
 # Exit immediately if a command error or non-zero return occurs.
 set -e
 
-# Global configuration variables:
+# Global runtime configuration variables:
 PROG=qwerty.sh       # Name of program.
-TEMP_DIR=            # Path to program temporary directory.
+TEMP_DIR=            # Path to program's temporary directory.
+WORKING_DIR="$PWD"   # Path of working directory at program start.
+
+# Checksum runtime configuration variable:
 DOWNLOAD=            # Temporary path of downloaded file.
 
+# Clone runtime configuration variable:
+CLONE_FILEPATH=      # Temporary path of cloned repository.
+CLONE_PREPARED=      # Temporary path of output prepared from clone.
+CLONE_STDOUT=        # Temporary path of file to send to stdout.
+
 # Variables parsed from command line:
+ARGUMENTS=           # Additional positional arguments.
 CHMOD=               # Mode invocation for chmod of downloaded file.
-URL=                 # URL of target download.
-OUTPUT=              # Destination of downloaded file once verified.
+CLONE_REVISION=      # Branch, reference, or tag to clone.
+FORCE=               # Force overwriting files (default in checksum mode).
+OUTPUT=              # Destination of downloaded file(s) once verified.
 SKIP_REJ=            # Skip writing .rej file on failure.
+URL=                 # URL of target download.
 
 # Checksum values, parsed from command line:
 MD5=
@@ -202,14 +239,112 @@ openssl_dgst() {
 
 ## Shell language improvements ##
 
+contains() {
+    # Check whether first argument exists in remaining arguments.
+    #
+    # Example:
+    #
+    #     contains "/" "foo/bar/"
+
+    char="$1"
+    shift
+
+    case "$*" in *"$char"*) return 0;; esac; return 1
+}
+
+endswith() {
+    # Check whether first argument exists at the end of remaining arguments.
+    #
+    # Example:
+    #
+    #     endswith "bar/" "/foo/bar/"
+
+    substr="$1"
+    shift
+
+    case "$*" in *"$substr") return 0;; esac; return 1
+}
+
 exists() {
     # Check whether argument is not empty, i.e. test whether a variable exists.
+    #
+    # Example:
+    #
+    #     exists "$VAR"
 
     [ _"$*" != _ ]
 }
 
+quote_arguments() {
+    # Output argument array to stdout in a format for saving.
+    #
+    # The argument array can include newlines and ' quotes.
+    # This:
+    #
+    #     foo
+    #     bar'baz
+    #     one two
+    #
+    # ... is saved as:
+    #
+    #     'foo' \
+    #     'bar'\''baz' \
+    #     'one two' \
+    #
+    #
+    # ... where the final line above has whitespace to continue the
+    #     previous/final backslash without effect (according to sh grammar).
+    #
+    # Example:
+    #
+    #     ARGUMENTS=$(quote_arguments "$@") # Save "$@".
+    #     eval "set -- $ARGUMENTS"          # Load "$@".
 
-## Output utilities ##
+    for arg in "$@"; do
+        quote_argument "$arg"
+    done
+
+    # Close array. See function comment block above.
+    echo " "
+}
+
+quote_argument() {
+    # Output argument within array to stdout in a format for saving.
+    #
+    # See `quote_arguments`.
+
+    #       Quoted argument.
+    #       |  Output line continuation \, escaped twice.
+    #       |  |   Newline, escaped twice.
+    printf "%s \\\\\\n" "$(quote "$@")"
+}
+
+quote() {
+    # Output argument wrapped in ' quotes, to stdout.
+
+    printf %s\\n "$@" | \
+        #    Replace ' characters with '\''.
+        #    |    Output \ (for \'), escaped twice.
+        #    |               Insert leading '.
+        #    |               |         Append trailing '.
+        sed "s/'/'\\\\''/g;  1s/^/'/;  \$s/\$/'/"
+}
+
+startswith() {
+    # Check whether first argument exists at the start of remaining arguments.
+    #
+    # Example:
+    #
+    #     startswith "/foo" "/foo/bar/"
+
+    substr="$1"
+    shift
+
+    case "$*" in "$substr"*) return 0;; esac; return 1
+}
+
+
+## Utilities for standard I/O ##
 
 stdout() {
     # Echo all arguments to stdout.
@@ -283,6 +418,152 @@ red() {
     # Print line to stdout, in red, if stderr is a terminal.
 
     colorize 31 "$@"
+}
+
+
+## Utilities for file I/O ##
+
+files_exist() {
+    # Check whether given directory contains files or directories.
+
+    exists "$(find "$@" -mindepth 1 -maxdepth 1)"
+}
+
+isabs() {
+    # Check whether a path is absolute.
+
+    case "$*" in /*) return 0;; esac; return 1
+}
+
+iterate_files() {
+    # Iterate all files at given location, including subdirectories.
+    #
+    # Load filepaths into an argument array as in `quote_arguments` as to allow
+    # shell functions to access files without having to handle quoting or
+    # escaping of filepaths.
+    #
+    # Example:
+    #
+    #     eval "set -- $(iterate_files /tmp/foo)" # Access files with "$@".
+
+    path="$1"
+    exists "$path" || path=.
+
+    # Three execs, 1 2 3,
+    # through comments, one can see,
+    # which inline, cannot be.
+    #
+    #          Use a sh subprocess to support inner printf|sed pipeline.
+    #          |       Output leading '.
+    #          2       |  Terminate -exec with \;.
+    #          |       1  |  Continue find invocation to next line.
+    #          |       |  1  |  Path {} from find, wrapped in escaped " quotes.
+    #          |       |  |  1  |            Start sed command.
+    #          |       |  |  |  2            | Replace ' characters with '\''.
+    #          |       |  |  |  |            2 |    Output \ (for \'),
+    #          |       |  |  |  |            | 2    escaped three times.
+    #          |       |  |  |  |            | |    |          End sed command.
+    #          |       1  1  1  |            | |    |          |
+    #          2       |  |  |  2            2 2    2          2
+    #          |       |  |  |  |            | |    |          |
+    find "$path" -type f \
+         -exec printf "'" \; \
+         -exec sh -c "printf %s \"{}\" | sed \"s/'/'\\\\\\''/g;\"" \; \
+         -exec printf "' \\\\\\n" \;
+    #                  | |   |
+    #                  3 3   3
+    #                  | |   |
+    #                  | |   Newline, escaped twice.
+    #                  | Output line continuation \, escaped twice.
+    #                  Output trailing '.
+
+    # Close array. Continue final backslash without effect, using whitespace.
+    echo " "
+}
+
+join_path() {
+    # Join two paths, inserting '/' as needed, and output to stdout.
+    #
+    # Use only the second path if it is absolute.
+
+    if [ $# -ne 2 ]; then
+        stderr "usage: join_path PATH1 PATH2"
+        return 2
+    fi
+
+    if isabs "$2"; then
+        echo "$2"
+    else
+        if endswith "/" "$1"; then
+            echo "$1$2"
+        else
+            echo "$1/$2"
+        fi
+    fi
+}
+
+merge_directories() {
+    # Merge directories by moving files from source to destination directory.
+    #
+    # This operation retains the tree structure of the source directory,
+    # writing files to their matching directory in the destination, while
+    # retaining files and directories in the destination which do not exist in
+    # the source directory.
+
+    if [ $# -ne 2 ]; then
+        stderr "usage: merge_directories SOURCE DESTINATION"
+        return 2
+    fi
+
+    src="$1"
+    dst="$2"
+    shift 2
+
+    pwd="$PWD"
+    src_abs="$(cd "$src" && pwd)"
+    dst_abs="$(cd "$dst" && pwd)"
+
+    cd "$src_abs"
+    eval "set -- $(iterate_files .)"
+
+    cd "$dst_abs"
+
+    for file in "$@"; do
+        file="$(strip_rel "$file")"
+        src_file="$(join_path "$src_abs" "$file")"
+        dst_file="$(join_path "$dst" "$file")"
+        dst_file="$(strip_rel "$dst_file")"
+        stderr "$dst_file"
+        mkdirs "$(dirname "$dst_file")"
+        mv "$src_file" "$dst_file"
+    done
+
+    cd "$pwd"
+}
+
+mkdirs() {
+    # Make a directory, making all parent directories in the process.
+    #
+    # While `mkdir -p` is useful, this allows invocation with variables which
+    # may result in empty invocation.
+    #
+    # Example:
+    #
+    #     mkdirs "$(dirname "$VAR")"
+
+    for dir in "$@"; do
+        mkdir -p "$dir"
+    done
+}
+
+strip_rel() {
+    # Output given path, stripped of leading './' if found.
+
+    if startswith "./" "$*"; then
+        printf %s "$*" | cut -c 3-
+    else
+        echo "$@"
+    fi
 }
 
 
@@ -393,12 +674,12 @@ checksums() {
     fi
 }
 
-write_output() {
-    # Write output file according to context.
+write_download_output() {
+    # Write download to output file according to context.
 
     if exists "$OUTPUT"; then
         stderr "Download is valid. Writing to $(green $OUTPUT)."
-        mkdir -p "$(dirname "$OUTPUT")"
+        mkdirs "$(dirname "$OUTPUT")"
         cp -p "$DOWNLOAD" "$OUTPUT"
         if exists "$CHMOD"; then
             chmod "$CHMOD" "$OUTPUT"
@@ -413,6 +694,281 @@ write_output() {
 }
 
 
+## Tasks when cloning a repository ##
+
+local_filepath() {
+    # Output the full filepath a target local file, according to context.
+
+    if [ $# -ne 1 ]; then
+        stderr "usage: local_filepath LOCAL_FILE"
+        return 2
+    fi
+
+    local_file="$1"
+    shift
+
+    if is_stdout "$local_file"; then
+        echo "$local_file"
+    else
+        if exists "$OUTPUT" && ! is_stdout "$OUTPUT"; then
+            join_path "$OUTPUT" "$local_file"
+        else
+            echo "$local_file"
+        fi
+    fi
+}
+
+iterate_clone_filepaths() {
+    # Build quoted array of clone full filepaths, in (repo, local) pairs.
+    #
+    # See `quote_arguments`.
+
+    eval "set -- $ARGUMENTS"
+
+    for argument in "$@"; do
+        if contains ":" "$argument"; then
+            repo_file=$(printf %s "$argument" | awk -F: '{ print $1 }')
+            local_file=$(printf %s "$argument" | awk -F: '{ print $NF }')
+        else
+            repo_file="$argument"
+            local_file=
+        fi
+
+        if ! exists "$local_file"; then
+            if is_stdout "$OUTPUT"; then
+                local_file="$OUTPUT"
+            else
+                local_file="$repo_file"
+            fi
+        fi
+
+        # Support both cases of before and after CLONE_FILEPATH is set.
+        if exists "$CLONE_FILEPATH"; then
+            quote_argument "$(join_path "$CLONE_FILEPATH" "$repo_file")"
+        else
+            quote_argument "$repo_file"
+        fi
+
+        quote_argument "$(local_filepath "$local_file")"
+    done
+
+    # Close array. See `quote_arguments`.
+    echo " "
+}
+
+validate_repo_filepath() {
+    # Check repo filepath and fail with a stderr message if it exists.
+
+    if [ $# -ne 1 ]; then
+        stderr "usage: validate_repo_filepath REPO_FILE"
+        return 2
+    fi
+
+    repo_file="$1"
+    shift
+
+    if ! exists "$CLONE_FILEPATH"; then
+        # Before clone.
+        if isabs "$repo_file"; then
+            stderr "$PROG: file must be relative to repository: $repo_file"
+            return 2
+        fi
+    else
+        # After clone.
+        if [ ! -e "$repo_file" ]; then
+            stderr "$PROG: no such file in repository: $(basename $repo_file)"
+            return 2
+        fi
+    fi
+}
+
+validate_local_filepath() {
+    # Check local filepath and fail with a stderr message if it exists.
+
+    if [ $# -ne 1 ]; then
+        stderr "usage: validate_local_filepath LOCAL_FILE"
+        return 2
+    fi
+
+    if exists "$FORCE"; then
+        return 0
+    fi
+
+    local_file="$1"
+    shift
+
+    if ! is_stdout "$local_file" && [ -e "$local_file" ]; then
+        stderr "$PROG: refusing to overwrite local file: $local_file"
+        stderr "(use -f or --force to force overwrite of local files)"
+        return 2
+    fi
+}
+
+validate_filepaths_before_clone() {
+    # Validate file paths for writing cloned file(s).
+    #
+    # Run this before a clone to find errors before attempting download.
+
+    eval "set -- $(iterate_clone_filepaths)"
+
+    cd "$WORKING_DIR"
+
+    if ! exists "$@" && is_stdout "$OUTPUT"; then
+        stderr "$PROG: refusing to write entire repository to stdout."
+        return 2
+    fi
+
+    while [ "$1" != "" ]; do
+        repo_file="$1"
+        local_file="$2"
+        shift 2
+
+        validate_repo_filepath "$repo_file"
+        validate_local_filepath "$local_file"
+    done
+}
+
+clone() {
+    # Clone repository, with result at CLONE_FILEPATH.
+
+    given git
+
+    clone_arguments="--depth 1 --single-branch --shallow-submodules"
+
+    if exists "$CLONE_REVISION"; then
+        clone_arguments="$clone_arguments --branch $CLONE_REVISION"
+    fi
+
+    url="$URL"
+    if [ -d "$url" ]; then
+        # Repository is a local directory.
+        cd "$url"
+        url="$PWD"
+        url="file://$url" # Use file:// to support shallow clone.
+    fi
+
+    mkdirs "$TEMP_DIR"/clone
+    cd "$TEMP_DIR"/clone
+
+    stderr "--- $(blue $PROG)"
+    eval "git clone $clone_arguments $url"
+
+    # Allow git to generate a humanish directory as default output.
+    CLONE_FILEPATH="$PWD/$(ls)"
+
+    rm -fr "$CLONE_FILEPATH/.git"
+}
+
+validate_filepaths_after_clone() {
+    # Validate file paths for writing cloned file(s).
+    #
+    # Run this after a clone to find errors before writing output.
+
+    eval "set -- $(iterate_clone_filepaths)"
+
+    cd "$WORKING_DIR"
+
+    if ! exists "$FORCE" && ! exists "$@" && ! exists "$OUTPUT"; then
+        # Writing entire repository; validate resulting location.
+        validate_local_filepath "$(basename "$CLONE_FILEPATH")"
+    fi
+
+    while [ "$1" != "" ]; do
+        repo_file="$1"
+        shift 2
+
+        validate_repo_filepath "$repo_file"
+    done
+}
+
+prepare_clone_output() {
+    # Prepare output from clone, with result at CLONE_PREPARED.
+
+    eval "set -- $(iterate_clone_filepaths)"
+
+    CLONE_PREPARED="$TEMP_DIR"/prepare
+    CLONE_STDOUT="$TEMP_DIR"/stdout
+
+    mkdirs "$CLONE_PREPARED"/abs "$CLONE_PREPARED"/rel
+
+    if ! exists "$@"; then
+        # Prepare the full clone for output.
+
+        if exists "$CHMOD"; then
+            eval "chmod $CHMOD $CLONE_FILEPATH"
+        fi
+
+        if is_stdout "$OUTPUT"; then return; fi
+
+        if exists "$OUTPUT"; then
+            if isabs "$OUTPUT"; then
+                output="$CLONE_PREPARED/abs/$OUTPUT"
+            else
+                output="$CLONE_PREPARED/rel/$OUTPUT"
+            fi
+            mkdirs "$(dirname "$output")"
+            mv "$CLONE_FILEPATH" "$output"
+        else
+            cd "$CLONE_PREPARED"/rel
+            mv "$CLONE_FILEPATH" .
+        fi
+
+        return
+    fi
+
+    # Prepare individual files for output.
+
+    while [ "$1" != "" ]; do
+        repo_file="$1"
+        local_file="$2"
+        shift 2
+
+        if is_stdout "$local_file"; then
+            if [ -e "$CLONE_STDOUT" ]; then
+                cat "$repo_file" >> "$CLONE_STDOUT"
+            else
+                cat "$repo_file"  > "$CLONE_STDOUT"
+            fi
+        else
+            if isabs "$local_file"; then
+                local_file="$CLONE_PREPARED/abs/$local_file"
+            else
+                local_file="$CLONE_PREPARED/rel/$local_file"
+            fi
+            mkdirs "$(dirname "$local_file")"
+            cp -p "$repo_file" "$local_file"
+            if exists "$CHMOD"; then
+                eval "chmod $CHMOD $local_file"
+            fi
+        fi
+    done
+}
+
+write_clone_output() {
+    # Write cloned output according to context.
+
+    if files_exist "$CLONE_PREPARED"/abs; then
+        stderr "-----------------------------------------"
+        stderr "Writing output $(green files with absolute paths):"
+        merge_directories "$CLONE_PREPARED"/abs /
+    fi
+
+    if files_exist "$CLONE_PREPARED"/rel; then
+        cd "$WORKING_DIR"
+        stderr "---------------------"
+        stderr "Writing output $(green files):"
+        merge_directories "$CLONE_PREPARED"/rel .
+    fi
+
+    if [ -e "$CLONE_STDOUT" ]; then
+        stderr "-------------------------"
+        stderr "Writing output to $(green stdout)."
+        stdout_isatty && stderr "-------------------------"
+        cat "$CLONE_STDOUT"
+    fi
+}
+
+
 ## Supplemental tasks ##
 
 version() {
@@ -423,6 +979,12 @@ version() {
 
 
 ## Utilities to simplify conditional tests ##
+
+is_stdout() {
+    # Check whether argument indicates stdout '-'.
+
+    [ "$@" = "-" ]
+}
 
 using_checksum() {
     # Check whether using a checksum in program invocation.
@@ -492,6 +1054,10 @@ parse_arguments() {
                 exists "$value" && shift
             fi
             case "$key" in
+                -b | --ref | --tag)
+                    exists "$CLONE_REVISION" && usage "duplicate ref: $value"
+                    CLONE_REVISION="$value"
+                    ;;
                 --chmod)
                     exists "$CHMOD" && usage "duplicate chmod: $value"
                     CHMOD="$value"
@@ -525,8 +1091,11 @@ parse_arguments() {
                     SHA512="$value"
                     ;;
                 *)
-                    eval "set -- $value $@"
+                    eval "set -- $(quote_arguments "$value" "$@")"
                     case "$key" in
+                        -f | --force)
+                            FORCE=true
+                            ;;
                         -h | --help)
                             usage
                             ;;
@@ -551,8 +1120,12 @@ parse_arguments() {
         fi
     done
 
-    if using_checksum && exists "$@"; then
-        usage "too many arguments when using a checksum: $@"
+    if using_checksum; then
+        if exists "$@"; then
+            usage "too many arguments when using a checksum: $@"
+        elif exists "$CLONE_REVISION"; then
+            usage "invalid repository option in checksum mode: $CLONE_REVISION"
+        fi
     fi
 
     for argument in "$@"; do
@@ -566,9 +1139,7 @@ parse_arguments() {
         usage "provide a URL for download."
     fi
 
-    if ! using_checksum; then
-        usage "provide a checksum value e.g. --sha256=..."
-    fi
+    ARGUMENTS=$(quote_arguments "$@")
 }
 
 
