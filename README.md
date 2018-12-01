@@ -89,14 +89,14 @@ curl -sSL qwerty.sh |\
   http://hello.qwerty.sh | sh
 ```
 
-Download a program, verify it, keep it, make it executable:
+Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
 curl -sSL qwerty.sh |\
   sh -s - \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   --output=hello --chmod=a+x \
-  http://hello.qwerty.sh
+  http://hello.qwerty.sh && ./hello
 ```
 
 Download an archive, verify it, unpack it (without keeping the archive itself):
@@ -119,13 +119,13 @@ curl -sSL qwerty.sh | sh -s - \
   -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
 ```
 
-Download a program, verify it, keep it, make it executable:
+Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
 curl -sSL qwerty.sh | sh -s - \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
-  web/hello/hello.sh:hello
+  web/hello/hello.sh:hello && ./hello
 ```
 
 Download an entire repository:
