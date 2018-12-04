@@ -1,5 +1,7 @@
 ### Development ###
 
+all: lint
+
 run: Procfile | poorman-command install lint
 	$(POORMAN) start
 

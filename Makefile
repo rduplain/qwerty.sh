@@ -1,3 +1,5 @@
+all: lint
+
 run: web-run
 
 lint: sh-lint web-lint
