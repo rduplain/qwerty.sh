@@ -295,6 +295,11 @@ quote_arguments() {
     # ... where the final line above has whitespace to continue the
     #     previous/final backslash without effect (according to sh grammar).
     #
+    # Formatting a string with these quoted arguments allows that string to be
+    # saved as a variable which can then be passed to shell's builtin `set`
+    # which parses the variable as though its contents were passed on the
+    # command line verbatim.
+    #
     # Example:
     #
     #     ARGUMENTS=$(quote_arguments "$@") # Save "$@".
@@ -449,11 +454,20 @@ iterate_files() {
     path="$1"
     exists "$path" || path=.
 
+    # Find all files (-type f) found in $path and its subdirectories.
+    #
+    # The `find` command allows `-exec` to execute a subprocess on each found
+    # result, and allows for arbitrarily many -exec calls (delimited with \;),
+    # which `find` calls in order.
+    #
+    # Format an output in the `quote_arguments` format (see its docstring and
+    # example) using printf and sed.
+    #
     # Three execs, 1 2 3,
     # through comments, one can see,
     # which inline, cannot be.
     #
-    #          Use a sh subprocess to support inner printf|sed pipeline.
+    #          Use a `sh -c` subprocess to support inner printf|sed pipeline.
     #          |       Output leading '.
     #          2       |  Terminate -exec with \;.
     #          |       1  |  Continue find invocation to next line.
