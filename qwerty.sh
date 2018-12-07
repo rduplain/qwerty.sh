@@ -921,7 +921,14 @@ prepare_clone_output() {
                 output="$CLONE_PREPARED/rel/$OUTPUT"
             fi
             mkdirs "$(dirname "$output")"
-            mv "$CLONE_FILEPATH" "$output"
+            if [ "$OUTPUT" = "." ]; then
+                # Unpack clone files in place.
+                mv "$CLONE_FILEPATH"/* "$output"
+                find "$CLONE_FILEPATH" -mindepth 1 -exec mv '{}' "$output" \;
+            else
+                # Move cloned repository using its git-cloned humanish name.
+                mv "$CLONE_FILEPATH" "$output"
+            fi
         else
             cd "$CLONE_PREPARED"/rel
             mv "$CLONE_FILEPATH" .
