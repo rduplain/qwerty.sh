@@ -67,8 +67,8 @@ See full examples below.
 
 * `curl`, to fetch the qwerty.sh script and have it download target files.
 * `sh`, which is a given on all Unix-like systems, to run the qwerty.sh script.
-* `openssl` command, which is widely available with curl, to verify checksums.
-* `git` command, a version control system, to verify file integrity.
+* `openssl`, which is widely available with curl, to verify checksums.
+* `git`, a version control system, to verify file integrity.
 
 Arguments to qwerty.sh indicate whether to use a checksum or use git to verify
 files, and qwerty.sh requires `openssl` or `git` accordingly.
