@@ -847,7 +847,9 @@ clone() {
 
     given git
 
-    clone_arguments="--depth 1 --single-branch --shallow-submodules"
+    clone_arguments="-c advice.detachedHead=false"
+    clone_arguments="$clone_arguments --depth 1 --single-branch"
+    clone_arguments="$clone_arguments --shallow-submodules"
 
     if exists "$CLONE_REVISION"; then
         clone_arguments="$clone_arguments --branch $CLONE_REVISION"
