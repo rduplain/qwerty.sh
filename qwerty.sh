@@ -102,6 +102,7 @@ CLONE_STDOUT=        # Temporary path of file to send to stdout.
 # Variables parsed from command line:
 ARGUMENTS=           # Additional positional arguments.
 CHMOD=               # Mode invocation for chmod of downloaded file.
+CLONE_FULL=          # Clone full repository (when needed by revision).
 CLONE_REVISION=      # Branch, reference, or tag to clone.
 FORCE=               # Force overwriting files (default in checksum mode).
 OUTPUT=              # Destination of downloaded file(s) once verified.
@@ -848,10 +849,10 @@ clone() {
     given git
 
     clone_arguments="-c advice.detachedHead=false"
-    clone_arguments="$clone_arguments --depth 1 --single-branch"
     clone_arguments="$clone_arguments --shallow-submodules"
 
-    if exists "$CLONE_REVISION"; then
+    if exists "$CLONE_REVISION" && ! exists "$CLONE_FULL"; then
+        clone_arguments="$clone_arguments --depth 1 --single-branch"
         clone_arguments="$clone_arguments --branch $CLONE_REVISION"
     fi
 
@@ -868,6 +869,12 @@ clone() {
 
     stderr "--- $(blue $PROG)"
     eval "git clone $clone_arguments $url"
+
+    if exists "$CLONE_FULL"; then
+        cd "$(ls)"
+        GIT_DIR=.git git checkout "$CLONE_REVISION"
+        cd ..
+    fi
 
     # Allow git to generate a humanish directory as default output.
     CLONE_FILEPATH="$PWD/$(ls)"
@@ -1077,7 +1084,7 @@ parse_arguments() {
                 exists "$value" && shift
             fi
             case "$key" in
-                -b | --ref | --tag)
+                -b | --tag)
                     exists "$CLONE_REVISION" && usage "duplicate ref: $value"
                     CLONE_REVISION="$value"
                     ;;
@@ -1092,6 +1099,11 @@ parse_arguments() {
                 -o | --output)
                     exists "$OUTPUT" && usage "duplicate output: $value"
                     OUTPUT="$value"
+                    ;;
+                --ref)
+                    exists "$CLONE_REVISION" && usage "duplicate ref: $value"
+                    CLONE_FULL=true
+                    CLONE_REVISION="$value"
                     ;;
                 --sha1)
                     exists "$SHA1" && usage "duplicate sha1: $value"
