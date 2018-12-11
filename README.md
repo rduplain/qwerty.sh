@@ -225,6 +225,10 @@ a keyboard.
 Contact: community@qwerty.sh
 
 Status: Beta, with a clear path toward a fully production-ready v1.0 release.
+Production-ready, in part, means highly available hosting. Alternative hosting
+of qwerty.sh is provided by GitHub [through its "raw" file hosting][raw].
+
+[raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
 
 Copyright (c) 2018, Ron DuPlain. All rights reserved.
 BSD 2-Clause License.
