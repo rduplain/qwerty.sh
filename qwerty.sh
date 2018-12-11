@@ -828,9 +828,13 @@ validate_filepaths_before_clone() {
 
     cd "$WORKING_DIR"
 
-    if ! exists "$@" && is_stdout "$OUTPUT"; then
-        stderr "$PROG: refusing to write entire repository to stdout."
-        return 2
+    if ! exists "$@"; then
+        if is_stdout "$OUTPUT"; then
+            stderr "$PROG: refusing to write entire repository to stdout."
+            return 2
+        elif exists "$OUTPUT"; then
+            validate_local_filepath "$OUTPUT"
+        fi
     fi
 
     while [ "$1" != "" ]; do
