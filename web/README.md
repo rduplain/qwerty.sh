@@ -87,7 +87,7 @@ Prepare:
 make install
 ```
 
-Use a process manager to run these, setting WORKERS based on number of CPUs:
+Use a process manager to run these, and set WORKERS based on number of CPUs:
 
 ```sh
 WORKERS=4 PORT=8001 make http-proxied
