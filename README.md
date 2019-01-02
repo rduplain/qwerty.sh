@@ -230,7 +230,7 @@ of qwerty.sh is provided by GitHub [through its "raw" file hosting][raw].
 
 [raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
 
-Copyright (c) 2018, Ron DuPlain. All rights reserved.
+Copyright (c) 2018-2019, Ron DuPlain. All rights reserved.
 BSD 2-Clause License.
 
 ... with apologies to Dvorak.
