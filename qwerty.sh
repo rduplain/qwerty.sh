@@ -481,7 +481,7 @@ iterate_files() {
     #          |       1  1  1  |            | |    |          |
     #          2       |  |  |  2            2 2    2          2
     #          |       |  |  |  |            | |    |          |
-    find "$path" -type f \
+    find -L "$path" -type f \
          -exec printf "'" \; \
          -exec sh -c "printf %s \"{}\" | sed \"s/'/'\\\\\\''/g;\"" \; \
          -exec printf "' \\\\\\n" \;
