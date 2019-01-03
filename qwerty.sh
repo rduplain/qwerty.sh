@@ -455,7 +455,7 @@ iterate_files() {
     path="$1"
     exists "$path" || path=.
 
-    # Find all files (-type f) found in $path and its subdirectories.
+    # Find all files (-type f) or (-o) symlinks (-type l) found within $path.
     #
     # The `find` command allows `-exec` to execute a subprocess on each found
     # result, and allows for arbitrarily many -exec calls (delimited with \;),
@@ -481,7 +481,7 @@ iterate_files() {
     #          |       1  1  1  |            | |    |          |
     #          2       |  |  |  2            2 2    2          2
     #          |       |  |  |  |            | |    |          |
-    find -L "$path" -type f \
+    find "$path" \( -type l -o -type f \) \
          -exec printf "'" \; \
          -exec sh -c "printf %s \"{}\" | sed \"s/'/'\\\\\\''/g;\"" \; \
          -exec printf "' \\\\\\n" \;
