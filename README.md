@@ -145,6 +145,15 @@ curl -sSL qwerty.sh | sh -s - \
   -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
 ```
 
+Download a specific revision of a file which is not tagged or is not at the
+HEAD of a branch (and note that use of `--ref` is more download intensive):
+
+```sh
+curl -sSL qwerty.sh | sh -s - \
+  --ref dea68e7 \
+  -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
+```
+
 Download multiple files, verify them, keep them, make them executable:
 
 ```sh
