@@ -128,7 +128,7 @@ curl -sSL qwerty.sh | sh -s - \
   web/hello/hello.sh:hello && ./hello
 ```
 
-Download an entire repository:
+Download an entire repository (without retaining .git metadata):
 
 ```sh
 curl -sSL qwerty.sh | sh -s - https://github.com/rduplain/qwerty.sh.git
@@ -137,7 +137,7 @@ curl -sSL qwerty.sh | sh -s - \
   --output=OUTPUT_DIRECTORY https://github.com/rduplain/qwerty.sh.git
 ```
 
-Download a specific revision:
+Download a specific revision of a file:
 
 ```sh
 curl -sSL qwerty.sh | sh -s - \
@@ -186,7 +186,7 @@ indicates a request to download the qwerty.sh script.
 The qwerty.sh script is provided over HTTPS which is encrypted by [Let's
 Encrypt](https://letsencrypt.org/). This encryption initiates a web of trust:
 
-* Determine details (e.g. a checksum) which validate a given file.
+* Determine details (e.g. a checksum or git) which validate a given file.
 * Get the qwerty.sh script, knowing that it transmitted through HTTPS.
 * Tell the qwerty.sh script known details about the target file to download.
 
