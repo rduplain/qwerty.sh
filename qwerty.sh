@@ -603,7 +603,7 @@ valid_download_exists() {
 }
 
 download() {
-    # Download file at URL.
+    # Download file at URL to DOWNLOAD.
 
     DOWNLOAD="$TEMP_DIR"/$PROG.download
 
@@ -757,6 +757,7 @@ iterate_clone_filepaths() {
             fi
         fi
 
+        # Output quoted repo filepath.
         # Support both cases of before and after CLONE_FILEPATH is set.
         if exists "$CLONE_FILEPATH"; then
             quote_argument "$(join_path "$CLONE_FILEPATH" "$repo_file")"
@@ -764,6 +765,7 @@ iterate_clone_filepaths() {
             quote_argument "$repo_file"
         fi
 
+        # Output quoted local filepath.
         quote_argument "$(local_filepath "$local_file")"
     done
 
@@ -909,6 +911,12 @@ validate_filepaths_after_clone() {
 
 prepare_clone_output() {
     # Prepare output from clone, with result at CLONE_PREPARED.
+    #
+    # Output:
+    #
+    # * "$CLONE_PREPARED"/abs has files to transfer to / directory.
+    # * "$CLONE_PREPARED"/rel has files to transfer to . directory.
+    # * "$CLONE_STDOUT" is a file to write to stdout.
 
     eval "set -- $(iterate_clone_filepaths)"
 
@@ -978,7 +986,7 @@ prepare_clone_output() {
 }
 
 write_clone_output() {
-    # Write cloned output according to context.
+    # Write cloned output according to context, moving CLONE_PREPARED files.
 
     if files_exist "$CLONE_PREPARED"/abs; then
         stderr "-----------------------------------------"
@@ -1029,12 +1037,12 @@ using_checksum() {
 ## Utilities for clean program execution ##
 
 create_temp_dir() {
-    # Create temporary directory.
+    # Create temporary directory, available at TEMP_DIR.
 
+    # For portability, do not rely on mktemp command-line options (i.e. `-d`).
     given mktemp
     TEMP_DIR=$(mktemp)
 
-    # For portability, do not rely on command-line options (i.e. `-d`).
     rm -f "$TEMP_DIR"
     mkdir -p "$TEMP_DIR"
 }
