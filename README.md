@@ -1,6 +1,7 @@
 ## qwerty.sh: download, verify, and unpack files in a single command.
 
-[qwerty.sh](https://qwerty.sh) is a script as a service.
+[qwerty.sh](https://qwerty.sh) is a script as a service, to download, verify,
+and unpack files in a single command.
 
 ```sh
 curl -sSL qwerty.sh | sh -s - \
