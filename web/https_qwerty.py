@@ -1,4 +1,4 @@
-"""https_qwerty.py: serve qwerty.sh file as requested."""
+"""https_qwerty.py: serve requested qwerty.sh file, to proxy behind HTTPS."""
 
 import os
 import re
