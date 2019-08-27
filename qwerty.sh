@@ -5,7 +5,7 @@
 # README: https://github.com/rduplain/qwerty.sh#readme
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
 
-VERSION=v0.4.6-dev
+VERSION=v0.4.6
 
 usage() {
     exists "$@" && stderr "$PROG: $(red "$@")" && stderr # Optional message.
