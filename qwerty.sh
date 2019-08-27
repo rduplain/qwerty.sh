@@ -470,8 +470,8 @@ iterate_files() {
     #
     #          Use a `sh -c` subprocess to support inner printf|sed pipeline.
     #          |       Output leading '.
-    #          2       |  Terminate -exec with \;.
-    #          |       1  |  Continue find invocation to next line.
+    #    -exec 2       |  Terminate -exec with \;.
+    #          | -exec 1  |  Continue find invocation to next line.
     #          |       |  1  |  Path {} from find, wrapped in escaped " quotes.
     #          |       |  |  1  |            Start sed command.
     #          |       |  |  |  2            | Replace ' characters with '\''.
@@ -486,7 +486,7 @@ iterate_files() {
          -exec sh -c "printf %s \"{}\" | sed \"s/'/'\\\\\\''/g;\"" \; \
          -exec printf "' \\\\\\n" \;
     #                  | |   |
-    #                  3 3   3
+    #            -exec 3 3   3
     #                  | |   |
     #                  | |   Newline, escaped twice.
     #                  | Output line continuation \, escaped twice.
