@@ -247,10 +247,10 @@ contains() {
     #
     #     contains "/" "foo/bar/"
 
-    char="$1"
+    match="$1"
     shift
 
-    case "$*" in *"$char"*) return 0;; esac; return 1
+    case "$*" in *"$match"*) return 0;; esac; return 1
 }
 
 endswith() {
