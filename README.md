@@ -262,20 +262,20 @@ Calling qwerty.sh via `curl` also supports `$QWERTY_SH_PROG`.
 
 Alternative hosting of qwerty.sh is provided by GitHub [through its "raw" file
 hosting][raw]; use a version tag by changing [`master`][raw] in the URL to a
-version tag, e.g. [`v0.4.7`][raw v].
+version tag, e.g. [`v0.5`][raw v].
 
 [raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
-[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.4.7/qwerty.sh
+[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.5/qwerty.sh
 
 To run qwerty.sh locally, download and run it:
 
 * Download qwerty.sh from <https://qwerty.sh>, which is always the latest
   release of qwerty.sh. Optionally include a version,
-  e.g. <https://qwerty.sh/v0.4.7>.
+  e.g. <https://qwerty.sh/v0.5>.
 * ... or from GitHub [through its "raw" file hosting][raw]; use a version tag
-  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.4.7`][raw
+  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.5`][raw
   v].
-  * Recommended: use a version tag, e.g. [`v0.4.7`][raw v]. Though
+  * Recommended: use a version tag, e.g. [`v0.5`][raw v]. Though
     [`master`][raw] is stable, it consistently refers to a pre-release; prefer
     a release version when downloading qwerty.sh.
 * Ensure that the resulting file is executable: `chmod a+x /path/to/qwerty.sh`.
