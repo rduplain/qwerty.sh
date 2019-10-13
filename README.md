@@ -28,6 +28,7 @@ Contents:
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
 * [Why "qwerty.sh"?](#why-qwertysh)
+* [Alternative Hosting and Local Usage](#alternative-hosting-and-local-usage)
 * [Meta](#meta)
 
 
@@ -230,18 +231,38 @@ Bootstrap a repeatable build on a Unix-like system with just one dependency:
 a keyboard.
 
 
+### Alternative Hosting and Local Usage
+
+Alternative hosting of qwerty.sh is provided by GitHub [through its "raw" file
+hosting][raw]; use a version tag by changing [`master`][raw] in the URL to a
+version tag, e.g. [`v0.4.7`][raw v].
+
+[raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
+[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.4.7/qwerty.sh
+
+To run qwerty.sh locally, download and run it:
+
+* Download qwerty.sh from <https://qwerty.sh>, which is always the latest
+  release of qwerty.sh. Optionally include a version,
+  e.g. <https://qwerty.sh/v0.4.7>.
+* ... or from GitHub [through its "raw" file hosting][raw]; use a version tag
+  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.4.7`][raw
+  v].
+  * Recommended: use a version tag, e.g. [`v0.4.7`][raw v]. Though
+    [`master`][raw] is stable, it consistently refers to a pre-release; prefer
+    a release version when downloading qwerty.sh.
+* Ensure that the resulting file is executable: `chmod a+x /path/to/qwerty.sh`.
+* Call `/path/to/qwerty.sh` directly or include it in the shell's `PATH`.
+  * See `qwerty.sh --help` for help.
+
+
 ### Meta
 
 Contact: community@qwerty.sh
 
 Status: Stable, with a clear path toward a fully production-ready v1.0 release.
-"Fully production-ready" means highly available hosting. Alternative hosting of
-qwerty.sh is provided by GitHub [through its "raw" file hosting][raw]; use a
-version tag by changing [`master`][raw] in the URL to a version tag,
-e.g. [`v0.4.7`][raw v].
-
-[raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
-[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.4.7/qwerty.sh
+"Fully production-ready" means highly available hosting. See alternative
+hosting options above.
 
 Copyright (c) 2018-2019, R. DuPlain. All rights reserved.
 BSD 2-Clause License.
