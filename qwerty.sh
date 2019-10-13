@@ -11,7 +11,7 @@ usage() {
     exists "$@" && stderr "$PROG: $(red "$@")" && stderr # Optional message.
 
     stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL [...]"
-    stderr "       curl -sSL qwerty.sh/v0.4   | sh -s - [OPTION...] URL [...]"
+    stderr "       curl -sSL qwerty.sh/v0.5   | sh -s - [OPTION...] URL [...]"
     stderr
     stderr "using a checksum:"
     stderr
