@@ -38,8 +38,11 @@ usage() {
     stderr "  file                       Download file within repository."
     stderr "  repo_file:local_file       Download file to this local path."
     stderr
-    stderr "  -b, --ref=REF, --tag=TAG   Clone repository at this reference."
     stderr "  -f, --force                Force overwriting files."
+    stderr "  -b, --ref=REF, --tag=TAG   Clone repository at this reference."
+    stderr "                             Option --ref is useful when a ref is"
+    stderr "                             untagged and not HEAD of a branch;"
+    stderr "                             --ref is more download-intensive."
     stderr
     stderr "output options:"
     stderr
