@@ -236,9 +236,12 @@ Contact: community@qwerty.sh
 
 Status: Beta, with a clear path toward a fully production-ready v1.0 release.
 Production-ready, in part, means highly available hosting. Alternative hosting
-of qwerty.sh is provided by GitHub [through its "raw" file hosting][raw].
+of qwerty.sh is provided by GitHub [through its "raw" file hosting][raw]; use a
+version tag by changing [`master`][raw] in the URL to a version tag,
+e.g. [`v0.4.7`][raw v].
 
 [raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
+[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.4.7/qwerty.sh
 
 Copyright (c) 2018-2019, R. DuPlain. All rights reserved.
 BSD 2-Clause License.
