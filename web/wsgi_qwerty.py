@@ -74,11 +74,14 @@ def run_development(app, host='localhost', port=8000, **kw):
 
 def run_main(app):
     """Run a WSGI development server, using port given on command line."""
+    from os import environ
     from sys import argv
 
     kw = {}
     if len(argv) > 1:
         kw['port'] = int(argv[1])
+    if 'HOST' in environ:
+        kw['host'] = environ['HOST']
     run_development(app, **kw)
 
 

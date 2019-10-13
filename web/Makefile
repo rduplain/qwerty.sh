@@ -2,6 +2,7 @@
 
 all: lint
 
+# To run the development server beyond localhost: `HOST=0.0.0.0 make run`.
 run: Procfile | poorman-command install lint
 	$(POORMAN) start
 
@@ -103,7 +104,12 @@ run-%-dev:
 run-http-dev:  PORT := 8001
 run-https-dev: PORT := 8002
 
+ifeq ($(HOST),)
 run-http-dev:  export QWERTY_HTTPS_LOCATION := http://localhost:8002/
+else
+run-http-dev:  export QWERTY_HTTPS_LOCATION := http://$(shell hostname):8002/
+endif
+
 run-https-dev: export DEFAULT_GIT_REF := DIRTY # DIRTY is a made-up ref.
 run-https-dev: export QWERTY_SH := $(PARENT_PROJECT_ROOT)/qwerty.sh
 
