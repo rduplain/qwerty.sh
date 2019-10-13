@@ -50,7 +50,7 @@ usage() {
     stderr
     stderr "general options:"
     stderr
-    stderr "  -h, --help                 Display this usage message."
+    stderr "  -h, --help                 Display this help message."
     stderr "  -V, --version              Display '$PROG $VERSION' to stdout."
     stderr
     stderr '`sh -s -` sends all arguments which follow to the stdin script.'
@@ -59,6 +59,7 @@ usage() {
 
 main() {
     set_traps
+    determine_program_name "$@"
 
     parse_arguments "$@"
     if using_checksum; then
@@ -90,6 +91,7 @@ set -e
 
 # Global runtime configuration variables:
 PROG=qwerty.sh       # Name of program.
+BASEPROG="$PROG"     # Static identifier for use in temporary names.
 TEMP_DIR=            # Path to program's temporary directory.
 WORKING_DIR="$PWD"   # Path of working directory at program start.
 
@@ -118,6 +120,11 @@ SHA224=
 SHA256=
 SHA384=
 SHA512=
+
+# Dynamic global variable to support white-label qwerty.sh invocation:
+if [ _"$QWERTY_SH_PROG" = _ ]; then
+    QWERTY_SH_PROG=
+fi
 
 
 ### Shell Cookbook: General utilities without global variables ###
@@ -373,13 +380,13 @@ stderr() {
 stdout_isatty() {
     # Check whether stdout is open and refers to a terminal.
 
-    [ -t 1 ]
+    [ "$ISATTY" = "true" ] || [ -t 1 ]
 }
 
 stderr_isatty() {
     # Check whether stderr is open and refers to a terminal.
 
-    [ -t 2 ]
+    [ "$ISATTY" = "true" ] || [ -t 2 ]
 }
 
 repleat() {
@@ -607,7 +614,7 @@ valid_download_exists() {
 download() {
     # Download file at URL to DOWNLOAD.
 
-    DOWNLOAD="$TEMP_DIR"/$PROG.download
+    DOWNLOAD="$TEMP_DIR"/$BASEPROG.download
 
     if [ -d "$URL" ]; then
         stderr "error: $PROG cannot target directories."
@@ -1079,6 +1086,43 @@ clear_traps() {
 
 ### Argument parsing ###
 
+determine_program_name() {
+    # Determine the qwerty.sh program name based on invocation.
+    #
+    # Three cases:
+    #
+    # 1. Default:             curl -sSL qwerty.sh | sh -s -
+    # 2. Local:               qwerty.sh
+    #                         path/to/qwerty.sh
+    # 3. White-Label:         QWERTY_SH_PROG=another-program qwerty.sh
+
+    if exists "$QWERTY_SH_PROG"; then
+        PROG="$QWERTY_SH_PROG"
+    elif [ "$(basename $0)" = "$PROG" ]; then
+        QWERTY_SH_PROG="$PROG"
+    fi
+}
+
+help() {
+    # Rewrite `usage` output to support alternative qwerty.sh invocations.
+
+    if ! exists "$QWERTY_SH_PROG"; then
+        usage "$@"
+        return 2
+    fi
+
+    if stderr_isatty; then
+        ISATTY=true
+    fi
+
+    usage "$@" 2>&1 | \
+        sed -e "/    curl .*$/d" \
+            -e "s/curl -sSL .* sh -s -/$QWERTY_SH_PROG/g" \
+            -e "/sh -s -/d" >&2
+
+    return 2
+}
+
 parse_arguments() {
     # Parse command-line arguments.
     #
@@ -1098,44 +1142,44 @@ parse_arguments() {
             fi
             case "$key" in
                 -b | --tag)
-                    exists "$CLONE_REVISION" && usage "duplicate ref: $value"
+                    exists "$CLONE_REVISION" && help "duplicate ref: $value"
                     CLONE_REVISION="$value"
                     ;;
                 --chmod)
-                    exists "$CHMOD" && usage "duplicate chmod: $value"
+                    exists "$CHMOD" && help "duplicate chmod: $value"
                     CHMOD="$value"
                     ;;
                 --md5)
-                    exists "$MD5" && usage "duplicate md5: $value"
+                    exists "$MD5" && help "duplicate md5: $value"
                     MD5="$value"
                     ;;
                 -o | --output)
-                    exists "$OUTPUT" && usage "duplicate output: $value"
+                    exists "$OUTPUT" && help "duplicate output: $value"
                     OUTPUT="$value"
                     ;;
                 --ref)
-                    exists "$CLONE_REVISION" && usage "duplicate ref: $value"
+                    exists "$CLONE_REVISION" && help "duplicate ref: $value"
                     CLONE_FULL=true
                     CLONE_REVISION="$value"
                     ;;
                 --sha1)
-                    exists "$SHA1" && usage "duplicate sha1: $value"
+                    exists "$SHA1" && help "duplicate sha1: $value"
                     SHA1="$value"
                     ;;
                 --sha224)
-                    exists "$SHA224" && usage "duplicate sha224: $value"
+                    exists "$SHA224" && help "duplicate sha224: $value"
                     SHA224="$value"
                     ;;
                 --sha256)
-                    exists "$SHA256" && usage "duplicate sha256: $value"
+                    exists "$SHA256" && help "duplicate sha256: $value"
                     SHA256="$value"
                     ;;
                 --sha384)
-                    exists "$SHA384" && usage "duplicate sha384: $value"
+                    exists "$SHA384" && help "duplicate sha384: $value"
                     SHA384="$value"
                     ;;
                 --sha512)
-                    exists "$SHA512" && usage "duplicate sha512: $value"
+                    exists "$SHA512" && help "duplicate sha512: $value"
                     SHA512="$value"
                     ;;
                 *)
@@ -1145,7 +1189,7 @@ parse_arguments() {
                             FORCE=true
                             ;;
                         -h | --help)
-                            usage
+                            help
                             ;;
                         --skip-rej)
                             SKIP_REJ=true
@@ -1155,7 +1199,7 @@ parse_arguments() {
                             exit
                             ;;
                         *)
-                            usage "unrecognized option '$key'"
+                            help "unrecognized option '$key'"
                             ;;
                     esac
                     ;;
@@ -1170,21 +1214,21 @@ parse_arguments() {
 
     if using_checksum; then
         if exists "$@"; then
-            usage "too many arguments when using a checksum: $@"
+            help "too many arguments when using a checksum: $@"
         elif exists "$CLONE_REVISION"; then
-            usage "invalid repository option in checksum mode: $CLONE_REVISION"
+            help "invalid repository option in checksum mode: $CLONE_REVISION"
         fi
     fi
 
     for argument in "$@"; do
         if case "$argument" in "-"*) true;; *) false;; esac; then
             # Argument starts with a hyphen.
-            usage "provide options before positional arguments: $argument"
+            help "provide options before positional arguments: $argument"
         fi
     done
 
     if ! exists "$URL"; then
-        usage "provide a URL for download."
+        help "provide a URL for download."
     fi
 
     ARGUMENTS=$(quote_arguments "$@")

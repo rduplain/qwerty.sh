@@ -28,6 +28,7 @@ Contents:
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
 * [Why "qwerty.sh"?](#why-qwertysh)
+* [White Label](#white-label)
 * [Alternative Hosting and Local Usage](#alternative-hosting-and-local-usage)
 * [Meta](#meta)
 
@@ -229,6 +230,32 @@ you downloaded what you expected is to know up front what you are expecting.
 
 Bootstrap a repeatable build on a Unix-like system with just one dependency:
 a keyboard.
+
+
+### White Label
+
+qwerty.sh supports vendoring, to allow an external project to wrap or rename
+qwerty.sh in its operation. For example, a `cmd` with subcommands could have
+`cmd download` call out to a local qwerty.sh file:
+
+```sh
+QWERTY_SH_PROG='cmd download' path/to/qwerty.sh "$@"
+```
+
+In this mode, qwerty.sh will function as usual but rewrite all messages and
+usage to indicate `$QWERTY_SH_PROG` instead of `qwerty.sh`.
+
+Importantly, this approach allows external projects to download qwerty.sh as-is
+without modification. With this approach, updating the vendored qwerty.sh
+program is just a download of a new version:
+
+```sh
+mkdir -p path/to/
+curl -sSL qwerty.sh > path/to/qwerty.sh
+chmod a+x path/to/qwerty.sh
+```
+
+Calling qwerty.sh via `curl` also supports `$QWERTY_SH_PROG`.
 
 
 ### Alternative Hosting and Local Usage
