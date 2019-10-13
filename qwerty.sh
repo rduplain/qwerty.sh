@@ -122,9 +122,7 @@ SHA384=
 SHA512=
 
 # Dynamic global variable to support white-label qwerty.sh invocation:
-if [ _"$QWERTY_SH_PROG" = _ ]; then
-    QWERTY_SH_PROG=
-fi
+QWERTY_SH_PROG="${QWERTY_SH_PROG-}"
 
 
 ### Shell Cookbook: General utilities without global variables ###
