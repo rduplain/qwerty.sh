@@ -34,7 +34,6 @@ usage() {
     stderr "  ... URL <repo_file>:<local_file>..."
     stderr
     stderr "  URL                        A repository."
-    stderr "  output_dir                 Output directory for repository downloads."
     stderr "  file                       Download file within repository."
     stderr "  repo_file:local_file       Download file to this local path."
     stderr
