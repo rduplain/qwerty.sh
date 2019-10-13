@@ -1031,7 +1031,7 @@ version() {
 is_stdout() {
     # Check whether argument indicates stdout '-'.
 
-    [ "$@" = "-" ]
+    [ "$*" = "-" ]
 }
 
 using_checksum() {
@@ -1212,7 +1212,7 @@ parse_arguments() {
 
     if using_checksum; then
         if exists "$@"; then
-            help "too many arguments when using a checksum: $@"
+            help "too many arguments when using a checksum: $*"
         elif exists "$CLONE_REVISION"; then
             help "invalid repository option in checksum mode: $CLONE_REVISION"
         fi
