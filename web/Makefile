@@ -47,6 +47,7 @@ deploy:
 		git checkout $(VERSION); \
 		make --no-print-directory install; \
 		supervisorctl status http-qwerty https-qwerty; \
+		echo "Starting/Reloading qwerty.sh web services ..."; \
 		supervisorctl start http-qwerty https-qwerty >/dev/null 2>&1 || true; \
 		sudo -n kill -HUP `cat /srv/qwerty.sh/web/.reqd/var/run/*.pid`; \
 		supervisorctl status http-qwerty https-qwerty; \
