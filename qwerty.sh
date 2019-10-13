@@ -229,7 +229,7 @@ openssl_dgst() {
 
     if [ $dgst_exit -ne 0 ]; then
         stderr "openssl dgst failed with non-zero status: $dgst_exit"
-        return $dsgt_exit
+        return $dgst_exit
     fi
 
     # Parse checksum output and trim spaces.
