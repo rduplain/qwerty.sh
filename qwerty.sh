@@ -121,6 +121,9 @@ SHA256=
 SHA384=
 SHA512=
 
+# Behavior overrides:
+QWERTY_SH_USE_REF="${QWERTY_SH_USE_REF-}"
+
 # Dynamic global variable to support white-label qwerty.sh invocation:
 QWERTY_SH_PROG="${QWERTY_SH_PROG-}"
 
@@ -1227,6 +1230,10 @@ parse_arguments() {
 
     if ! exists "$URL"; then
         help "provide a URL for download."
+    fi
+
+    if exists "$QWERTY_SH_USE_REF"; then
+        CLONE_FULL=true
     fi
 
     ARGUMENTS=$(quote_arguments "$@")
