@@ -1,7 +1,7 @@
 #!/bin/sh
 # qwerty.sh: download, verify, and unpack files in a single command.
 #
-# Copyright (c) 2018-2019, R. DuPlain. All rights reserved.
+# Copyright (c) 2018-2020, R. DuPlain. All rights reserved.
 # README: https://github.com/rduplain/qwerty.sh#readme
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
 

@@ -291,7 +291,7 @@ Status: Stable, with a clear path toward a fully production-ready v1.0 release.
 "Fully production-ready" means highly available hosting. See alternative
 hosting options above.
 
-Copyright (c) 2018-2019, R. DuPlain. All rights reserved.
+Copyright (c) 2018-2020, R. DuPlain. All rights reserved.
 BSD 2-Clause License.
 
 ... with apologies to Dvorak.
