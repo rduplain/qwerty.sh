@@ -665,6 +665,7 @@ checksums_or_rej() {
             output_rej="$OUTPUT.rej"
         fi
         stderr "Rejecting download: $(red $output_rej)"
+        mkdirs "$(dirname "$output_rej")"
         mv "$DOWNLOAD" "$output_rej"
     fi
 
