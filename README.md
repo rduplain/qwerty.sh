@@ -196,7 +196,9 @@ portion of the command line is known to the qwerty.sh server, which only
 indicates a request to download the qwerty.sh script.
 
 The qwerty.sh script is provided over HTTPS which is encrypted by [Let's
-Encrypt](https://letsencrypt.org/). This encryption initiates a web of trust:
+Encrypt](https://letsencrypt.org/). Having a trusted certificate authority
+through _Let's Encrypt_ is essential in getting a trusted qwerty.sh script.
+This HTTPS encryption initiates a web of trust:
 
 * Determine details (e.g. a checksum or git) which validate a given file.
 * Get the qwerty.sh script, knowing that it transmitted through HTTPS.
