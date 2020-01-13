@@ -206,6 +206,8 @@ This HTTPS encryption initiates a web of trust:
 
 qwerty.sh is available as specific versions to further guarantee repeatability.
 
+See below for details on downloading qwerty.sh for local usage.
+
 [BSD 2-Clause License](LICENSE)
 
 
@@ -283,6 +285,10 @@ To run qwerty.sh locally, download and run it:
 * Ensure that the resulting file is executable: `chmod a+x /path/to/qwerty.sh`.
 * Call `/path/to/qwerty.sh` directly or include it in the shell's `PATH`.
   * See `qwerty.sh --help` for help.
+
+It's good practice to have scripts call `$QWERTY_SH` instead of a hard-coded
+`curl -sSL qwerty.sh` invocation, as to allow dynamic reconfiguration to
+substitute a locally downloaded `qwerty.sh` program.
 
 
 ### Meta
