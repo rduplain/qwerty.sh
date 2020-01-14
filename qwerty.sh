@@ -43,6 +43,13 @@ usage() {
     stderr "                             untagged and not HEAD of a branch;"
     stderr "                             --ref is more download-intensive."
     stderr
+    stderr "using a run-command (rc) file:"
+    stderr
+    stderr "  -r, --rc=FILE              File containing qwerty.sh arguments."
+    stderr "                             Each line in the file is treated as"
+    stderr "                             arguments to a qwerty.sh call;"
+    stderr "                             multiple rc files supported."
+    stderr
     stderr "output options:"
     stderr
     stderr "  -o, --output=FILEPATH      Download to this location."
@@ -63,7 +70,9 @@ main() {
     determine_program_name "$@"
 
     parse_arguments "$@"
-    if using_checksum; then
+    if using_rc; then
+        run_commands
+    elif using_checksum; then
         if ! valid_download_exists; then
             given curl openssl
             create_temp_dir
@@ -114,6 +123,7 @@ reset() {
     CLONE_REVISION=      # Branch, reference, or tag to clone.
     FORCE=               # Force overwriting files (default in checksum mode).
     OUTPUT=              # Destination of downloaded file(s) once verified.
+    RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
     URL=                 # URL of target download.
 
@@ -130,6 +140,18 @@ reset() {
 
     # Dynamic global variable to support white-label qwerty.sh invocation:
     QWERTY_SH_PROG="${QWERTY_SH_PROG-}"
+}
+
+pack_arguments() {
+    # Print packed data of values parsed from command line.
+    #
+    # This is useful for command-line validation.
+    # Keep in sync with list (above) of variables parsed from command line.
+
+    printf '%s' \
+           "$ARGUMENTS" \
+           "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
+           "$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL"
 }
 
 
@@ -599,6 +621,58 @@ strip_rel() {
 
 ### Tasks and utilities which use global variables ###
 
+## Tasks when using run-command (rc) files ##
+
+read_run_command_file() {
+    # Print preprocessed lines to stdout for `while read line`.
+
+    if [ $# -ne 1 ]; then
+        stderr "usage: read_run_command_file FILENAME"
+        return 2
+    fi
+
+    file="$1"
+    shift
+
+    if [ ! -e "$file" ]; then
+        stderr "no such run-command file: $file"
+        return 1
+    fi
+
+    # Ultimately, each line in the run-command file is sent to the
+    # shell-builtin `read` in order to parse as shell arguments while
+    # supporting comments and line continuations.
+    #
+    # Preprocess lines to preserve backslashes, '\' to '\\'.
+    # This is especially important in supporting arguments with spaces.
+    #
+    # Then, revert any line-continuation so that `read` correctly constructs a
+    # single line from the continuation.
+    sed 's,\\,\\\\,g' "$file" | \
+        sed 's,\\\\[[:space:]]*$,\\,g'
+}
+
+run_commands() {
+    # Run commands listed in run-command (rc) file(s).
+
+    eval "set -- $RC"
+
+    for rc_file in "$@"; do
+        if [ ! -e "$rc_file" ]; then
+            stderr "$PROG: no such run-command file: $rc_file"
+            return 1
+        fi
+
+        read_run_command_file "$rc_file" | while read line; do
+            eval "set -- $line"
+            if [ $# -gt 0 ]; then
+                stderr "--- $(blue "$rc_file"): $line"
+                main "$@"
+            fi
+        done
+    done
+}
+
 ## Tasks when using checksum ##
 
 valid_download_exists() {
@@ -1049,6 +1123,12 @@ using_checksum() {
     exists "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512"
 }
 
+using_rc() {
+    # Check whether using a run-command (rc) file in program invocation.
+
+    exists "$RC"
+}
+
 
 ## Utilities for clean program execution ##
 
@@ -1164,6 +1244,13 @@ parse_arguments() {
                     exists "$OUTPUT" && help "duplicate output: $value"
                     OUTPUT="$value"
                     ;;
+                -r | --rc)
+                    if exists "$RC"; then
+                        RC="$RC '$value'"
+                    else
+                        RC="'$value'"
+                    fi
+                    ;;
                 --ref)
                     exists "$CLONE_REVISION" && help "duplicate ref: $value"
                     CLONE_FULL=true
@@ -1218,6 +1305,15 @@ parse_arguments() {
             break
         fi
     done
+
+    if using_rc; then
+        if [ "$(pack_arguments)" != "$RC" ]; then
+            help "do not pass arguments when using run-command (rc) files: $RC"
+        fi
+
+        # Short-circuit. Additional arguments are unused.
+        return
+    fi
 
     if using_checksum; then
         if exists "$@"; then

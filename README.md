@@ -24,6 +24,7 @@ Contents:
 * [Dependencies](#dependencies)
 * [Using a Checksum](#using-a-checksum)
 * [Using git](#using-git)
+* [Using a run-command (rc) file](#using-a-run-command-rc-file)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
@@ -184,6 +185,40 @@ curl -sSL qwerty.sh | sh -s - \
   https://github.com/rduplain/qwerty.sh.git \
   README.md web/README.md | less
 ```
+
+
+### Using a run-command (rc) file
+
+Run qwerty.sh in batch-mode by providing a run-command (rc) file. This approach
+is useful in order to have a project download, verify, and unpack multiple
+files from multiple sources _without_ tracking anything but the rc file in
+version control.
+
+An example `.qwertyrc`:
+
+```
+# With checksum, download shell script, verify it, keep it, make it executable.
+  --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
+  --output=hello-from-checksum --chmod=a+x \
+  http://hello.qwerty.sh
+
+# With git, download shell script, verify it, keep it, make it executable.
+  --chmod=a+x \
+  https://github.com/rduplain/qwerty.sh.git \
+  web/hello/hello.sh:hello-from-git
+```
+
+Call qwerty.sh:
+
+```sh
+curl -sSL qwerty.sh | sh -s - --rc .qwertyrc
+```
+
+This will result in two local files (`hello-from-checksum`, `hello-from-git`)
+applying two separate command-line invocations of qwerty.sh, using only a
+single download of the qwerty.sh program itself.
+
+Provide multiple `--rc` flags for multiple run-command files.
 
 
 ### Trust
