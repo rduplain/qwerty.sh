@@ -104,13 +104,13 @@ reset() {
 
     # Clone runtime configuration variable:
     CLONE_FILEPATH=      # Temporary path of cloned repository.
+    CLONE_FULL=          # Clone full repository (when needed by revision).
     CLONE_PREPARED=      # Temporary path of output prepared from clone.
     CLONE_STDOUT=        # Temporary path of file to send to stdout.
 
     # Variables parsed from command line:
     ARGUMENTS=           # Additional positional arguments.
     CHMOD=               # Mode invocation for chmod of downloaded file.
-    CLONE_FULL=          # Clone full repository (when needed by revision).
     CLONE_REVISION=      # Branch, reference, or tag to clone.
     FORCE=               # Force overwriting files (default in checksum mode).
     OUTPUT=              # Destination of downloaded file(s) once verified.
