@@ -58,6 +58,7 @@ usage() {
 }
 
 main() {
+    reset
     set_traps
     determine_program_name "$@"
 
@@ -89,43 +90,47 @@ main() {
 # Exit immediately if a command error or non-zero return occurs.
 set -e
 
-# Global runtime configuration variables:
-PROG=qwerty.sh       # Name of program.
-BASEPROG="$PROG"     # Static identifier for use in temporary names.
-TEMP_DIR=            # Path to program's temporary directory.
-WORKING_DIR="$PWD"   # Path of working directory at program start.
+reset() {
+    # Reset global variables.
 
-# Checksum runtime configuration variable:
-DOWNLOAD=            # Temporary path of downloaded file.
+    # Global runtime configuration variables:
+    PROG=qwerty.sh       # Name of program.
+    BASEPROG="$PROG"     # Static identifier for use in temporary names.
+    TEMP_DIR=            # Path to program's temporary directory.
+    WORKING_DIR="$PWD"   # Path of working directory at program start.
 
-# Clone runtime configuration variable:
-CLONE_FILEPATH=      # Temporary path of cloned repository.
-CLONE_PREPARED=      # Temporary path of output prepared from clone.
-CLONE_STDOUT=        # Temporary path of file to send to stdout.
+    # Checksum runtime configuration variable:
+    DOWNLOAD=            # Temporary path of downloaded file.
 
-# Variables parsed from command line:
-ARGUMENTS=           # Additional positional arguments.
-CHMOD=               # Mode invocation for chmod of downloaded file.
-CLONE_FULL=          # Clone full repository (when needed by revision).
-CLONE_REVISION=      # Branch, reference, or tag to clone.
-FORCE=               # Force overwriting files (default in checksum mode).
-OUTPUT=              # Destination of downloaded file(s) once verified.
-SKIP_REJ=            # Skip writing .rej file on failure.
-URL=                 # URL of target download.
+    # Clone runtime configuration variable:
+    CLONE_FILEPATH=      # Temporary path of cloned repository.
+    CLONE_PREPARED=      # Temporary path of output prepared from clone.
+    CLONE_STDOUT=        # Temporary path of file to send to stdout.
 
-# Checksum values, parsed from command line:
-MD5=
-SHA1=
-SHA224=
-SHA256=
-SHA384=
-SHA512=
+    # Variables parsed from command line:
+    ARGUMENTS=           # Additional positional arguments.
+    CHMOD=               # Mode invocation for chmod of downloaded file.
+    CLONE_FULL=          # Clone full repository (when needed by revision).
+    CLONE_REVISION=      # Branch, reference, or tag to clone.
+    FORCE=               # Force overwriting files (default in checksum mode).
+    OUTPUT=              # Destination of downloaded file(s) once verified.
+    SKIP_REJ=            # Skip writing .rej file on failure.
+    URL=                 # URL of target download.
 
-# Behavior overrides:
-QWERTY_SH_USE_REF="${QWERTY_SH_USE_REF-}"
+    # Checksum values, parsed from command line:
+    MD5=
+    SHA1=
+    SHA224=
+    SHA256=
+    SHA384=
+    SHA512=
 
-# Dynamic global variable to support white-label qwerty.sh invocation:
-QWERTY_SH_PROG="${QWERTY_SH_PROG-}"
+    # Behavior overrides:
+    QWERTY_SH_USE_REF="${QWERTY_SH_USE_REF-}"
+
+    # Dynamic global variable to support white-label qwerty.sh invocation:
+    QWERTY_SH_PROG="${QWERTY_SH_PROG-}"
+}
 
 
 ### Shell Cookbook: General utilities without global variables ###
