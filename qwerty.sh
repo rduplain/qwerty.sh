@@ -8,7 +8,7 @@
 VERSION=v0.5.3-dev
 
 usage() {
-    exists "$@" && stderr "$PROG: $(red "$@")" && stderr # Optional message.
+    exists "$@" && stderr "$PROG: $(red "$@")" && return 2
 
     stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL [...]"
     stderr "       curl -sSL qwerty.sh/v0.5   | sh -s - [OPTION...] URL [...]"
