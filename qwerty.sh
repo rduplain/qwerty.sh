@@ -1245,6 +1245,15 @@ parse_arguments() {
                     OUTPUT="$value"
                     ;;
                 -r | --rc)
+                    # Implementation note:
+                    #
+                    # Shell globbing to specify multiple rc files is not
+                    # supported, as the shell will expand filepaths before
+                    # passing them to qwerty.sh. If globbing is needed, e.g. to
+                    # specify rc files in a directory, quote the argument with
+                    # single-quotes to delay expansion:
+                    #
+                    #     --rc='.qwertyrc.d/*'
                     if exists "$RC"; then
                         RC="$RC '$value'"
                     else
