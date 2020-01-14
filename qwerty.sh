@@ -111,7 +111,7 @@ reset() {
     # Checksum runtime configuration variable:
     DOWNLOAD=            # Temporary path of downloaded file.
 
-    # Clone runtime configuration variable:
+    # Clone runtime configuration variables:
     CLONE_FILEPATH=      # Temporary path of cloned repository.
     CLONE_FULL=          # Clone full repository (when needed by revision).
     CLONE_PREPARED=      # Temporary path of output prepared from clone.
