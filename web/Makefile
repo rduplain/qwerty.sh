@@ -79,7 +79,7 @@ endif
 
 ### External Dependencies ###
 
-PYTHON_REQUIREMENTS := gunicorn==19.9.0 pyflakes werkzeug==0.14.1
+PYTHON_REQUIREMENTS := gunicorn==20.0.4 pyflakes werkzeug==0.16.0
 
 
 ### Implementation Details ###
