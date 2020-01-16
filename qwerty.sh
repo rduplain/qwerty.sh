@@ -823,6 +823,17 @@ local_filepath() {
     fi
 }
 
+humanish() {
+    # Print "humanish" name of repository to stdout, given its URL.
+    #
+    # For example: git@github.com:owner/project.git is "project".
+
+    url="$1"
+    shift
+
+    echo "$url" | sed -e 's,/$,,' -e 's,:*/*\.git$,,' -e 's,.*[/:],,g'
+}
+
 iterate_clone_filepaths() {
     # Build quoted array of clone full filepaths, in (repo, local) pairs.
     #
@@ -905,9 +916,8 @@ validate_local_filepath() {
     shift
 
     if ! is_stdout "$local_file" && [ -e "$local_file" ]; then
-        stderr "$PROG: refusing to overwrite local file: $local_file"
-        stderr "(use -f or --force to force overwrite of local files)"
-        return 2
+        stderr "Output already exists: $(green $local_file)"
+        return 1
     fi
 }
 
@@ -920,12 +930,21 @@ validate_filepaths_before_clone() {
 
     cd "$WORKING_DIR"
 
+    # Determine whether a clone is needed to download any files.
+    do_clone=
+
     if ! exists "$@"; then
         if is_stdout "$OUTPUT"; then
             stderr "$PROG: refusing to write entire repository to stdout."
             return 2
         elif exists "$OUTPUT"; then
-            validate_local_filepath "$OUTPUT"
+            if validate_local_filepath "$OUTPUT"; then
+                do_clone=true
+            fi
+        else
+            if validate_local_filepath "$(humanish "$URL")"; then
+                do_clone=true
+            fi
         fi
     fi
 
@@ -935,8 +954,13 @@ validate_filepaths_before_clone() {
         shift 2
 
         validate_repo_filepath "$repo_file"
-        validate_local_filepath "$local_file"
+
+        if validate_local_filepath "$local_file"; then
+            do_clone=true
+        fi
     done
+
+    exists "$do_clone"
 }
 
 clone() {
