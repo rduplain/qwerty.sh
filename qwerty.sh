@@ -864,7 +864,7 @@ iterate_clone_filepaths() {
 }
 
 validate_repo_filepath() {
-    # Check repo filepath and fail with a stderr message if it exists.
+    # Check repo filepath and fail with stderr message if invalid.
 
     if [ $# -ne 1 ]; then
         stderr "usage: validate_repo_filepath REPO_FILE"
@@ -890,7 +890,7 @@ validate_repo_filepath() {
 }
 
 validate_local_filepath() {
-    # Check local filepath and fail with a stderr message if it exists.
+    # Check local filepath and exit non-zero with stderr message if it exists.
 
     if [ $# -ne 1 ]; then
         stderr "usage: validate_local_filepath LOCAL_FILE"
