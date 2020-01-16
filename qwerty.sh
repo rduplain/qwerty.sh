@@ -916,7 +916,7 @@ validate_local_filepath() {
     shift
 
     if ! is_stdout "$local_file" && [ -e "$local_file" ]; then
-        stderr "Output already exists: $(green $local_file)"
+        stderr "Output already exists: $(yellow $local_file)"
         return 1
     fi
 }
