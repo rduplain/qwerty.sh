@@ -82,7 +82,8 @@ See full examples below.
 * `git`, a version control system, to verify file integrity.
 
 Arguments to qwerty.sh indicate whether to use a checksum or use git to verify
-files, and qwerty.sh requires `openssl` or `git` accordingly.
+files, and qwerty.sh requires `openssl` or `git` accordingly. For HTTPS, `curl`
+must support TLSv1.2 (2008), which it commonly does.
 
 The qwerty.sh project provides fully portable shell using commands commonly
 found on Unix platforms, and makes every effort to provide a simple, clear
