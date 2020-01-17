@@ -357,6 +357,30 @@ Start with `QWERTY_SH` value:
 QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
 ```
 
+Match project requirements by adjusting the URL or referring to a locally
+downloaded qwerty.sh program:
+
+```sh
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf CUSTOM_URL_HERE | sh -s -"
+QWERTY_SH="sh /path/to/qwerty.sh"
+QWERTY_SH="/path/to/qwerty.sh"
+```
+
+Optionally, add `QWERTY_SH_URL` to dynamically configure the qwerty.sh URL:
+
+```sh
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf $QWERTY_SH_URL | sh -s -"
+```
+
+Then adjust the URL as needed:
+
+```sh
+QWERTY_SH_URL="https://qwerty.sh"
+QWERTY_SH_URL="https://qwerty.sh/v0.5.2"
+QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh"
+QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.5.2/qwerty.sh"
+```
+
 
 ### Meta
 
