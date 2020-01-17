@@ -203,6 +203,8 @@ version control.
 An example `.qwertyrc`:
 
 ```sh
+# https://qwerty.sh/
+
 # With checksum, download shell script, verify it, keep it, make it executable.
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   --output=hello-from-checksum --chmod=a+x \
