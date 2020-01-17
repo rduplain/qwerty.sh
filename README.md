@@ -16,6 +16,13 @@ curl -sSL qwerty.sh | sh -s - \
   -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
 ```
 
+Hardened usage:
+
+```sh
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/ | sh -s -"
+$QWERTY_SH [OPTION...] URL [...]
+```
+
 Contents:
 
 * [Manage the Unmanaged](#manage-the-unmanaged)
@@ -239,6 +246,12 @@ This HTTPS encryption initiates a web of trust:
 * Get the qwerty.sh script, knowing that it transmitted through HTTPS.
 * Tell the qwerty.sh script known details about the target file to download.
 
+Harden curl usage:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/ | sh -s -
+```
+
 qwerty.sh is available as specific versions to further guarantee repeatability.
 
 See below for details on downloading qwerty.sh for local usage.
@@ -324,6 +337,12 @@ To run qwerty.sh locally, download and run it:
 It's good practice to have scripts call `$QWERTY_SH` instead of a hard-coded
 `curl -sSL qwerty.sh` invocation, as to allow dynamic reconfiguration to
 substitute a locally downloaded `qwerty.sh` program.
+
+Start with `QWERTY_SH` value:
+
+```sh
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/ | sh -s -"
+```
 
 
 ### Meta
