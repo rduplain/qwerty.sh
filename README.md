@@ -223,7 +223,9 @@ This will result in two local files (`hello-from-checksum`, `hello-from-git`)
 applying two separate command-line invocations of qwerty.sh, using only a
 single download of the qwerty.sh program itself.
 
-Provide multiple `--rc` flags for multiple run-command files.
+Provide multiple `--rc` flags for multiple run-command files. Add the
+`--cd-on-rc` flag to have qwerty.sh change directories to that of the
+run-command file when processing its commands.
 
 
 ### Trust

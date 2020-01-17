@@ -49,6 +49,8 @@ usage() {
     stderr "                             Each line in the file is treated as"
     stderr "                             arguments to a qwerty.sh call;"
     stderr "                             multiple rc files supported."
+    stderr "  --cd-on-rc                 Change directories to that of rc file"
+    stderr "                             when processing its commands."
     stderr
     stderr "output options:"
     stderr
@@ -107,7 +109,7 @@ reset() {
     PROG=qwerty.sh       # Name of program.
     BASEPROG="$PROG"     # Static identifier for use in temporary names.
     TEMP_DIR=            # Path to program's temporary directory.
-    WORKING_DIR="$PWD"   # Path of working directory at program start.
+    WORKING_DIR="$PWD"   # Path of program's working directory.
 
     # Checksum runtime configuration variable:
     DOWNLOAD=            # Temporary path of downloaded file.
@@ -120,6 +122,7 @@ reset() {
 
     # Variables parsed from command line:
     ARGUMENTS=           # Additional positional arguments.
+    CD_ON_RC=            # Change directories to rc file when processing it.
     CHMOD=               # Mode invocation for chmod of downloaded file.
     CLONE_REVISION=      # Branch, reference, or tag to clone.
     FORCE=               # Force overwriting files (default in checksum mode).
@@ -141,6 +144,9 @@ reset() {
 
     # Dynamic global variable to support white-label qwerty.sh invocation:
     QWERTY_SH_PROG="${QWERTY_SH_PROG-}"
+
+    # Path of working directory at program start.
+    QWERTY_SH_PWD="${QWERTY_SH_PWD-$PWD}"
 }
 
 pack_arguments() {
@@ -152,7 +158,7 @@ pack_arguments() {
     printf '%s' \
            "$ARGUMENTS" \
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
-           "$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL"
+           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL"
 }
 
 
@@ -658,13 +664,27 @@ run_commands() {
 
     eval "set -- $RC"
 
+    if exists "$cd_on_rc$CD_ON_RC"; then
+        cd_on_rc=true
+    fi
+
     for rc_file in "$@"; do
-        if [ ! -e "$rc_file" ]; then
+        cd "$QWERTY_SH_PWD"
+
+        rc_filepath="$PWD"/"$rc_file"
+
+        if exists "$cd_on_rc"; then
+            cd "$(dirname "$rc_file")"
+            rc_filepath="$PWD"/"$(basename "$rc_file")"
+            WORKING_DIR="$PWD"
+        fi
+
+        if [ ! -e "$rc_filepath" ]; then
             stderr "$PROG: no such run-command file: $rc_file"
             return 1
         fi
 
-        read_run_command_file "$rc_file" | while read line; do
+        read_run_command_file "$rc_filepath" | while read line; do
             eval "set -- $line"
             if [ $# -gt 0 ]; then
                 stderr "--- $(blue "$rc_file"): $line"
@@ -1313,6 +1333,9 @@ parse_arguments() {
                 *)
                     eval "set -- $(quote_arguments "$value" "$@")"
                     case "$key" in
+                        --cd-on-rc)
+                            CD_ON_RC=true
+                            ;;
                         -f | --force)
                             FORCE=true
                             ;;
@@ -1341,8 +1364,8 @@ parse_arguments() {
     done
 
     if using_rc; then
-        if [ "$(pack_arguments)" != "$RC" ]; then
-            help "do not pass arguments when using run-command (rc) files: $RC"
+        if [ "$(pack_arguments)" != "$CD_ON_RC$RC" ]; then
+            help "only --cd-on-rc accepted in calling run-command files: $RC"
         fi
 
         # Short-circuit. Additional arguments are unused.
