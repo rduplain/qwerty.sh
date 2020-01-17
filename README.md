@@ -146,7 +146,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --output=OUTPUT_DIRECTORY https://github.com/rduplain/qwerty.sh.git
 ```
 
-Download a specific revision of a file:
+Download a specific revision of a file (`-o -` writes to stdout):
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
