@@ -230,10 +230,11 @@ Provide multiple `--rc` flags for multiple run-command files. Add the
 `--cd-on-rc` flag to have qwerty.sh change directories to that of the
 run-command file when processing its commands.
 
-Shell globbing to specify multiple rc files is not supported, as the shell will
-expand filepaths before passing them to qwerty.sh. If globbing is needed,
-e.g. to specify rc files in a directory, quote the argument with single (') or
-double (") quotes to delay expansion:
+Specifying multiple rc files in a pattern/glob requires quoting. Otherwise, the
+shell will expand filepaths before passing them to qwerty.sh, which will fail
+because `--rc` takes a single argument. For example, to specify rc files in a
+directory, quote the argument with single (') or double (") quotes to delay
+expansion (and use `.*` not `*` if the target rc files are hidden dotfiles):
 
 ```sh
 --rc='.qwertyrc.d/*'
