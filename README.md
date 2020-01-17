@@ -1,6 +1,6 @@
 ## qwerty.sh: download, verify, and unpack files in a single command.
 
-[qwerty.sh](https://qwerty.sh) is a script as a service, to download, verify,
+[qwerty.sh](https://qwerty.sh) is a script as a service to download, verify,
 and unpack files in a single command.
 
 ```sh
@@ -67,7 +67,7 @@ Use qwerty.sh when bootstrapping builds and development environments, for:
 Arguments start after `sh -s -`. The `--help` flag shows full usage.
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - --help
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh      | sh -s - --help
 curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/v0.4 | sh -s - --help
 ```
 
@@ -94,8 +94,7 @@ error message in the event that a dependency is missing.
 Download a shell script, verify it, execute it (without keeping it):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
-  sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   http://hello.qwerty.sh | sh
 ```
@@ -103,8 +102,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
 Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
-  sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   --output=hello --chmod=a+x \
   http://hello.qwerty.sh && ./hello
@@ -113,11 +111,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
 Download an archive, verify it, unpack it (without keeping the archive itself):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
-  sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --sha256=70c98b2d0640b2b73c9d8adb4df63bcb62bad34b788fe46d1634b6cf87dc99a4 \
-  http://download.redis.io/releases/redis-5.0.0.tar.gz |\
-  tar -xvzf -
+  http://download.redis.io/releases/redis-5.0.0.tar.gz | \
+    tar -xvzf -
 ```
 
 
