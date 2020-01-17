@@ -45,6 +45,7 @@ curl -sSL qwerty.sh/8932ac8
 * Published versions shall guarantee that they have no changes over time.
 * All HTTP responses shall redirect to the HTTPS location of the same path.
 * HTTPS shall be terminated by a proxying httpd.
+* HTTPS shall support TLSv1.2.
 * All HTTP and HTTPS responses shall have a shell body:
   1. 200 OK -- Only when serving the qwerty.sh file itself.
   1. 301 MOVED PERMANENTLY
