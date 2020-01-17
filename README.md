@@ -217,7 +217,7 @@ An example `.qwertyrc`:
 Call qwerty.sh:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/6cf91ec | sh -s - --rc .qwertyrc
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/master | sh -s - --rc .qwertyrc
 ```
 
 This will result in two local files (`hello-from-checksum`, `hello-from-git`)
