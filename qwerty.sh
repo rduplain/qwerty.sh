@@ -83,11 +83,12 @@ main() {
     else
         given git
         create_temp_dir
-        validate_filepaths_before_clone
-        clone
-        validate_filepaths_after_clone
-        prepare_clone_output
-        write_clone_output
+        if validate_filepaths_before_clone; then
+            clone
+            validate_filepaths_after_clone
+            prepare_clone_output
+            write_clone_output
+        fi
     fi
     remove_temp_dir
     clear_traps
