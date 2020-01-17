@@ -44,9 +44,9 @@ Contents:
 ### Manage the Unmanaged
 
 It is a solved (or solvable) problem to download, verify, and unpack files as a
-programmer with most operating systems and programming languages. Everything
-else is undefined. Use qwerty.sh to download, verify, and unpack: unversioned
-files, specific versions of development tools, and project data.
+programmer working with the tools provided with a programming language.
+Everything else is undefined. Use qwerty.sh to download, verify, and unpack:
+unversioned files, specific versions of development tools, and project data.
 
 Know that you have a bad download at **download time** and not _run time_,
 especially to save from troubleshooting hidden errors or running untrusted
