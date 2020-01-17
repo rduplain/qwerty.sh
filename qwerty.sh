@@ -668,7 +668,7 @@ run_commands() {
         cd_on_rc=true
     fi
 
-    for rc_file in "$@"; do
+    for rc_file in $@; do
         cd "$QWERTY_SH_PWD"
 
         rc_filepath="$PWD"/"$rc_file"
@@ -1296,13 +1296,13 @@ parse_arguments() {
                     # supported, as the shell will expand filepaths before
                     # passing them to qwerty.sh. If globbing is needed, e.g. to
                     # specify rc files in a directory, quote the argument with
-                    # single-quotes to delay expansion:
+                    # single (') or double (") quotes to delay expansion:
                     #
                     #     --rc='.qwertyrc.d/*'
                     if exists "$RC"; then
-                        RC="$RC '$value'"
+                        RC="$RC $(quote "$value")"
                     else
-                        RC="'$value'"
+                        RC="$(quote "$value")"
                     fi
                     ;;
                 --ref)
