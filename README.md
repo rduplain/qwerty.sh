@@ -19,7 +19,7 @@ curl -sSL qwerty.sh | sh -s - \
 Hardened usage:
 
 ```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/ | sh -s -"
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
 $QWERTY_SH [OPTION...] URL [...]
 ```
 
@@ -67,8 +67,8 @@ Use qwerty.sh when bootstrapping builds and development environments, for:
 Arguments start after `sh -s -`. The `--help` flag shows full usage.
 
 ```sh
-curl -sSL qwerty.sh | sh -s - --help
-curl -sSL qwerty.sh/v0.4 | sh -s - --help
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - --help
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/v0.4 | sh -s - --help
 ```
 
 See full examples below.
@@ -94,7 +94,7 @@ error message in the event that a dependency is missing.
 Download a shell script, verify it, execute it (without keeping it):
 
 ```sh
-curl -sSL qwerty.sh |\
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
   sh -s - \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   http://hello.qwerty.sh | sh
@@ -103,7 +103,7 @@ curl -sSL qwerty.sh |\
 Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
-curl -sSL qwerty.sh |\
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
   sh -s - \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   --output=hello --chmod=a+x \
@@ -113,7 +113,7 @@ curl -sSL qwerty.sh |\
 Download an archive, verify it, unpack it (without keeping the archive itself):
 
 ```sh
-curl -sSL qwerty.sh |\
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh |\
   sh -s - \
   --sha256=70c98b2d0640b2b73c9d8adb4df63bcb62bad34b788fe46d1634b6cf87dc99a4 \
   http://download.redis.io/releases/redis-5.0.0.tar.gz |\
@@ -126,14 +126,14 @@ curl -sSL qwerty.sh |\
 Download a shell script, verify it, execute it (without keeping it):
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
 ```
 
 Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
   web/hello/hello.sh:hello && ./hello
@@ -142,16 +142,17 @@ curl -sSL qwerty.sh | sh -s - \
 Download an entire repository (without retaining .git metadata):
 
 ```sh
-curl -sSL qwerty.sh | sh -s - https://github.com/rduplain/qwerty.sh.git
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+  https://github.com/rduplain/qwerty.sh.git
 
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --output=OUTPUT_DIRECTORY https://github.com/rduplain/qwerty.sh.git
 ```
 
 Download a specific revision of a file:
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   -b v0.4 \
   -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
 ```
@@ -160,7 +161,7 @@ Download a specific revision of a file which is not tagged or is not at the
 HEAD of a branch (and note that use of `--ref` is more download intensive):
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --ref dea68e7 \
   -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
 ```
@@ -168,7 +169,7 @@ curl -sSL qwerty.sh | sh -s - \
 Download multiple files, verify them, keep them, make them executable:
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
   qwerty.sh web/hello/hello.sh:hello.sh
@@ -178,7 +179,7 @@ Download multiple files, verify them, write one file to stdout while making the
 others executable:
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
   LICENSE:- web/hello/hello.sh:hello.sh
@@ -187,7 +188,7 @@ curl -sSL qwerty.sh | sh -s - \
 Download multiple files, verify them, and write them to stdout:
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
   -o - \
   https://github.com/rduplain/qwerty.sh.git \
   README.md web/README.md | less
@@ -218,7 +219,7 @@ An example `.qwertyrc`:
 Call qwerty.sh:
 
 ```sh
-curl -sSL qwerty.sh/6cf91ec | sh -s - --rc .qwertyrc
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/6cf91ec | sh -s - --rc .qwertyrc
 ```
 
 This will result in two local files (`hello-from-checksum`, `hello-from-git`)
@@ -249,7 +250,7 @@ This HTTPS encryption initiates a web of trust:
 Harden curl usage:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/ | sh -s -
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -
 ```
 
 qwerty.sh is available as specific versions to further guarantee repeatability.
@@ -303,7 +304,7 @@ program is just a download of a new version:
 
 ```sh
 mkdir -p path/to/
-curl -sSL qwerty.sh > path/to/qwerty.sh
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh > path/to/qwerty.sh
 chmod a+x path/to/qwerty.sh
 ```
 
@@ -335,13 +336,13 @@ To run qwerty.sh locally, download and run it:
   * See `qwerty.sh --help` for help.
 
 It's good practice to have scripts call `$QWERTY_SH` instead of a hard-coded
-`curl -sSL qwerty.sh` invocation, as to allow dynamic reconfiguration to
-substitute a locally downloaded `qwerty.sh` program.
+`curl` invocation, as to allow dynamic reconfiguration to substitute a locally
+downloaded `qwerty.sh` program.
 
 Start with `QWERTY_SH` value:
 
 ```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/ | sh -s -"
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
 ```
 
 
