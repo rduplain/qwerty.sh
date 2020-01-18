@@ -212,6 +212,7 @@ An example `.qwertyrc`:
 
 # With git, download shell script, verify it, keep it, make it executable.
   --chmod=a+x \
+  --force --when-missing \
   https://github.com/rduplain/qwerty.sh.git \
   web/hello/hello.sh:hello-from-git
 ```

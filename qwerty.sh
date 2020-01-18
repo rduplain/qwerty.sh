@@ -42,6 +42,9 @@ usage() {
     stderr "                             untagged and not HEAD of a branch;"
     stderr "                             --ref is more download-intensive."
     stderr "  -f, --force                Force overwriting files."
+    stderr "  --when-missing             When used with --force, only clone"
+    stderr "                             repository when one or more files"
+    stderr "                             are missing on the local system."
     stderr
     stderr "using a run-command (rc) file:"
     stderr
@@ -130,6 +133,7 @@ reset() {
     RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
     URL=                 # URL of target download.
+    WHEN_MISSING=        # With FORCE, only clone when missing local files.
 
     # Checksum values, parsed from command line:
     MD5=
@@ -158,7 +162,8 @@ pack_arguments() {
     printf '%s' \
            "$ARGUMENTS" \
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
-           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL"
+           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL" \
+           "$WHEN_MISSING"
 }
 
 
@@ -929,10 +934,6 @@ validate_local_filepath() {
         return 2
     fi
 
-    if exists "$FORCE"; then
-        return 0
-    fi
-
     local_file="$1"
     shift
 
@@ -951,8 +952,9 @@ validate_filepaths_before_clone() {
 
     cd "$WORKING_DIR"
 
-    # Determine whether a clone is needed to download any files.
-    do_clone=
+    # Track whether existing/missing files to decide whether clone is needed.
+    some_exist=
+    some_missing=
 
     if ! exists "$@"; then
         if is_stdout "$OUTPUT"; then
@@ -960,11 +962,15 @@ validate_filepaths_before_clone() {
             return 2
         elif exists "$OUTPUT"; then
             if validate_local_filepath "$OUTPUT"; then
-                do_clone=true
+                some_missing=true
+            else
+                some_exist=true
             fi
         else
             if validate_local_filepath "$(humanish "$URL")"; then
-                do_clone=true
+                some_missing=true
+            else
+                some_exist=true
             fi
         fi
     fi
@@ -977,11 +983,23 @@ validate_filepaths_before_clone() {
         validate_repo_filepath "$repo_file"
 
         if validate_local_filepath "$local_file"; then
-            do_clone=true
+            some_missing=true
+        else
+            some_exist=true
         fi
     done
 
-    exists "$do_clone"
+    if ! exists "$some_exist"; then
+        return 0
+    elif exists "$FORCE"; then
+        if ! exists "$WHEN_MISSING"; then
+            return 0
+        elif exists "$some_missing"; then
+            return 0
+        fi
+    fi
+
+    return 1
 }
 
 clone() {
@@ -1340,6 +1358,9 @@ parse_arguments() {
                             version
                             exit
                             ;;
+                        --when-missing)
+                            WHEN_MISSING=true
+                            ;;
                         *)
                             help "unrecognized option '$key'"
                             ;;
@@ -1377,6 +1398,10 @@ parse_arguments() {
             help "provide options before positional arguments: $argument"
         fi
     done
+
+    if exists "$WHEN_MISSING" && ! exists "$FORCE"; then
+        help "--when-missing only applies when -f, --force is given"
+    fi
 
     if ! exists "$URL"; then
         help "provide a URL for download."
