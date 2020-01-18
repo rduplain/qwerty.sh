@@ -997,6 +997,8 @@ validate_filepaths_before_clone() {
         elif exists "$some_missing"; then
             return 0
         fi
+    else
+        exit 1
     fi
 
     return 1
