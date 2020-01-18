@@ -48,7 +48,7 @@ usage() {
     stderr
     stderr "using a run-command (rc) file:"
     stderr
-    stderr "  -r, --rc=FILE              File containing qwerty.sh arguments."
+    stderr "  --rc=FILE                  File containing qwerty.sh arguments."
     stderr "                             Each line in the file is treated as"
     stderr "                             arguments to a qwerty.sh call;"
     stderr "                             multiple rc files supported."
@@ -1309,7 +1309,7 @@ parse_arguments() {
                     exists "$OUTPUT" && help "duplicate output: $value"
                     OUTPUT="$value"
                     ;;
-                -r | --rc)
+                --rc)
                     if exists "$RC"; then
                         RC="$RC $(quote "$value")"
                     else
