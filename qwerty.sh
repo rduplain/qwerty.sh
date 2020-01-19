@@ -40,11 +40,14 @@ usage() {
     stderr "  -b, --ref=REF, --tag=TAG   Clone repository at this reference."
     stderr "                             Option --ref is useful when a ref is"
     stderr "                             untagged and not HEAD of a branch;"
-    stderr "                             --ref is more download-intensive."
+    stderr "                             --ref clones the full repo history"
+    stderr "                             and is more download-intensive."
     stderr "  -f, --force                Force overwriting files."
     stderr "  --when-missing             When used with --force, only clone"
     stderr "                             repository when one or more files"
     stderr "                             are missing on the local system."
+    stderr "  -k, --keep                 Keep the .git directory after clone."
+    stderr "                             Note: -b, --tag have shallow clones."
     stderr
     stderr "using a run-command (rc) file:"
     stderr
@@ -143,6 +146,7 @@ reset() {
     CHMOD=               # Mode invocation for chmod of downloaded file.
     CLONE_REVISION=      # Branch, reference, or tag to clone.
     FORCE=               # Force overwriting files (default in checksum mode).
+    KEEP=                # Keep the .git directory after clone.
     OUTPUT=              # Destination of downloaded file(s) once verified.
     RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
@@ -177,7 +181,7 @@ pack_arguments() {
     printf %s \
            "$URL$ARGUMENTS" \
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
-           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ" \
+           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$KEEP$OUTPUT$RC$SKIP_REJ" \
            "$WHEN_MISSING"
 }
 
@@ -1148,7 +1152,9 @@ clone() {
     # Allow git to generate a humanish directory as default output.
     CLONE_FILEPATH="$PWD/$(ls)"
 
-    rm -fr "$CLONE_FILEPATH/.git"
+    if ! exists "$KEEP"; then
+        rm -fr "$CLONE_FILEPATH/.git"
+    fi
 }
 
 validate_filepaths_after_clone() {
@@ -1469,6 +1475,9 @@ parse_arguments() {
                         -h | --help)
                             help
                             ;;
+                        -k | --keep)
+                            KEEP=true
+                            ;;
                         --skip-rej)
                             SKIP_REJ=true
                             ;;
@@ -1513,6 +1522,10 @@ parse_arguments() {
 
         if exists "$CLONE_REVISION"; then
             help "invalid repository option in checksum mode: $CLONE_REVISION"
+        fi
+
+        if exists "$KEEP"; then
+            help "-k, --keep only applies when using a repository: $line"
         fi
     fi
 
