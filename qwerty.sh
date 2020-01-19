@@ -173,6 +173,8 @@ pack_arguments() {
     #
     # This is useful for command-line validation.
     # Keep in sync with list (above) of variables parsed from command line.
+    #
+    # Note that conditional execution options are omitted; they always apply.
 
     printf %s \
            "$ARGUMENTS" \
