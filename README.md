@@ -301,6 +301,14 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -
 
 qwerty.sh is available as specific versions to further guarantee repeatability.
 
+Skeptical users can fork the qwerty.sh project on GitHub and set a shell
+environment variable for the conventional `QWERTY_SH` to the fork's resulting
+`https://raw.githubusercontent.com/.../qwerty.sh` URL:
+
+```sh
+QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf HTTPS_URL_HERE | sh -s -"
+```
+
 See below for details on downloading qwerty.sh for local usage.
 
 [BSD 2-Clause License](LICENSE)
