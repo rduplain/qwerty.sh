@@ -319,7 +319,8 @@ environment variable for the conventional `QWERTY_SH` to the fork's resulting
 QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf HTTPS_URL_HERE | sh -s -"
 ```
 
-See below for details on downloading qwerty.sh for local usage.
+See [below](#alternative-hosting-and-local-usage) for details on downloading
+qwerty.sh for local usage.
 
 [BSD 2-Clause License](LICENSE)
 
