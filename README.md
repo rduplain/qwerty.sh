@@ -247,7 +247,7 @@ expansion (and use `.*` not `*` if the target rc files are hidden dotfiles):
 Provide processor architecture and operating system details to qwerty.sh to
 conditionally execute a command:
 
-```sh
+```
   --arch=ARCHITECTURE        Run only if `uname -m` matches.
   --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.
 ```
