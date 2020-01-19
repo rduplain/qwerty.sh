@@ -1281,6 +1281,8 @@ parse_arguments() {
     # All command-line flags must be listed separately,
     # i.e. combined short options in the form of `-abc` are not supported.
 
+    line="$@"
+
     # Loop through arguments; below is a break on first positional argument.
     while [ "$1" != "" ]; do
         if case "$1" in "-"*) true;; *) false;; esac; then
@@ -1375,7 +1377,7 @@ parse_arguments() {
 
     if using_rc; then
         if [ "$(pack_arguments)" != "$CD_ON_RC$RC" ]; then
-            help "only --cd-on-rc accepted in calling run-command files: $RC"
+            help "only --cd-on-rc accepted in calling run-command files: $line"
         fi
 
         # Short-circuit. Additional arguments are unused.
@@ -1398,11 +1400,11 @@ parse_arguments() {
     done
 
     if exists "$CD_ON_RC" && ! exists "$RC"; then
-        help "--cd-on-rc only applies when --rc is given"
+        help "--cd-on-rc only applies when --rc is given: $line"
     fi
 
     if exists "$WHEN_MISSING" && ! exists "$FORCE"; then
-        help "--when-missing only applies when -f, --force is given"
+        help "--when-missing only applies when -f, --force is given: $line"
     fi
 
     if ! exists "$URL"; then
