@@ -41,6 +41,11 @@ Contents:
 * [Alternative Hosting and Local Usage](#alternative-hosting-and-local-usage)
 * [Meta](#meta)
 
+_This README is for the master branch of qwerty.sh. To view the README of the
+latest release served at [qwerty.sh](https://qwerty.sh), see [v0.5.2][v0.5.2]._
+
+[v0.5.2]: https://github.com/rduplain/qwerty.sh/tree/v0.5.2#readme
+
 
 ### Manage the Unmanaged
 
@@ -226,7 +231,7 @@ An example `.qwertyrc`:
 Call qwerty.sh:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/master | sh -s - --rc .qwertyrc
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - --rc .qwertyrc
 ```
 
 This will result in two local files (`hello-from-checksum`, `hello-from-git`)
