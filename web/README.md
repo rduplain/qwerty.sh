@@ -26,8 +26,8 @@ curl -sSL qwerty.sh
 Support downloading a specific version or git reference:
 
 ```sh
-curl -sSL qwerty.sh/v0.4
-curl -sSL qwerty.sh/8932ac8
+curl -sSL qwerty.sh/v0.5.2
+curl -sSL qwerty.sh/68bd6db
 ```
 
 
@@ -72,8 +72,8 @@ make run
 Test:
 
 ```sh
-curl -sSL localhost:8001 | sh -s - --help
-curl -sSL localhost:8001/v0.4 | sh -s - --version
+curl -sSL localhost:8001        | sh -s - --help
+curl -sSL localhost:8001/v0.5.2 | sh -s - --version
 ```
 
 

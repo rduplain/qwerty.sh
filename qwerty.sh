@@ -5,13 +5,13 @@
 # README: https://github.com/rduplain/qwerty.sh#readme
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
 
-VERSION=v0.5.3-dev
+VERSION=v0.6
 
 usage() {
     exists "$@" && stderr "$PROG: $(red "$@")" && return 2
 
     stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL [...]"
-    stderr "       curl -sSL qwerty.sh/v0.5   | sh -s - [OPTION...] URL [...]"
+    stderr "       curl -sSL qwerty.sh/v0.5.2 | sh -s - [OPTION...] URL [...]"
     stderr
     stderr "using a checksum:"
     stderr

@@ -41,11 +41,6 @@ Contents:
 * [Alternative Hosting and Local Usage](#alternative-hosting-and-local-usage)
 * [Meta](#meta)
 
-_This README is for the master branch of qwerty.sh. To view the README of the
-latest release served at [qwerty.sh](https://qwerty.sh), see [v0.5.2][v0.5.2]._
-
-[v0.5.2]: https://github.com/rduplain/qwerty.sh/tree/v0.5.2#readme
-
 
 ### Manage the Unmanaged
 
@@ -78,8 +73,8 @@ Use qwerty.sh when bootstrapping builds and development environments, for:
 Arguments start after `sh -s -`. The `--help` flag shows full usage.
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh      | sh -s - --help
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/v0.4 | sh -s - --help
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh        | sh -s - --help
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/v0.5.2 | sh -s - --help
 ```
 
 See full examples below.
@@ -162,7 +157,7 @@ Download a specific revision of a file (`-o -` writes to stdout):
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
-  -b v0.4 \
+  -b v0.5.2 \
   -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
 ```
 
@@ -382,20 +377,20 @@ Calling qwerty.sh via `curl` also supports `$QWERTY_SH_PROG`.
 
 Alternative hosting of qwerty.sh is provided by GitHub [through its "raw" file
 hosting][raw]; use a version tag by changing [`master`][raw] in the URL to a
-version tag, e.g. [`v0.5`][raw v].
+version tag, e.g. [`v0.5.2`][raw v].
 
 [raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
-[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.5/qwerty.sh
+[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.5.2/qwerty.sh
 
 To run qwerty.sh locally, download and run it:
 
 * Download qwerty.sh from <https://qwerty.sh>, which is always the latest
   release of qwerty.sh. Optionally include a version,
-  e.g. <https://qwerty.sh/v0.5>.
+  e.g. <https://qwerty.sh/v0.5.2>.
 * ... or from GitHub [through its "raw" file hosting][raw]; use a version tag
-  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.5`][raw
+  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.5.2`][raw
   v].
-  * Recommended: use a version tag, e.g. [`v0.5`][raw v]. Though
+  * Recommended: use a version tag, e.g. [`v0.5.2`][raw v]. Though
     [`master`][raw] is stable, it consistently refers to a pre-release; prefer
     a release version when downloading qwerty.sh.
 * Ensure that the resulting file is executable: `chmod a+x /path/to/qwerty.sh`.
