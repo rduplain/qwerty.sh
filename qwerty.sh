@@ -159,7 +159,7 @@ pack_arguments() {
     # This is useful for command-line validation.
     # Keep in sync with list (above) of variables parsed from command line.
 
-    printf '%s' \
+    printf %s \
            "$ARGUMENTS" \
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
            "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL" \
