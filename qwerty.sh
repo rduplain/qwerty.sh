@@ -72,6 +72,7 @@ usage() {
     stderr
     stderr '  --arch=ARCHITECTURE        Run only if `uname -m` matches.'
     stderr '  --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.'
+    stderr
     stderr '  --all-sub-arch             Support partial --arch matches.'
     stderr
     stderr '`sh -s -` sends all arguments which follow to the stdin script.'
