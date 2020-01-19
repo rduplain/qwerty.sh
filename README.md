@@ -31,7 +31,7 @@ Contents:
 * [Dependencies](#dependencies)
 * [Using a Checksum](#using-a-checksum)
 * [Using git](#using-git)
-* [Using a run-command (rc) file](#using-a-run-command-rc-file)
+* [Using a Run-Command (rc) File](#using-a-run-command-rc-file)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
@@ -193,7 +193,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 ```
 
 
-### Using a run-command (rc) file
+### Using a Run-Command (rc) File
 
 Run qwerty.sh in batch-mode by providing a run-command (rc) file. This approach
 is useful in order to have a project download, verify, and unpack multiple
