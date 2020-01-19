@@ -169,11 +169,9 @@ reset() {
 }
 
 pack_arguments() {
-    # Print packed data of values parsed from command line.
+    # Print packed data of values parsed from command line, for validation.
     #
-    # This is useful for command-line validation.
     # Keep in sync with list (above) of variables parsed from command line.
-    #
     # Note that conditional execution options are omitted; they always apply.
 
     printf %s \
