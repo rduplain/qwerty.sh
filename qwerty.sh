@@ -69,6 +69,7 @@ usage() {
     stderr
     stderr '  --arch=ARCHITECTURE        Run only if `uname -m` matches.'
     stderr '  --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.'
+    stderr '  --all-sub-arch             Support partial --arch matches.'
     stderr
     stderr '`sh -s -` sends all arguments which follow to the stdin script.'
     return 2
@@ -135,6 +136,7 @@ reset() {
     CLONE_STDOUT=        # Temporary path of file to send to stdout.
 
     # Variables parsed from command line:
+    ALL_SUB_ARCH=        # Support partial --arch matches.
     ARCH=                # Run only if `uname -m` matches one of these.
     ARGUMENTS=           # Additional positional arguments.
     CD_ON_RC=            # Change directories to rc file when processing it.
@@ -667,6 +669,10 @@ platform_matches() {
     # Begin composing status line to stderr with each condition tested.
     printf %s "$PROG: conditional execution: " >&2
 
+    if exists "$ALL_SUB_ARCH"; then
+        printf %s "--all-sub-arch " >&2
+    fi
+
     eval "set -- $ARCH"
 
     arch_match=
@@ -675,7 +681,10 @@ platform_matches() {
         match=$(lower "$arch")
         found=$(lower "$(uname -m)")
 
-        if [ "$match" = "$found" ]; then
+        if exists "$ALL_SUB_ARCH" && startswith "$match" "$found"; then
+            arch_match="$arch"
+            printf %s "$(green --arch=$arch) " >&2
+        elif [ "$match" = "$found" ]; then
             arch_match="$arch"
             printf %s "$(green --arch=$arch) " >&2
         else
@@ -1442,6 +1451,9 @@ parse_arguments() {
                 *)
                     eval "set -- $(quote_arguments "$value" "$@")"
                     case "$key" in
+                        --all-sub-arch)
+                            ALL_SUB_ARCH=true
+                            ;;
                         --cd-on-rc)
                             CD_ON_RC=true
                             ;;
@@ -1498,6 +1510,10 @@ parse_arguments() {
             help "provide options before positional arguments: $argument"
         fi
     done
+
+    if exists "$ALL_SUB_ARCH" && ! exists "$ARCH"; then
+        help "--all-sub-arch only applies when --arch is given: $line"
+    fi
 
     if exists "$CD_ON_RC" && ! exists "$RC"; then
         help "--cd-on-rc only applies when --rc is given: $line"

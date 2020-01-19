@@ -259,11 +259,14 @@ qwerty.sh will only proceed on Linux machines (of any architecture).
 Values are case-insensitive and will match specifically what is reported by
 `uname`: `-m` and `-s` for architecture and kernel/system, respectively. Pass
 multiple `--sys` and `--arch` flags as needed to support target platforms. Only
-one match of each category is needed to continue execution. For example,
-support multiple ARM architectures by passing `--arch=arm___` for each of the
-ARM names (`armv6-m`, `armv7l`, ...) reported by `uname -m` on platforms of
-interest. In this sense, qwerty.sh defers platform-matching support to its
-caller.
+one match of each category is needed to continue execution.
+
+An `--all-sub-arch` flag is accepted in order to support architectures which
+have multiple sub-architectures. Namely, ARM systems report a wide variety of
+names in `uname -m` (`armv6`, `armv6-m`, ..., `armv7l`, ...). On `--arch=arm
+--all-sub-arch`, qwerty.sh will proceed on all platforms that report an
+architecture starting with `arm`. More broadly, `--all-sub-arch` matches all
+`uname -m` output that starts with the given `--arch` value.
 
 This is especially useful when downloading platform-dependent binaries. A
 run-command (rc) file can specify qwerty.sh invocations across multiple
