@@ -65,6 +65,11 @@ usage() {
     stderr "  -h, --help                 Display this help message."
     stderr "  -V, --version              Display '$PROG $VERSION' to stdout."
     stderr
+    stderr "conditional execution:"
+    stderr
+    stderr '  --arch=ARCHITECTURE        Run only if `uname -m` matches.'
+    stderr '  --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.'
+    stderr
     stderr '`sh -s -` sends all arguments which follow to the stdin script.'
     return 2
 }
@@ -75,6 +80,12 @@ main() {
     determine_program_name "$@"
 
     parse_arguments "$@"
+
+    if ! platform_matches; then
+        clear_traps
+        return
+    fi
+
     if using_rc; then
         run_commands
     elif using_checksum; then
@@ -124,6 +135,7 @@ reset() {
     CLONE_STDOUT=        # Temporary path of file to send to stdout.
 
     # Variables parsed from command line:
+    ARCH=                # Run only if `uname -m` matches one of these.
     ARGUMENTS=           # Additional positional arguments.
     CD_ON_RC=            # Change directories to rc file when processing it.
     CHMOD=               # Mode invocation for chmod of downloaded file.
@@ -132,6 +144,7 @@ reset() {
     OUTPUT=              # Destination of downloaded file(s) once verified.
     RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
+    SYS=                 # Run only if `uname -s` matches one of these.
     URL=                 # URL of target download.
     WHEN_MISSING=        # With FORCE, only clone when missing local files.
 
@@ -323,6 +336,12 @@ exists() {
     #     exists "$VAR"
 
     [ _"$*" != _ ]
+}
+
+lower() {
+    # Print argument to stdout, converting uppercase letters to lowercase.
+
+    echo "$@" | tr '[:upper:]' '[:lower:]'
 }
 
 quote_arguments() {
@@ -632,6 +651,81 @@ strip_rel() {
 
 
 ### Tasks and utilities which use global variables ###
+
+## Tasks in determining whether system matches conditions for execution ##
+
+platform_matches() {
+    # Check whether local system matches given execution conditions.
+
+    if ! exists "$ARCH$SYS"; then
+        # No conditions given.
+        return
+    fi
+
+    platform_matches_fail=
+
+    # Begin composing status line to stderr with each condition tested.
+    printf %s "$PROG: conditional execution: " >&2
+
+    eval "set -- $ARCH"
+
+    arch_match=
+
+    for arch in $@; do
+        match=$(lower "$arch")
+        found=$(lower "$(uname -m)")
+
+        if [ "$match" = "$found" ]; then
+            arch_match="$arch"
+            printf %s "$(green --arch=$arch) " >&2
+        else
+            printf %s "--arch=$arch " >&2
+        fi
+    done
+
+    eval "set -- $SYS"
+
+    sys_match=
+
+    for sys in $@; do
+        match=$(lower "$sys")
+        found=$(lower "$(uname -s)")
+
+        if [ "$match" = "$found" ]; then
+            sys_match="$sys"
+            printf %s "$(green --sys=$sys) " >&2
+        else
+            printf %s "--sys=$sys " >&2
+        fi
+    done
+
+    stderr
+
+    if exists "$ARCH"; then
+        if exists "$arch_match"; then
+            stderr "Architecture matches $(green $arch_match)."
+        else
+            stderr "Architecture does not match."
+            platform_matches_fail=true
+        fi
+    fi
+
+    if exists "$SYS"; then
+        if exists "$sys_match"; then
+            stderr "System matches $(green $sys_match)."
+        else
+            stderr "System does not match."
+            platform_matches_fail=true
+        fi
+    fi
+
+    if exists "$platform_matches_fail"; then
+        stderr "Platform does not match. Skipping ..."
+        return 1
+    else
+        stderr "$(green Platform matches. Proceeding ...)"
+    fi
+}
 
 ## Tasks when using run-command (rc) files ##
 
@@ -1295,6 +1389,9 @@ parse_arguments() {
                 exists "$value" && shift
             fi
             case "$key" in
+                --arch)
+                    ARCH="$ARCH $(quote "$value")"
+                    ;;
                 -b | --tag)
                     exists "$CLONE_REVISION" && help "duplicate ref: $value"
                     CLONE_REVISION="$value"
@@ -1338,6 +1435,9 @@ parse_arguments() {
                 --sha512)
                     exists "$SHA512" && help "duplicate sha512: $value"
                     SHA512="$value"
+                    ;;
+                --sys)
+                    SYS="$SYS $(quote "$value")"
                     ;;
                 *)
                     eval "set -- $(quote_arguments "$value" "$@")"

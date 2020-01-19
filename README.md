@@ -32,6 +32,7 @@ Contents:
 * [Using a Checksum](#using-a-checksum)
 * [Using git](#using-git)
 * [Using a Run-Command (rc) File](#using-a-run-command-rc-file)
+* [Conditional Execution](#conditional-execution)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
@@ -240,6 +241,35 @@ expansion (and use `.*` not `*` if the target rc files are hidden dotfiles):
 ```sh
 --rc='.qwertyrc.d/*'
 ```
+
+### Conditional Execution
+
+Provide processor architecture and operating system details to qwerty.sh to
+conditionally execute a command:
+
+```sh
+  --arch=ARCHITECTURE        Run only if `uname -m` matches.
+  --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.
+```
+
+For example, on flags `--arch=x86_64 --sys=Linux`, qwerty.sh will only proceed
+on 64-bit x86 Linux machines. On `--sys=Linux` alone (no `--arch` given),
+qwerty.sh will only proceed on Linux machines (of any architecture).
+
+Values are case-insensitive and will match specifically what is reported by
+`uname`: `-m` and `-s` for architecture and kernel/system, respectively. Pass
+multiple `--sys` and `--arch` flags as needed to support target platforms. Only
+one match of each category is needed to continue execution. For example,
+support multiple ARM architectures by passing `--arch=arm___` for each of the
+ARM names (`armv6-m`, `armv7l`, ...) reported by `uname -m` on platforms of
+interest. In this sense, qwerty.sh defers platform-matching support to its
+caller.
+
+This is especially useful when downloading platform-dependent binaries. A
+run-command (rc) file can specify qwerty.sh invocations across multiple
+platforms, and qwerty.sh will skip any commands for which the system conditions
+are not met. This approach allows a single qwerty.sh invocation to download
+platform-dependent files and binaries without additional logic.
 
 
 ### Trust
