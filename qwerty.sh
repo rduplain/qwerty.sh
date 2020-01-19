@@ -175,9 +175,9 @@ pack_arguments() {
     # Note that conditional execution options are omitted; they always apply.
 
     printf %s \
-           "$ARGUMENTS" \
+           "$URL$ARGUMENTS" \
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
-           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ$URL" \
+           "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$OUTPUT$RC$SKIP_REJ" \
            "$WHEN_MISSING"
 }
 
