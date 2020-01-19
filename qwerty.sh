@@ -1310,11 +1310,7 @@ parse_arguments() {
                     OUTPUT="$value"
                     ;;
                 --rc)
-                    if exists "$RC"; then
-                        RC="$RC $(quote "$value")"
-                    else
-                        RC="$(quote "$value")"
-                    fi
+                    RC="$RC $(quote "$value")"
                     ;;
                 --ref)
                     exists "$CLONE_REVISION" && help "duplicate ref: $value"
