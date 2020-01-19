@@ -647,7 +647,7 @@ read_run_command_file() {
     shift
 
     if [ ! -e "$file" ]; then
-        stderr "no such run-command file: $file"
+        stderr "$PROG: no such run-command file: $file"
         return 1
     fi
 
