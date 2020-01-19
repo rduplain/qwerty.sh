@@ -1509,7 +1509,9 @@ parse_arguments() {
     if using_checksum; then
         if exists "$@"; then
             help "too many arguments when using a checksum: $*"
-        elif exists "$CLONE_REVISION"; then
+        fi
+
+        if exists "$CLONE_REVISION"; then
             help "invalid repository option in checksum mode: $CLONE_REVISION"
         fi
     fi
