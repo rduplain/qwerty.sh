@@ -73,7 +73,7 @@ usage() {
     stderr '  --arch=ARCHITECTURE        Run only if `uname -m` matches.'
     stderr '  --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.'
     stderr
-    stderr '  --all-sub-arch             Support partial --arch matches.'
+    stderr "  --all-sub-arch             Support partial --arch matches."
     stderr
     stderr '`sh -s -` sends all arguments which follow to the stdin script.'
     return 2
@@ -229,23 +229,23 @@ checksum() {
             # Print a legible standalone section of checksum values to stderr.
             case "$hash_algorithm" in
                 "md5")
-                    pad='----'
+                    pad="----"
                     ;;
                 "sha1")
-                    pad='---'
+                    pad="---"
                     ;;
                 *)
-                    pad='-'
+                    pad="-"
                     ;;
             esac
-            stderr "--- $hash_algorithm $pad$(repleat '-' $dgst_value)"
+            stderr "--- $hash_algorithm $pad$(repleat "-" $dgst_value)"
             stderr "Expected:   $hash_value"
             if [ "$hash_value" = "$dgst_value" ]; then
                 stderr "$(green Downloaded): $dgst_value"
             else
                 stderr "$(red Downloaded): $dgst_value"
             fi
-            stderr "------------$(repleat '-' $dgst_value)"
+            stderr "------------$(repleat "-" $dgst_value)"
 
             if [ "$hash_value" != "$dgst_value" ]; then
                 stderr "Error: $hash_algorithm mismatch."
@@ -296,7 +296,7 @@ openssl_dgst() {
 
     # Parse checksum output and trim spaces.
     dgst_value=$(printf %s "$dgst_output" | awk -F= '{ print $2 }')
-    dgst_value=$(printf %s "$dgst_value" | tr -d '[:space:]')
+    dgst_value=$(printf %s "$dgst_value" | tr -d "[:space:]")
 
     if ! exists "$dgst_value"; then
         stderr "Unable to parse hash value from openssl dgst call."
@@ -348,7 +348,7 @@ exists() {
 lower() {
     # Print argument to stdout, converting uppercase letters to lowercase.
 
-    echo "$@" | tr '[:upper:]' '[:lower:]'
+    echo "$@" | tr "[:upper:]" "[:lower:]"
 }
 
 quote_arguments() {
@@ -461,7 +461,7 @@ repleat() {
     replacement="$1"
     shift
 
-    echo "$@" | tr '[:print:]' "$replacement"
+    echo "$@" | tr "[:print:]" "$replacement"
 }
 
 colorize() {
@@ -1215,7 +1215,7 @@ prepare_clone_output() {
             if [ "$OUTPUT" = "." ]; then
                 # Unpack clone files in place.
                 mv "$CLONE_FILEPATH"/* "$output"
-                find "$CLONE_FILEPATH" -mindepth 1 -exec mv '{}' "$output" \;
+                find "$CLONE_FILEPATH" -mindepth 1 -exec mv "{}" "$output" \;
             else
                 # Move cloned repository using its git-cloned humanish name.
                 mv "$CLONE_FILEPATH" "$output"
