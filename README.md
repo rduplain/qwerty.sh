@@ -260,6 +260,7 @@ conditionally execute a command:
 ```
   --arch=ARCHITECTURE        Run only if `uname -m` matches.
   --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.
+  --when=COMMAND             Run only if COMMAND is successful.
 ```
 
 For example, on flags `--arch=x86_64 --sys=Linux`, qwerty.sh will only proceed

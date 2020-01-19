@@ -72,6 +72,7 @@ usage() {
     stderr
     stderr '  --arch=ARCHITECTURE        Run only if `uname -m` matches.'
     stderr '  --sys=OPERATING_SYSTEM     Run only if `uname -s` matches.'
+    stderr "  --when=COMMAND             Run only if COMMAND is successful."
     stderr
     stderr "  --all-sub-arch             Support partial --arch matches."
     stderr
@@ -153,6 +154,7 @@ reset() {
     SKIP_REJ=            # Skip writing .rej file on failure.
     SYS=                 # Run only if `uname -s` matches one of these.
     URL=                 # URL of target download.
+    WHEN=                # Run only if one of these commands is successful.
     WHEN_MISSING=        # With FORCE, only clone when missing local files.
 
     # Checksum values, parsed from command line:
@@ -664,7 +666,7 @@ strip_rel() {
 platform_matches() {
     # Check whether local system matches given execution conditions.
 
-    if ! exists "$ARCH$SYS"; then
+    if ! exists "$ARCH$SYS$WHEN"; then
         # No conditions given.
         return
     fi
@@ -715,6 +717,19 @@ platform_matches() {
         fi
     done
 
+    eval "set -- $WHEN"
+
+    when_match=
+
+    for when in "$@"; do
+        if ! exists "$when_match" && eval "$when" > /dev/null 2>&1; then
+            when_match="$when"
+            printf %s "$(green --when=\'$when\') " >&2
+        else
+            printf %s "--when='$when' " >&2
+        fi
+    done
+
     stderr
 
     if exists "$ARCH"; then
@@ -735,6 +750,15 @@ platform_matches() {
             stderr "System matches $(green $sys_match)."
         else
             stderr "System does not match."
+            platform_matches_fail=true
+        fi
+    fi
+
+    if exists "$WHEN"; then
+        if exists "$when_match"; then
+            stderr "Matches 'when' condition: '$(green "$when_match")'."
+        else
+            stderr "Does not match a 'when' command."
             platform_matches_fail=true
         fi
     fi
@@ -1460,6 +1484,9 @@ parse_arguments() {
                     ;;
                 --sys)
                     SYS="$SYS $(quote "$value")"
+                    ;;
+                --when)
+                    WHEN="$WHEN $(quote "$value")"
                     ;;
                 *)
                     eval "set -- $(quote_arguments "$value" "$@")"
