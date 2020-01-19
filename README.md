@@ -49,6 +49,11 @@ working with the tools provided with a programming language. Everything else is
 undefined. Use qwerty.sh to download, verify, and unpack: unversioned files,
 specific versions of development tools, and project data.
 
+More broadly, download any file and make it part of a project without checking
+it into the repository. Add individual files from other git repos. Outside of
+git, determine the file's checksum and have qwerty.sh verify it. The qwerty.sh
+commands get checked into the project repo; the resulting files do not.
+
 Know that you have a bad download at **download time** and not _run time_,
 especially to save from troubleshooting hidden errors or running untrusted
 code.
