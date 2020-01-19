@@ -1397,6 +1397,10 @@ parse_arguments() {
         fi
     done
 
+    if exists "$CD_ON_RC" && ! exists "$RC"; then
+        help "--cd-on-rc only applies when --rc is given"
+    fi
+
     if exists "$WHEN_MISSING" && ! exists "$FORCE"; then
         help "--when-missing only applies when -f, --force is given"
     fi
