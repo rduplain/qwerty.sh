@@ -1493,6 +1493,10 @@ parse_arguments() {
         fi
     done
 
+    if exists "$ALL_SUB_ARCH" && ! exists "$ARCH"; then
+        help "--all-sub-arch only applies when --arch is given: $line"
+    fi
+
     if using_rc; then
         if [ "$(pack_arguments)" != "$CD_ON_RC$RC" ]; then
             help "only --cd-on-rc accepted in calling run-command files: $line"
@@ -1516,10 +1520,6 @@ parse_arguments() {
             help "provide options before positional arguments: $argument"
         fi
     done
-
-    if exists "$ALL_SUB_ARCH" && ! exists "$ARCH"; then
-        help "--all-sub-arch only applies when --arch is given: $line"
-    fi
 
     if exists "$CD_ON_RC" && ! exists "$RC"; then
         help "--cd-on-rc only applies when --rc is given: $line"
