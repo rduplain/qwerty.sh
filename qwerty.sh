@@ -219,16 +219,16 @@ checksum() {
                     ;;
             esac
             stderr "--- $hash_algorithm $pad$(repleat '-' $dgst_value)"
-            stderr "expected:   $hash_value"
+            stderr "Expected:   $hash_value"
             if [ "$hash_value" = "$dgst_value" ]; then
-                stderr "$(green downloaded): $dgst_value"
+                stderr "$(green Downloaded): $dgst_value"
             else
-                stderr "$(red downloaded): $dgst_value"
+                stderr "$(red Downloaded): $dgst_value"
             fi
             stderr "------------$(repleat '-' $dgst_value)"
 
             if [ "$hash_value" != "$dgst_value" ]; then
-                stderr "error: $hash_algorithm mismatch."
+                stderr "Error: $hash_algorithm mismatch."
                 return 1
             fi
 
