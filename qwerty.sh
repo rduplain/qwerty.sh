@@ -676,6 +676,7 @@ platform_matches() {
     eval "set -- $ARCH"
 
     arch_match=
+    arch_hint=
 
     for arch in $@; do
         match=$(lower "$arch")
@@ -683,6 +684,7 @@ platform_matches() {
 
         if exists "$ALL_SUB_ARCH" && startswith "$match" "$found"; then
             arch_match="$arch"
+            arch_hint="$(uname -m)"
             printf %s "$(green --arch=$arch) " >&2
         elif [ "$match" = "$found" ]; then
             arch_match="$arch"
@@ -712,7 +714,11 @@ platform_matches() {
 
     if exists "$ARCH"; then
         if exists "$arch_match"; then
-            stderr "Architecture matches $(green $arch_match)."
+            if exists "$arch_hint"; then
+                stderr "Architecture matches $arch_match: $(green $arch_hint)."
+            else
+                stderr "Architecture matches $(green $arch_match)."
+            fi
         else
             stderr "Architecture does not match."
             platform_matches_fail=true
