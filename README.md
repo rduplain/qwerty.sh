@@ -279,11 +279,12 @@ names in `uname -m` (`armv6`, `armv6-m`, ..., `armv7l`, ...). On `--arch=arm
 architecture starting with `arm`. More broadly, `--all-sub-arch` matches all
 `uname -m` output that starts with the given `--arch` value.
 
-This is especially useful when downloading platform-dependent binaries. A
-run-command (rc) file can specify qwerty.sh invocations across multiple
-platforms, and qwerty.sh will skip any commands for which the system conditions
-are not met. This approach allows a single qwerty.sh invocation to download
-platform-dependent files and binaries without additional logic.
+Conditional execution is especially useful when downloading platform-dependent
+binaries for projects that run on a variety of platforms. A run-command (rc)
+file can specify qwerty.sh invocations across multiple platforms, and qwerty.sh
+will skip any commands for which the system conditions are not met. This
+approach allows a single qwerty.sh invocation to download platform-dependent
+files and binaries without additional logic.
 
 
 ### Trust
