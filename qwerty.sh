@@ -13,6 +13,10 @@ usage() {
     stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL [...]"
     stderr "       curl -sSL qwerty.sh/v0.5.2 | sh -s - [OPTION...] URL [...]"
     stderr
+    stderr "harden usage with:"
+    stderr
+    stderr "  curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
+    stderr
     stderr "using a checksum:"
     stderr
     stderr "  URL                        A file to download."
@@ -882,7 +886,7 @@ download_url() {
     #
     # Example usage from command line:
     #
-    #     curl -sSL qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
+    #     curl ... qwerty.sh | QWERTY_CURL_FLAGS="-v" sh -s - ...
 
     given curl
     report="--- $(blue $PROG)\n"
@@ -1384,6 +1388,7 @@ determine_program_name() {
     # Three cases:
     #
     # 1. Default:             curl -sSL qwerty.sh | sh -s -
+    #                         (or a similar pipe into `sh`)
     # 2. Local:               qwerty.sh
     #                         path/to/qwerty.sh
     # 3. White-Label:         QWERTY_SH_PROG=another-program qwerty.sh
@@ -1408,9 +1413,11 @@ help() {
     fi
 
     usage "$@" 2>&1 | \
-        sed -e "/    curl .*$/d" \
-            -e "s/curl -sSL .* sh -s -/$QWERTY_SH_PROG/g" \
-            -e "/sh -s -/d" >&2
+        sed -e "/  curl .*$/d" \
+            -e "/harden usage.*$/d" \
+            -e "s/curl .* sh -s -/$QWERTY_SH_PROG/g" \
+            -e "/sh -s -/d" | \
+        cat -s - >&2
 
     return 2
 }
