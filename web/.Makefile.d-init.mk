@@ -5,8 +5,8 @@ ifeq ($(QWERTY_SH),)
 QWERTY_SH := $(abspath $(DIR)/../qwerty.sh)
 endif
 
-MAKEFILE_D_URL := https://github.com/rduplain/Makefile.d.git
-MAKEFILE_D_REV := v1.3.1
+MAKEFILE_D_URL ?= https://github.com/rduplain/Makefile.d.git
+MAKEFILE_D_REV ?= v1.4 # Use --ref instead of --tag below if untagged.
 
 .Makefile.d/%.mk: .Makefile.d/path.mk
 	@touch $@
