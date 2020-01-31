@@ -471,13 +471,13 @@ repleat() {
 }
 
 colorize() {
-    # Print line to stdout, with given color code, if stderr is a terminal.
+    # Print bold line to stdout with given color code if stdout is a terminal.
 
     color="$1"
     shift
 
     if stderr_isatty; then
-        printf "\033[1;${color}m%s\033[0m" "$*"
+        printf "\033[1;${color}m%s\033[0m\n" "$*"
     else
         echo "$*"
     fi
