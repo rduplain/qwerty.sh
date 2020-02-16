@@ -343,8 +343,14 @@ you downloaded what you expected is to know up front what you are expecting.
 
 ### Why "qwerty.sh"?
 
-Bootstrap a repeatable build on an internet-connected Unix-like system with
-just one dependency: a keyboard.
+Bootstrap a toolchain on an internet-connected Unix-like system with just one
+dependency: a keyboard.
+
+```sh
+alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | \
+  QWERTY_SH_PROG=qwerty.sh sh -s -"
+qwerty.sh [OPTION...] URL [...]
+```
 
 
 ### White Label
