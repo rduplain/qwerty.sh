@@ -336,9 +336,9 @@ sometimes leading to blind `sudo` password prompts (!), and archive files often
 download over plaintext internet connections without a checksum or signature.
 
 Until it is trivial to download, verify, and unpack files _from anywhere_,
-developers and builds will skip (or not even consider!) the verification
-step. Verification is about trust and repeatability; the only way to know that
-you downloaded what you expected is to know up front what you are expecting.
+developers and builds will skip the verification step, or not even consider it!
+Verification is about trust and repeatability; the only way to know that you
+downloaded what you expected is to know up front what you are expecting.
 
 
 ### Why "qwerty.sh"?
@@ -349,6 +349,7 @@ dependency: a keyboard.
 ```sh
 alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | \
   QWERTY_SH_PROG=qwerty.sh sh -s -"
+
 qwerty.sh [OPTION...] URL [...]
 ```
 
