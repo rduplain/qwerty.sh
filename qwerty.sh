@@ -133,7 +133,7 @@ reset() {
     PROG=qwerty.sh       # Name of program.
     BASEPROG="$PROG"     # Static identifier for use in temporary names.
     TEMP_DIR=            # Path to program's temporary directory.
-    WORKING_DIR="$PWD"   # Path of program's working directory.
+    WORKING_DIR="$PWD"   # Path to program's working directory.
 
     # Checksum runtime configuration variable:
     DOWNLOAD=            # Temporary path of downloaded file.
