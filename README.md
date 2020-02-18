@@ -321,6 +321,38 @@ can substitute output by overwriting the file at `$DOWNLOAD`. When using git,
 an on-download hook can modify any path within the cloned repository.
 
 
+#### On Output
+
+Hooks run after writing output.
+
+This is useful in unpacking archived directories and running setup commands.
+Note that these steps are often best run within a script or Makefile that calls
+qwerty.sh, with the on-output hook provided for cases where a project would
+prefer a single, complete qwerty.sh invocation to run setup commands.
+
+The following example downloads an archive matching the given checksum, unpacks
+it to a relative directory, and only runs if a resulting file does not exist on
+repeat runs of qwerty.sh:
+
+```sh
+# Skip the $QWERTY_SH line when using .qwertyrc files.
+$QWERTY_SH \
+  --when='! test -e .usr/local/project-1.0' \
+  --sha256=1234567890abcdef \
+  --output=.usr/src/project-1.0.tar.gz \
+  --on-output='mkdir -p .usr/local' \
+  --on-output='cd .usr/local; tar -xf ../src/project-1.0.tar.gz' \
+  http://dist.example.com/project-1.0.tar.gz
+```
+
+The on-output hook runs in the original working directory of qwerty.sh.
+
+To build a static binary from the qwerty.sh download, consider an on-download
+hook instead of on-output with build steps. Substitute the download with the
+resulting binary when using a checksum or specify the resulting build filepath
+for output when using git.
+
+
 ### Trust
 
 The qwerty.sh project has a single focus: provide a script as a service.

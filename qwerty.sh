@@ -75,6 +75,7 @@ usage() {
     stderr "event hooks:"
     stderr
     stderr "  --on-download=COMMAND      Run command after downloading."
+    stderr "  --on-output=COMMAND        Run command after writing output."
     stderr
     stderr "conditional execution:"
     stderr
@@ -110,6 +111,7 @@ main() {
             checksums_or_rej
             on_download
             write_download_output
+            on_output
         fi
     else
         given git
@@ -120,6 +122,7 @@ main() {
             validate_filepaths_after_clone
             prepare_clone_output
             write_clone_output
+            on_output
         fi
     fi
     remove_temp_dir
@@ -163,6 +166,7 @@ reset() {
     FORCE=               # Force overwriting files (default in checksum mode).
     KEEP=                # Keep the .git directory after clone.
     ON_DOWNLOAD=         # Event hook commands to run on download.
+    ON_OUTPUT=           # Event hook commands to run on output.
     OUTPUT=              # Destination of downloaded file(s) once verified.
     RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
@@ -200,7 +204,7 @@ pack_arguments() {
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
            "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$KEEP$OUTPUT$RC$SKIP_REJ" \
            "$WHEN_MISSING" \
-           "$ON_DOWNLOAD"
+           "$ON_DOWNLOAD$ON_OUTPUT"
 }
 
 
@@ -1351,6 +1355,18 @@ on_download() {
     done
 }
 
+on_output() {
+    # Run event hook commands after writing output.
+
+    eval "set -- $ON_OUTPUT"
+
+    for cmd in "$@"; do
+        cd "$QWERTY_SH_PWD"
+        printf "on-output: %s\n" "$cmd" >&2
+        eval "$cmd"
+    done
+}
+
 
 ## Utilities to simplify conditional tests ##
 
@@ -1493,6 +1509,9 @@ parse_arguments() {
                     ;;
                 --on-download)
                     ON_DOWNLOAD="$ON_DOWNLOAD $(quote "$value")"
+                    ;;
+                --on-output)
+                    ON_OUTPUT="$ON_OUTPUT $(quote "$value")"
                     ;;
                 -o | --output)
                     exists "$OUTPUT" && help "duplicate output: $value"
