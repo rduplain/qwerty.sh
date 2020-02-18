@@ -478,6 +478,10 @@ alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | \
 qwerty.sh [OPTION...] URL [...]
 ```
 
+Let's take a moment to reflect on the profundity of this alias. A standard Unix
+shell can extend with a hosted script that behaves just like any other command
+in the shell.
+
 
 ### White Label
 
