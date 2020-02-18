@@ -312,7 +312,8 @@ Each hook supports repeat command-line flags and runs the given shell
 expressions in order.
 
 All shell expressions passed to qwerty.sh can be quoted in order to include
-shell features of pipelines and redirection.
+shell features of pipelines and redirection. Further, qwerty.sh logs only to
+stderr in order to preserve stdout for download and hook output.
 
 
 #### On Start
