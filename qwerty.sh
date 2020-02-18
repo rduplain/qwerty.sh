@@ -126,6 +126,9 @@ main() {
 # Exit immediately if a command error or non-zero return occurs.
 set -e
 
+# Ensure execution continues if variables are unset.
+set +u
+
 reset() {
     # Reset global variables.
 
