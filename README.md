@@ -319,6 +319,14 @@ Hooks run on start, after parsing arguments and before conditional execution.
 The on-start hook runs in the original working directory of qwerty.sh.
 
 
+#### On Match
+
+Hooks run after conditions match; run when no conditions are given.
+See [_Conditional Execution_](#conditional-execution).
+
+The on-match hook runs in the original working directory of qwerty.sh.
+
+
 #### On Download
 
 Hooks run on (after) download and before writing output.

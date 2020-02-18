@@ -75,6 +75,7 @@ usage() {
     stderr "event hooks:"
     stderr
     stderr "  --on-start=COMMAND         Run command on start."
+    stderr "  --on-match=COMMAND         Run command after conditions match."
     stderr "  --on-download=COMMAND      Run command after downloading."
     stderr "  --on-output=COMMAND        Run command after writing output."
     stderr
@@ -103,6 +104,8 @@ main() {
         clear_traps
         return
     fi
+
+    on_match
 
     if using_rc; then
         run_commands
@@ -169,6 +172,7 @@ reset() {
     FORCE=               # Force overwriting files (default in checksum mode).
     KEEP=                # Keep the .git directory after clone.
     ON_DOWNLOAD=         # Event hook commands to run on download.
+    ON_MATCH=            # Event hook commands to run on match.
     ON_OUTPUT=           # Event hook commands to run on output.
     ON_START=            # Event hook commands to run on start.
     OUTPUT=              # Destination of downloaded file(s) once verified.
@@ -208,7 +212,7 @@ pack_arguments() {
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
            "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$KEEP$OUTPUT$RC$SKIP_REJ" \
            "$WHEN_MISSING" \
-           "$ON_DOWNLOAD$ON_OUTPUT$ON_START"
+           "$ON_DOWNLOAD$ON_MATCH$ON_OUTPUT$ON_START"
 }
 
 
@@ -1359,6 +1363,18 @@ on_download() {
     done
 }
 
+on_match() {
+    # Run event hooks after conditions match; runs when no conditions are given.
+
+    eval "set -- $ON_MATCH"
+
+    for cmd in "$@"; do
+        cd "$QWERTY_SH_PWD"
+        printf "on-match: %s\n" "$cmd" >&2
+        eval "$cmd"
+    done
+}
+
 on_output() {
     # Run event hook commands after writing output.
 
@@ -1525,6 +1541,9 @@ parse_arguments() {
                     ;;
                 --on-download)
                     ON_DOWNLOAD="$ON_DOWNLOAD $(quote "$value")"
+                    ;;
+                --on-match)
+                    ON_MATCH="$ON_MATCH $(quote "$value")"
                     ;;
                 --on-output)
                     ON_OUTPUT="$ON_OUTPUT $(quote "$value")"
