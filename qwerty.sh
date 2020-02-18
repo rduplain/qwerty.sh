@@ -72,6 +72,10 @@ usage() {
     stderr "  -h, --help                 Display this help message."
     stderr "  -V, --version              Display '$PROG $VERSION' to stdout."
     stderr
+    stderr "event hooks:"
+    stderr
+    stderr "  --on-download=COMMAND      Run command after downloading."
+    stderr
     stderr "conditional execution:"
     stderr
     stderr '  --arch=ARCHITECTURE        Run only if `uname -m` matches.'
@@ -104,6 +108,7 @@ main() {
             create_temp_dir
             download
             checksums_or_rej
+            on_download
             write_download_output
         fi
     else
@@ -111,6 +116,7 @@ main() {
         create_temp_dir
         if validate_filepaths_before_clone; then
             clone
+            on_download
             validate_filepaths_after_clone
             prepare_clone_output
             write_clone_output
@@ -156,6 +162,7 @@ reset() {
     CLONE_REVISION=      # Branch, reference, or tag to clone.
     FORCE=               # Force overwriting files (default in checksum mode).
     KEEP=                # Keep the .git directory after clone.
+    ON_DOWNLOAD=         # Event hook commands to run on download.
     OUTPUT=              # Destination of downloaded file(s) once verified.
     RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
@@ -192,7 +199,8 @@ pack_arguments() {
            "$URL$ARGUMENTS" \
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
            "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$KEEP$OUTPUT$RC$SKIP_REJ" \
-           "$WHEN_MISSING"
+           "$WHEN_MISSING" \
+           "$ON_DOWNLOAD"
 }
 
 
@@ -953,6 +961,8 @@ checksums() {
 write_download_output() {
     # Write download to output file according to context.
 
+    cd "$QWERTY_SH_PWD"
+
     if exists "$OUTPUT"; then
         stderr "Download is valid. Writing to $(green $OUTPUT)."
         mkdirs "$(dirname "$OUTPUT")"
@@ -1321,6 +1331,27 @@ version() {
 }
 
 
+## Event hooks ##
+
+on_download() {
+    # Run event hook commands on (after) download.
+
+    eval "set -- $ON_DOWNLOAD"
+
+    for cmd in "$@"; do
+        if using_checksum; then
+            cd "$(dirname "$DOWNLOAD")"
+        else
+            cd "$CLONE_FILEPATH"
+        fi
+
+        printf "on-download: %s\n" "$cmd" >&2
+
+        eval "$cmd"
+    done
+}
+
+
 ## Utilities to simplify conditional tests ##
 
 is_stdout() {
@@ -1459,6 +1490,9 @@ parse_arguments() {
                 --md5)
                     exists "$MD5" && help "duplicate md5: $value"
                     MD5="$value"
+                    ;;
+                --on-download)
+                    ON_DOWNLOAD="$ON_DOWNLOAD $(quote "$value")"
                     ;;
                 -o | --output)
                     exists "$OUTPUT" && help "duplicate output: $value"

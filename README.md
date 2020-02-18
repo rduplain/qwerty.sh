@@ -33,6 +33,7 @@ Contents:
 * [Using git](#using-git)
 * [Using a Run-Command (rc) File](#using-a-run-command-rc-file)
 * [Conditional Execution](#conditional-execution)
+* [Event Hooks](#event-hooks)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
 * [Motivation](#motivation)
@@ -280,6 +281,44 @@ file can specify qwerty.sh invocations across multiple platforms, and qwerty.sh
 will skip any commands for which the system conditions are not met. This
 approach allows a single qwerty.sh invocation to download platform-dependent
 files and binaries without additional logic.
+
+
+### Event Hooks
+
+Hook shell expressions into qwerty.sh at specific events during its runtime.
+Each hook supports repeat command-line flags and runs the given shell
+expressions in order.
+
+
+#### On Download
+
+Hooks run on (after) download and before writing output.
+
+This is useful in unpacking zipped binary executables, especially when using
+run-command (rc) files to specify downloads for multiple supported platforms.
+
+The following example downloads a .zip matching the given checksum, unzips a
+binary, outputs it to a specific filepath, makes it executable, and only runs
+if this resulting file does not exist on repeat runs of qwerty.sh (which is
+essential to prevent qwerty.sh from rejecting the resulting file on its next
+run, because the checksum of the resulting file is not the same as that of the
+specified .zip download):
+
+```sh
+# Skip the $QWERTY_SH line when using .qwertyrc files.
+$QWERTY_SH \
+  --sys=linux --arch=x86_64 \
+  --when='! test -e bin/program' \
+  --sha256=1234567890abcdef \
+  --output=bin/program --chmod=a+x \
+  --on-download='unzip $DOWNLOAD && mv program $DOWNLOAD' \
+  http://dist.example.com/program_1.0_linux_amd64.zip
+```
+
+The on-download hook runs in the temporary working directory of the download
+before qwerty.sh writes its output. When using a checksum, an on-download hook
+can substitute output by overwriting the file at `$DOWNLOAD`. When using git,
+an on-download hook can modify any path within the cloned repository.
 
 
 ### Trust
