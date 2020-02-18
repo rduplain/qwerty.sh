@@ -312,6 +312,13 @@ Each hook supports repeat command-line flags and runs the given shell
 expressions in order.
 
 
+#### On Start
+
+Hooks run on start, after parsing arguments and before conditional execution.
+
+The on-start hook runs in the original working directory of qwerty.sh.
+
+
 #### On Download
 
 Hooks run on (after) download and before writing output.

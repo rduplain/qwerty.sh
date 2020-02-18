@@ -74,6 +74,7 @@ usage() {
     stderr
     stderr "event hooks:"
     stderr
+    stderr "  --on-start=COMMAND         Run command on start."
     stderr "  --on-download=COMMAND      Run command after downloading."
     stderr "  --on-output=COMMAND        Run command after writing output."
     stderr
@@ -95,6 +96,8 @@ main() {
     determine_program_name "$@"
 
     parse_arguments "$@"
+
+    on_start
 
     if ! platform_matches; then
         clear_traps
@@ -167,6 +170,7 @@ reset() {
     KEEP=                # Keep the .git directory after clone.
     ON_DOWNLOAD=         # Event hook commands to run on download.
     ON_OUTPUT=           # Event hook commands to run on output.
+    ON_START=            # Event hook commands to run on start.
     OUTPUT=              # Destination of downloaded file(s) once verified.
     RC=                  # Run-command (rc) file(s) for batch-style qwerty.sh.
     SKIP_REJ=            # Skip writing .rej file on failure.
@@ -204,7 +208,7 @@ pack_arguments() {
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
            "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$KEEP$OUTPUT$RC$SKIP_REJ" \
            "$WHEN_MISSING" \
-           "$ON_DOWNLOAD$ON_OUTPUT"
+           "$ON_DOWNLOAD$ON_OUTPUT$ON_START"
 }
 
 
@@ -1367,6 +1371,18 @@ on_output() {
     done
 }
 
+on_start() {
+    # Run event hook commands on start, after parsing arguments.
+
+    eval "set -- $ON_START"
+
+    for cmd in "$@"; do
+        cd "$QWERTY_SH_PWD"
+        printf "on-start: %s\n" "$cmd" >&2
+        eval "$cmd"
+    done
+}
+
 
 ## Utilities to simplify conditional tests ##
 
@@ -1512,6 +1528,9 @@ parse_arguments() {
                     ;;
                 --on-output)
                     ON_OUTPUT="$ON_OUTPUT $(quote "$value")"
+                    ;;
+                --on-start)
+                    ON_START="$ON_START $(quote "$value")"
                     ;;
                 -o | --output)
                     exists "$OUTPUT" && help "duplicate output: $value"
