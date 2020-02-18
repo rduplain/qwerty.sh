@@ -311,6 +311,9 @@ Hook shell expressions into qwerty.sh at specific events during its runtime.
 Each hook supports repeat command-line flags and runs the given shell
 expressions in order.
 
+All shell expressions passed to qwerty.sh can be quoted in order to include
+shell features of pipelines and redirection.
+
 
 #### On Start
 
