@@ -78,6 +78,7 @@ usage() {
     stderr "  --on-match=COMMAND         Run command after conditions match."
     stderr "  --on-download=COMMAND      Run command after downloading."
     stderr "  --on-output=COMMAND        Run command after writing output."
+    stderr "  --on-finish=COMMAND        Run command on finish."
     stderr
     stderr "conditional execution:"
     stderr
@@ -133,6 +134,8 @@ main() {
     fi
     remove_temp_dir
     clear_traps
+
+    on_finish
 }
 
 
@@ -172,6 +175,7 @@ reset() {
     FORCE=               # Force overwriting files (default in checksum mode).
     KEEP=                # Keep the .git directory after clone.
     ON_DOWNLOAD=         # Event hook commands to run on download.
+    ON_FINISH=           # Event hook commands to run on finish.
     ON_MATCH=            # Event hook commands to run on match.
     ON_OUTPUT=           # Event hook commands to run on output.
     ON_START=            # Event hook commands to run on start.
@@ -212,7 +216,7 @@ pack_arguments() {
            "$MD5$SHA1$SHA224$SHA256$SHA384$SHA512" \
            "$CD_ON_RC$CHMOD$CLONE_REVISION$FORCE$KEEP$OUTPUT$RC$SKIP_REJ" \
            "$WHEN_MISSING" \
-           "$ON_DOWNLOAD$ON_MATCH$ON_OUTPUT$ON_START"
+           "$ON_DOWNLOAD$ON_FINISH$ON_MATCH$ON_OUTPUT$ON_START"
 }
 
 
@@ -1363,6 +1367,18 @@ on_download() {
     done
 }
 
+on_finish() {
+    # Run event hook commands on finish, after full qwerty.sh main routine.
+
+    eval "set -- $ON_FINISH"
+
+    for cmd in "$@"; do
+        cd "$QWERTY_SH_PWD"
+        printf "on-finish: %s\n" "$cmd" >&2
+        eval "$cmd"
+    done
+}
+
 on_match() {
     # Run event hooks after conditions match; runs when no conditions are given.
 
@@ -1541,6 +1557,9 @@ parse_arguments() {
                     ;;
                 --on-download)
                     ON_DOWNLOAD="$ON_DOWNLOAD $(quote "$value")"
+                    ;;
+                --on-finish)
+                    ON_FINISH="$ON_FINISH $(quote "$value")"
                     ;;
                 --on-match)
                     ON_MATCH="$ON_MATCH $(quote "$value")"

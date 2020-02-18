@@ -390,6 +390,16 @@ resulting binary when using a checksum or specify the resulting build filepath
 for output when using git.
 
 
+#### On Finish
+
+Hooks run on finish, after qwerty.sh finishes its full main routine.
+
+Note that with run-command (rc) files, this hook runs at the finish of each rc
+line invocation.
+
+The on-finish hook runs in the original working directory of qwerty.sh.
+
+
 ### Trust
 
 **Only run code from trusted sources. This includes copy/paste qwerty.sh
