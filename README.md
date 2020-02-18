@@ -377,6 +377,9 @@ for output when using git.
 
 ### Trust
 
+**Only run code from trusted sources. This includes copy/paste qwerty.sh
+invocations and run-command (rc) .qwertyrc files.**
+
 The qwerty.sh project has a single focus: provide a script as a service.
 
 The script downloads and runs locally; no information given to the script is
