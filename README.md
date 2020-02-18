@@ -248,6 +248,28 @@ expansion (and use `.*` not `*` if the target rc files are hidden dotfiles):
 --rc='.qwertyrc.d/*'
 ```
 
+Note that the shell language has limitations when commenting with the
+line-continuation backslash (`\`). A block of lines is joined as though the
+backslashes and their adjacent newlines are not there. As such, no line can be
+"commented-out" without moving it outside of the backslash-concatenated block
+of lines, separated by newlines.
+
+Example interpreted as a stand-alone comment followed by an rc line:
+
+```sh
+# --flag=value \
+
+--flag=value
+```
+
+Example interpreted as a comment only, without any rc lines:
+
+```sh
+# --flag=value \
+--flag=value
+```
+
+
 ### Conditional Execution
 
 Provide processor architecture and operating system details to qwerty.sh to
