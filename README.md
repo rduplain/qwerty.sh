@@ -20,7 +20,7 @@ Hardened usage:
 
 ```sh
 QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
-$QWERTY_SH [OPTION...] URL [...]
+eval "$QWERTY_SH" [OPTION...] URL [...]
 ```
 
 Contents:
@@ -347,7 +347,7 @@ specified .zip download):
 
 ```sh
 # Skip the $QWERTY_SH line when using .qwertyrc files.
-$QWERTY_SH \
+eval "$QWERTY_SH" \
   --sys=linux --arch=x86_64 \
   --when='! test -e bin/program' \
   --sha256=1234567890abcdef \
@@ -377,7 +377,7 @@ repeat runs of qwerty.sh:
 
 ```sh
 # Skip the $QWERTY_SH line when using .qwertyrc files.
-$QWERTY_SH \
+eval "$QWERTY_SH" \
   --when='! test -e .usr/local/project-1.0' \
   --sha256=1234567890abcdef \
   --output=.usr/src/project-1.0.tar.gz \
@@ -533,9 +533,9 @@ To run qwerty.sh locally, download and run it:
 * Call `/path/to/qwerty.sh` directly or include it in the shell's `PATH`.
   * See `qwerty.sh --help` for help.
 
-It's good practice to have scripts call `$QWERTY_SH` instead of a hard-coded
-`curl` invocation, as to allow dynamic reconfiguration to substitute a locally
-downloaded `qwerty.sh` program.
+It's good practice to have scripts call `$QWERTY_SH` (or `eval "$QWERTY_SH"`)
+instead of a hard-coded `curl` invocation, as to allow dynamic reconfiguration
+to substitute a locally downloaded `qwerty.sh` program.
 
 Start with `QWERTY_SH` value:
 
