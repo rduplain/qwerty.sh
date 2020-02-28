@@ -33,6 +33,7 @@ Contents:
 * [Using git](#using-git)
 * [Using a Run-Command (rc) File](#using-a-run-command-rc-file)
 * [Conditional Execution](#conditional-execution)
+* [Conditional Execution, Full Example](#conditional-execution-full-example)
 * [Event Hooks](#event-hooks)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
@@ -303,6 +304,45 @@ file can specify qwerty.sh invocations across multiple platforms, and qwerty.sh
 will skip any commands for which the system conditions are not met. This
 approach allows a single qwerty.sh invocation to download platform-dependent
 files and binaries without additional logic.
+
+
+### Conditional Execution, Full Example
+
+An example to put it all together, `hosts.qwertyrc`:
+
+```sh
+# https://qwerty.sh/
+
+# GNU/Linux 64-bit
+  --sys=linux --arch=x86_64 \
+  --sha256=baae9a4ccb17b3f9e0b868e261e39356774955a68084d3653a1d7e773dea616d \
+  --output="$HOME"/bin/hosts --chmod=755 \
+  https://github.com/rduplain/hosts/releases/download/v1.1/hosts-v1.1-x86_64-linux-gnu
+
+# GNU/Linux on ARM, incl. Raspberry Pi
+  --sys=linux --arch=arm --all-sub-arch \
+  --sha256=31762e1448834bd3cdd76a708aa0e53cbc88144ca0151077f58d5058e6eca6ec \
+  --output="$HOME"/bin/hosts --chmod=755 \
+  https://github.com/rduplain/hosts/releases/download/v1.1/hosts-v1.1-arm-linux-gnueabihf
+
+# Mac OS X, 64-bit
+  --sys=darwin --arch=x86_64 \
+  --sha256=6b741620cd517e23ad1748fc6193e3cdf099fb32d16c26a2edb93d847ee3635f \
+  --output="$HOME"/bin/hosts --chmod=755 \
+  https://github.com/rduplain/hosts/releases/download/v1.1/hosts-v1.1-x86_64-apple-darwin
+
+# FreeBSD 64-bit
+  --sys=freebsd --arch=amd64 \
+  --sha256=412d4e850d3a26685a6954f75d40665fd128a42712a4d4572bd1371232795a44 \
+  --output="$HOME"/bin/hosts --chmod=755 \
+  https://github.com/rduplain/hosts/releases/download/v1.1/hosts-v1.1-x86_64-freebsd
+```
+
+Then:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - --rc hosts.qwertyrc
+```
 
 
 ### Event Hooks
