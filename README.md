@@ -1,27 +1,32 @@
-## qwerty.sh: download, verify, unpack files in a single command.
+## qwerty.sh: download, verify, unpack files in a single, portable command.
 
 [qwerty.sh](https://qwerty.sh) is a script as a service to download, verify,
-and unpack files in a single command.
+and unpack files in a single, portable command.
+
+On any Unix shell with `curl` available:
 
 ```sh
-curl -sSL qwerty.sh | sh -s - \
+QWERTY_SH=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7/qwerty.sh
+alias curl-https="curl --proto '=https' --tlsv1.2 -sSf"  # Accept no less.
+alias qwerty.sh="curl-https $QWERTY_SH | sh -s -"
+```
+
+Execute a file downloaded with `git`:
+
+```sh
+qwerty.sh https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh:- | sh
+```
+
+Execute a file, but only if it matches a predetermined checksum:
+
+```sh
+qwerty.sh \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   http://hello.qwerty.sh | sh
 ```
 
-_or_
-
-```sh
-curl -sSL qwerty.sh | sh -s - \
-  -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
-```
-
-Hardened usage:
-
-```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
-eval "$QWERTY_SH" [OPTION...] URL [...]
-```
+`qwerty.sh` works without any installation, using whatever `curl`, `git`, and
+`openssl` commands it finds.
 
 Contents:
 
