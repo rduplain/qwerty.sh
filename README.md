@@ -11,13 +11,13 @@ alias curl-https="curl --proto '=https' --tlsv1.2 -sSf"  # Accept no less.
 alias qwerty.sh="curl-https $QWERTY_SH | sh -s -"
 ```
 
-Execute a file downloaded with `git`:
+Execute [a file][hello.sh] downloaded with `git`:
 
 ```sh
 qwerty.sh https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh:- | sh
 ```
 
-Execute a file, but only if it matches a predetermined checksum:
+Execute [a file][hello.sh], but only if it matches a predetermined checksum:
 
 ```sh
 qwerty.sh \
@@ -625,3 +625,6 @@ Copyright (c) 2018-2021, R. DuPlain. All rights reserved.
 BSD 2-Clause License.
 
 ... with apologies to Dvorak.
+
+
+[hello.sh]: https://github.com/rduplain/qwerty.sh/blob/master/web/hello/hello.sh
