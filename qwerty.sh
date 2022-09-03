@@ -8,8 +8,6 @@
 VERSION=v0.7.1-dev
 
 usage() {
-    exists "$@" && stderr "$PROG: $(red "$@")" && return 2
-
     stderr "usage: curl -sSL qwerty.sh      | sh -s - [OPTION...] URL [...]"
     stderr "       curl -sSL qwerty.sh/v0.7 | sh -s - [OPTION...] URL [...]"
     stderr
@@ -89,7 +87,6 @@ usage() {
     stderr "  --all-sub-arch             Support partial --arch matches."
     stderr
     stderr '`sh -s -` sends all arguments which follow to the stdin script.'
-    return 2
 }
 
 main() {
@@ -1501,30 +1498,32 @@ determine_program_name() {
 help() {
     # Report error, else print usage to stderr, rewriting program name.
 
-    # Use standard usage if no alternative program name is configured.
-    if ! exists "$QWERTY_SH_PROG"; then
-        usage "$@"
-        return 2
-    fi
-
     # If stderr is a tty then treat everything as a tty.
     if stderr_isatty; then
         ISATTY=true
     fi
 
-    # Rewrite `usage` output to support alternative qwerty.sh invocations.
-    #
-    # Print usage (usage), using $QWERTY_SH_PROG as program name (sed).
-    # Replace all references to curl (sed).
-    # Remove duplicate blank lines (awk).
-    usage "$@" 2>&1 | \
-        sed -e "/  curl .*$/d" \
-            -e "/harden usage.*$/d" \
-            -e "s/curl .* sh -s -/$QWERTY_SH_PROG/g" \
-            -e "/sh -s -/d" | \
-        awk -v RS='\n\n\n' '{ print $0 }' >&2
+    if exists "$@"; then
+        # Report error.
+        stderr "$PROG: $(red "$@")"
+        return 2
+    fi
 
-    return 2
+    if exists "$QWERTY_SH_PROG"; then
+        # Rewrite `usage` output to support alternative qwerty.sh invocations.
+        #
+        # Print usage (usage), using $QWERTY_SH_PROG as program name (sed).
+        # Replace all references to curl (sed).
+        # Remove duplicate blank lines (awk).
+        usage "$@" 2>&1 | \
+            sed -e "/  curl .*$/d" \
+                -e "/harden usage.*$/d" \
+                -e "s/curl .* sh -s -/$QWERTY_SH_PROG/g" \
+                -e "/sh -s -/d" | \
+            awk -v RS='\n\n\n' '{ print $0 }' >&2
+    else
+        usage "$@" 2>&1
+    fi
 }
 
 parse_arguments() {
@@ -1629,6 +1628,7 @@ parse_arguments() {
                             ;;
                         -h | --help)
                             help
+                            exit
                             ;;
                         -k | --keep)
                             KEEP=true
