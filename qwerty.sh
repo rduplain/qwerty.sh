@@ -1499,17 +1499,21 @@ determine_program_name() {
 }
 
 help() {
-    # Rewrite `usage` output to support alternative qwerty.sh invocations.
+    # Report error, else print usage to stderr, rewriting program name.
 
+    # Use standard usage if no alternative program name is configured.
     if ! exists "$QWERTY_SH_PROG"; then
         usage "$@"
         return 2
     fi
 
+    # If stderr is a tty then treat everything as a tty.
     if stderr_isatty; then
         ISATTY=true
     fi
 
+    # Rewrite `usage` output to support alternative qwerty.sh invocations.
+    #
     # Print usage (usage), using $QWERTY_SH_PROG as program name (sed).
     # Replace all references to curl (sed).
     # Remove duplicate blank lines (awk).
