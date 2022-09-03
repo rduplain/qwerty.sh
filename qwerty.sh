@@ -1510,12 +1510,15 @@ help() {
         ISATTY=true
     fi
 
+    # Print usage (usage), using $QWERTY_SH_PROG as program name (sed).
+    # Replace all references to curl (sed).
+    # Remove duplicate blank lines (awk).
     usage "$@" 2>&1 | \
         sed -e "/  curl .*$/d" \
             -e "/harden usage.*$/d" \
             -e "s/curl .* sh -s -/$QWERTY_SH_PROG/g" \
             -e "/sh -s -/d" | \
-        cat -s - >&2
+        awk -v RS='\n\n\n' '{ print $0 }' >&2
 
     return 2
 }
