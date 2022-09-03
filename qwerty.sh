@@ -5,11 +5,11 @@
 # README: https://github.com/rduplain/qwerty.sh#readme
 # Contact: community@qwerty.sh -- See footer for BSD 2-Clause License.
 
-VERSION=v0.7.1-dev
+VERSION=v0.7.1
 
 usage() {
-    stderr "usage: curl -sSL qwerty.sh      | sh -s - [OPTION...] URL [...]"
-    stderr "       curl -sSL qwerty.sh/v0.7 | sh -s - [OPTION...] URL [...]"
+    stderr "usage: curl -sSL qwerty.sh        | sh -s - [OPTION...] URL [...]"
+    stderr "       curl -sSL qwerty.sh/v0.7.1 | sh -s - [OPTION...] URL [...]"
     stderr
     stderr "harden usage with:"
     stderr

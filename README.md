@@ -6,7 +6,7 @@ and unpack files in a single, portable command.
 On any Unix shell with `curl` available:
 
 ```sh
-QWERTY_SH=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7/qwerty.sh
+QWERTY_SH=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh
 alias curl-https="curl --proto '=https' --tlsv1.2 -sSf"  # Accept no less.
 alias qwerty.sh="curl-https $QWERTY_SH | sh -s -"
 ```
@@ -558,20 +558,20 @@ Calling qwerty.sh via `curl` also supports `$QWERTY_SH_PROG`.
 
 Alternative hosting of qwerty.sh is provided by GitHub [through its "raw" file
 hosting][raw]; use a version tag by changing [`master`][raw] in the URL to a
-version tag, e.g. [`v0.7`][raw v].
+version tag, e.g. [`v0.7.1`][raw v].
 
 [raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
-[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7/qwerty.sh
+[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh
 
 To run qwerty.sh locally, download and run it:
 
 * Download qwerty.sh from <https://qwerty.sh>, which is always the latest
   release of qwerty.sh. Optionally include a version,
-  e.g. <https://qwerty.sh/v0.7>.
+  e.g. <https://qwerty.sh/v0.7.1>.
 * ... or from GitHub [through its "raw" file hosting][raw]; use a version tag
-  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.7`][raw
+  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.7.1`][raw
   v].
-  * Recommended: use a version tag, e.g. [`v0.7`][raw v]. Though
+  * Recommended: use a version tag, e.g. [`v0.7.1`][raw v]. Though
     [`master`][raw] is stable, it consistently refers to a pre-release; prefer
     a release version when downloading qwerty.sh.
 * Ensure that the resulting file is executable: `chmod a+x /path/to/qwerty.sh`.
@@ -607,9 +607,9 @@ Then adjust the URL as needed:
 
 ```sh
 QWERTY_SH_URL="https://qwerty.sh"
-QWERTY_SH_URL="https://qwerty.sh/v0.7"
+QWERTY_SH_URL="https://qwerty.sh/v0.7.1"
 QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh"
-QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7/qwerty.sh"
+QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh"
 ```
 
 
