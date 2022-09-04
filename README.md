@@ -1,4 +1,4 @@
-## qwerty.sh: download, verify, unpack files in a single, portable command.
+## qwerty.sh: download, verify, unpack files.
 
 [qwerty.sh](https://qwerty.sh) is a script as a service.
 On any Unix shell with `curl` available:
