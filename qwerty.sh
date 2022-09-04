@@ -1454,18 +1454,15 @@ remove_temp_dir() {
 }
 
 set_traps() {
-    # Set shell traps in order to keep it classy on program exit.
+    # Set shell traps.
     #
     # Set an EXIT trap since ERR is not portable.
-    # Be sure to `clear_traps` before exiting on success.
+    #
+    # For any EXIT trap beyond remove_temp_dir, be sure to `clear_traps` before
+    # exiting on success.
 
     trap remove_temp_dir INT TERM
-
-    if stdout_isatty; then
-        trap 'remove_temp_dir' EXIT
-    else
-        trap 'stdout "exit $? # Propagate error."; remove_temp_dir' EXIT
-    fi
+    trap remove_temp_dir EXIT  # Future error-handling can go here.
 }
 
 clear_traps() {
