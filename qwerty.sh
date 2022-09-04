@@ -1486,8 +1486,13 @@ determine_program_name() {
     # 3. White-Label:         QWERTY_SH_PROG=another-program qwerty.sh
 
     if exists "$QWERTY_SH_PROG"; then
+        # Environment contains program name to use.
         PROG="$QWERTY_SH_PROG"
     elif [ "$(basename $0)" = "$PROG" ]; then
+        # Program is running locally.
+        QWERTY_SH_PROG="$PROG"
+    elif [ -n "$Q" ] && [ "$(basename $Q)" = "$PROG" ]; then
+        # Program is using conventional $Q alias.
         QWERTY_SH_PROG="$PROG"
     fi
 }
