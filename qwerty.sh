@@ -1496,7 +1496,7 @@ determine_program_name() {
 }
 
 help() {
-    # Report error, else print usage to stderr, rewriting program name.
+    # Print error to stderr, else print usage to stdout with program name.
 
     # If stderr is a tty then treat everything as a tty.
     if stderr_isatty; then
@@ -1520,7 +1520,7 @@ help() {
                 -e "/harden usage.*$/d" \
                 -e "s/curl .* sh -s -/$QWERTY_SH_PROG/g" \
                 -e "/sh -s -/d" | \
-            awk -v RS='\n\n\n' '{ print $0 }' >&2
+            awk -v RS='\n\n\n' '{ print $0 }'
     else
         usage "$@" 2>&1
     fi
