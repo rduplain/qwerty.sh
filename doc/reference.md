@@ -14,10 +14,8 @@ Contents:
 * [Event Hooks](#event-hooks)
 * [Trust](#trust)
 * [The qwerty.sh Web Service](#the-qwertysh-web-service)
-* [Motivation](#motivation)
-* [Why "qwerty.sh"?](#why-qwertysh)
 * [White Label](#white-label)
-* [Alternative Hosting and Local Usage](#alternative-hosting-and-local-usage)
+* [Why "qwerty.sh"?](#why-qwertysh)
 
 
 ### Manage the Unmanaged
@@ -41,20 +39,39 @@ code.
 
 Use qwerty.sh when bootstrapping builds and development environments, for:
 
-1. Repeatable single-command downloads in build systems & Dockerfile workflows.
+1. Repeatable single-command downloads in build workflows.
 2. Trusted copy/paste developer tool instructions (replacing `curl ... | sh`).
 3. An easy-to-type command to bootstrap a development environment.
 
 
 ### Usage
 
-Arguments start after `sh -s -`. The `--help` flag shows full usage.
+On a Unix shell:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh        | sh -s - --help
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh/v0.6.3 | sh -s - --help
+Q=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh
+alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf $Q | Q=$Q sh -s -"
 ```
 
+Explained:
+
+* Set the `$Q` environment variable to a reliably hosted `qwerty.sh` script.
+* Use `--proto '=https' --tlsv1.2` to configure `curl` to only accept HTTPS;
+  this mitigates the risk of `curl` being redirected to a non-encrypted URL.
+* Use `-sS` to silence `curl` (`-s`) but show an error (`-S`).
+* Use `-f` to fail silently on server errors, to let qwerty.sh control output.
+* Reference the previously set `$Q`, twice:
+  - The first is simple variable substitution, give the URL to `curl`.
+  - The second is to pass `$Q` to the `qwerty.sh` program, in order for
+    `qwerty.sh` to provide useful help messaging. Instead of `export Q`,
+    setting `Q=$Q` allows the `sh -s -` process to have `Q` in its environment
+    without `export`ing/cluttering the environment of other processes
+    (especially because `Q` is highly contextual to qwerty.sh).
+* Pipe to `sh` to run `qwerty.sh` locally.
+* Invoking `sh -s -` allows for all additional command-line arguments to be
+  passed to `qwerty.sh` (instead of to `sh`).
+
+The `--help` flag shows full usage.
 See full examples below.
 
 
@@ -70,8 +87,8 @@ files, and qwerty.sh requires `openssl` or `git` accordingly. For HTTPS, `curl`
 must support TLSv1.2 (2008), which it commonly does.
 
 The qwerty.sh project provides fully portable shell using commands commonly
-found on Unix platforms, and makes every effort to provide a simple, clear
-error message in the event that a dependency is missing.
+found on Unix platforms (SUSv4), and makes every effort to provide a simple,
+clear error message in the event that a dependency is missing.
 
 
 ### Using a Checksum
@@ -79,7 +96,7 @@ error message in the event that a dependency is missing.
 Download a shell script, verify it, execute it (without keeping it):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   http://hello.qwerty.sh | sh
 ```
@@ -87,7 +104,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --sha256=87d9aaac491de41f2e19d7bc8b3af20a54645920c499bbf868cd62aa4a77f4c7 \
   --output=hello --chmod=a+x \
   http://hello.qwerty.sh && ./hello
@@ -96,7 +113,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 Download an archive, verify it, unpack it (without keeping the archive itself):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --sha256=70c98b2d0640b2b73c9d8adb4df63bcb62bad34b788fe46d1634b6cf87dc99a4 \
   http://download.redis.io/releases/redis-5.0.0.tar.gz | \
     tar -xvzf -
@@ -108,14 +125,14 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 Download a shell script, verify it, execute it (without keeping it):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   -o - https://github.com/rduplain/qwerty.sh.git web/hello/hello.sh | sh
 ```
 
 Download a program, verify it, keep it, make it executable (then execute it):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
   web/hello/hello.sh:hello && ./hello
@@ -124,17 +141,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 Download an entire repository (without retaining .git metadata):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
-  https://github.com/rduplain/qwerty.sh.git
+qwerty.sh https://github.com/rduplain/qwerty.sh.git
 
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
-  --output=OUTPUT_DIRECTORY https://github.com/rduplain/qwerty.sh.git
+qwerty.sh --output=OUTPUT_DIRECTORY https://github.com/rduplain/qwerty.sh.git
 ```
 
 Download a specific revision of a file (`-o -` writes to stdout):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   -b v0.6.3 \
   -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
 ```
@@ -143,7 +158,7 @@ Download a specific revision of a file which is not tagged or is not at the
 HEAD of a branch (and note that use of `--ref` is more download intensive):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --ref dea68e7 \
   -o - https://github.com/rduplain/qwerty.sh.git qwerty.sh | head
 ```
@@ -151,7 +166,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 Download multiple files, verify them, keep them, make them executable:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
   qwerty.sh web/hello/hello.sh:hello.sh
@@ -161,7 +176,7 @@ Download multiple files, verify them, write one file to stdout while making the
 others executable:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   --chmod=a+x \
   https://github.com/rduplain/qwerty.sh.git \
   LICENSE:- web/hello/hello.sh:hello.sh
@@ -170,7 +185,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
 Download multiple files, verify them, and write them to stdout:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - \
+qwerty.sh \
   -o - \
   https://github.com/rduplain/qwerty.sh.git \
   README.md web/README.md | less
@@ -204,7 +219,7 @@ An example `.qwertyrc`:
 Call qwerty.sh:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - --rc .qwertyrc
+qwerty.sh --rc .qwertyrc
 ```
 
 This will result in two local files (`hello-from-checksum`, `hello-from-git`)
@@ -317,7 +332,7 @@ An example to put it all together, `hosts.qwertyrc`:
 Then:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s - --rc hosts.qwertyrc
+qwerty.sh --rc hosts.qwertyrc
 ```
 
 
@@ -392,8 +407,8 @@ it to a relative directory, and only runs if a resulting file does not exist on
 repeat runs of qwerty.sh:
 
 ```sh
-# Skip the $QWERTY_SH line when using .qwertyrc files.
-eval "$QWERTY_SH" \
+# Skip the first line (`qwerty.sh \`) when using .qwertyrc files.
+qwerty.sh \
   --when='! test -e .usr/local/project-1.0' \
   --sha256=1234567890abcdef \
   --output=.usr/src/project-1.0.tar.gz \
@@ -432,71 +447,35 @@ provided to the qwerty.sh server. When running qwerty.sh, only the `curl`
 portion of the command line is known to the qwerty.sh server, which only
 indicates a request to download the qwerty.sh script.
 
-The qwerty.sh script is provided over HTTPS which is encrypted by [Let's
-Encrypt](https://letsencrypt.org/). Having a trusted certificate authority
-through _Let's Encrypt_ is essential in getting a trusted qwerty.sh script.
-This HTTPS encryption initiates a web of trust:
+The qwerty.sh script is provided over HTTPS. Having a trusted certificate
+authority is essential in getting a trusted qwerty.sh script. This HTTPS
+encryption initiates a web of trust:
 
 * Determine details (e.g. a checksum or git) which validate a given file.
 * Get the qwerty.sh script, knowing that it transmitted through HTTPS.
 * Tell the qwerty.sh script known details about the target file to download.
 
-Harden curl usage:
+Ideally everything could be verified against signed artifacts, i.e. GPG. The
+entire purpose of `qwerty.sh` is to acknowledge the reality that many files are
+downloaded without any verification whatsoever (neither git nor checksum) and
+piped freely into `sh` and other interpreters, (!!!) and identifies a trusted
+HTTPS connection as the lowest common denominator in trust.
 
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -
+Skeptical users can fork the qwerty.sh project on GitHub or elsewhere:
+
+```
+Q=https://.../qwerty.sh/v0.7.1/qwerty.sh  # Set URL of fork here.
+alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf $Q | Q=$Q sh -s -"
 ```
 
-qwerty.sh is available as specific versions to further guarantee repeatability.
+Alternatively, run a `qwerty.sh` web server.
 
-Skeptical users can fork the qwerty.sh project on GitHub and set a shell
-environment variable for the conventional `QWERTY_SH` to the fork's resulting
-`https://raw.githubusercontent.com/.../qwerty.sh` URL:
-
-```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf HTTPS_URL_HERE | sh -s -"
-```
-
-See [below](#alternative-hosting-and-local-usage) for details on downloading
-qwerty.sh for local usage.
-
-[BSD 2-Clause License](LICENSE)
+[BSD 2-Clause License](../LICENSE)
 
 
 ### The qwerty.sh Web Service
 
-See: [web/README.md](web/README.md#readme)
-
-
-### Motivation
-
-How do you verify integrity of a downloaded file, when the download installs
-the very tool that you need to run the build process? Too often, you do
-not. Installation instructions commonly pipe the output of `curl` into `sh`,
-sometimes leading to blind `sudo` password prompts (!), and archive files often
-download over plaintext internet connections without a checksum or signature.
-
-Until it is trivial to download, verify, and unpack files _from anywhere_,
-developers and builds will skip the verification step, or not even consider it!
-Verification is about trust and repeatability; the only way to know that you
-downloaded what you expected is to know up front what you are expecting.
-
-
-### Why "qwerty.sh"?
-
-Bootstrap a toolchain on an internet-connected Unix-like system with just one
-dependency: a keyboard.
-
-```sh
-alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | \
-  QWERTY_SH_PROG=qwerty.sh sh -s -"
-
-qwerty.sh [OPTION...] URL [...]
-```
-
-Let's take a moment to reflect on the profundity of this alias. A standard Unix
-shell can extend with a hosted script that behaves just like any other command
-in the shell.
+See: [web/README.md](../web/README.md#readme)
 
 
 ### White Label
@@ -518,70 +497,17 @@ program is just a download of a new version:
 
 ```sh
 mkdir -p path/to/
-curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh > path/to/qwerty.sh
+curl --proto '=https' --tlsv1.2 -sSf $Q > path/to/qwerty.sh
 chmod a+x path/to/qwerty.sh
 ```
 
-Calling qwerty.sh via `curl` also supports `$QWERTY_SH_PROG`.
+Calling `qwerty.sh` via `curl` also supports `$QWERTY_SH_PROG`.
 
 
-### Alternative Hosting and Local Usage
+### Why "qwerty.sh"?
 
-Alternative hosting of qwerty.sh is provided by GitHub [through its "raw" file
-hosting][raw]; use a version tag by changing [`master`][raw] in the URL to a
-version tag, e.g. [`v0.7.1`][raw v].
-
-[raw]: https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh
-[raw v]: https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh
-
-To run qwerty.sh locally, download and run it:
-
-* Download qwerty.sh from <https://qwerty.sh>, which is always the latest
-  release of qwerty.sh. Optionally include a version,
-  e.g. <https://qwerty.sh/v0.7.1>.
-* ... or from GitHub [through its "raw" file hosting][raw]; use a version tag
-  by changing [`master`][raw] in the URL to a version tag, e.g. [`v0.7.1`][raw
-  v].
-  * Recommended: use a version tag, e.g. [`v0.7.1`][raw v]. Though
-    [`master`][raw] is stable, it consistently refers to a pre-release; prefer
-    a release version when downloading qwerty.sh.
-* Ensure that the resulting file is executable: `chmod a+x /path/to/qwerty.sh`.
-* Call `/path/to/qwerty.sh` directly or include it in the shell's `PATH`.
-  * See `qwerty.sh --help` for help.
-
-It's good practice to have scripts call `$QWERTY_SH` (or `eval "$QWERTY_SH"`)
-instead of a hard-coded `curl` invocation, as to allow dynamic reconfiguration
-to substitute a locally downloaded `qwerty.sh` program.
-
-Start with `QWERTY_SH` value:
-
-```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf https://qwerty.sh | sh -s -"
-```
-
-Match project requirements by adjusting the URL or referring to a locally
-downloaded qwerty.sh program:
-
-```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf CUSTOM_URL_HERE | sh -s -"
-QWERTY_SH="sh /path/to/qwerty.sh"
-QWERTY_SH="/path/to/qwerty.sh"
-```
-
-Optionally, add `QWERTY_SH_URL` to dynamically configure the qwerty.sh URL:
-
-```sh
-QWERTY_SH="curl --proto '=https' --tlsv1.2 -sSf $QWERTY_SH_URL | sh -s -"
-```
-
-Then adjust the URL as needed:
-
-```sh
-QWERTY_SH_URL="https://qwerty.sh"
-QWERTY_SH_URL="https://qwerty.sh/v0.7.1"
-QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/master/qwerty.sh"
-QWERTY_SH_URL="https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh"
-```
+Bootstrap a toolchain on an internet-connected Unix-like system with just one
+dependency: a keyboard.
 
 
 [hello.sh]: https://github.com/rduplain/qwerty.sh/blob/master/web/hello/hello.sh
