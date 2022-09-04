@@ -4,7 +4,7 @@
 On any Unix shell with `curl` available:
 
 ```sh
-Q=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh
+Q=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.8/qwerty.sh
 alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf $Q | Q=$Q sh -s -"
 ```
 

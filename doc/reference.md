@@ -49,7 +49,7 @@ Use qwerty.sh when bootstrapping builds and development environments, for:
 On a Unix shell:
 
 ```sh
-Q=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.7.1/qwerty.sh
+Q=https://raw.githubusercontent.com/rduplain/qwerty.sh/v0.8/qwerty.sh
 alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf $Q | Q=$Q sh -s -"
 ```
 
@@ -464,7 +464,7 @@ HTTPS connection as the lowest common denominator in trust.
 Skeptical users can fork the qwerty.sh project on GitHub or elsewhere:
 
 ```
-Q=https://.../qwerty.sh/v0.7.1/qwerty.sh  # Set URL of fork here.
+Q=https://.../qwerty.sh/v.../qwerty.sh  # Set URL of fork here.
 alias qwerty.sh="curl --proto '=https' --tlsv1.2 -sSf $Q | Q=$Q sh -s -"
 ```
 
