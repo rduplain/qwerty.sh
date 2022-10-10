@@ -25,7 +25,7 @@ qwerty.sh \
   http://hello.qwerty.sh | sh
 ```
 
-`qwerty.sh` uses whatever `curl`, `git`, and `openssl` commands it finds.
+`qwerty.sh` is POSIX shell and uses whatever `curl`, `git`, and `openssl` commands it finds.
 
 ---
 
